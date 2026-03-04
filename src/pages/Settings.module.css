@@ -1,0 +1,118 @@
+.container {
+    padding: var(--spacing-4);
+    background-color: #FDFDFF;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    margin-bottom: var(--spacing-6);
+}
+
+.title {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: 32px;
+    font-weight: var(--typography-weight-bold);
+    color: #1A1C1E;
+    margin: 0;
+}
+
+.subtitle {
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-400);
+    color: #6C707F;
+    margin-top: var(--spacing-1);
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.card {
+    background-color: white;
+    border-radius: 20px;
+    padding: var(--spacing-5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #F0F1F5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.card:active {
+    transform: scale(0.99);
+}
+
+.settingInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.settingTitle {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: 18px;
+    font-weight: var(--typography-weight-bold);
+    color: #1A1C1E;
+}
+
+.settingValue {
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: 14px;
+    color: #6C707F;
+}
+
+.actionArea {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+}
+
+.switchLabel {
+    font-size: 12px;
+    font-weight: var(--typography-weight-bold);
+    color: #7781E4;
+    background-color: #F0F2FF;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.actionArea i {
+    color: #C0C4D6;
+    font-size: 14px;
+}
+
+.toggle {
+    width: 48px;
+    height: 28px;
+    background-color: #EDEFF5;
+    border-radius: 20px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.toggleActive {
+    background-color: #2ED199;
+}
+
+.toggleKnob {
+    width: 22px;
+    height: 22px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.toggleActive .toggleKnob {
+    transform: translateX(20px);
+}

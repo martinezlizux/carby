@@ -1,0 +1,233 @@
+.container {
+    background-color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-6);
+    background: white;
+    border-bottom: 1px solid var(--border-neutral-light);
+    flex-shrink: 0;
+}
+
+.header h1 {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: var(--typography-scale-600);
+    color: var(--color-neutral-900);
+}
+
+.closeBtn {
+    background: var(--surface-neutral-bg-light);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-neutral-600);
+    font-size: 20px;
+}
+
+.scrollableContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-6);
+    padding-bottom: 120px;
+    /* Extra padding for the footer area */
+}
+
+.avatarSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-2) 0;
+}
+
+.avatarPreview {
+    width: 120px;
+    height: 120px;
+    border-radius: var(--radius-full);
+    background-color: var(--surface-primary-bg-lighter);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    border: 2px dashed var(--border-neutral-light);
+    cursor: pointer;
+}
+
+.avatarImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.avatarPlaceholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--color-primary-500);
+}
+
+.avatarPlaceholder i {
+    font-size: 40px;
+}
+
+.uploadOverlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.5);
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.avatarPreview:hover .uploadOverlay {
+    opacity: 1;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-5);
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2);
+}
+
+.formGroup label {
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-200);
+    color: var(--color-neutral-600);
+    font-weight: var(--typography-weight-medium);
+}
+
+.input,
+.select {
+    padding: var(--spacing-3) var(--spacing-4);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-neutral-light);
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-300);
+    background-color: white;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input:focus,
+.select:focus {
+    outline: none;
+    border-color: var(--color-primary-500);
+}
+
+.medList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+}
+
+.medTag {
+    background: var(--surface-primary-bg-lighter);
+    color: var(--color-primary-500);
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: 14px;
+}
+
+.removeMed {
+    border: none;
+    background: transparent;
+    color: var(--color-primary-400);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.addMedRow {
+    display: flex;
+    gap: var(--spacing-2);
+}
+
+.addMedBtn {
+    padding: 0 var(--spacing-4);
+    border-radius: var(--radius-lg);
+    border: none;
+    background: var(--color-primary-500);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: var(--spacing-6);
+    background: white;
+    border-top: 1px solid var(--border-neutral-light);
+    display: flex;
+    gap: var(--spacing-4);
+    box-sizing: border-box;
+    flex-shrink: 0;
+    z-index: 1001;
+}
+
+.saveBtn {
+    flex: 1;
+    height: 56px;
+    border-radius: var(--radius-2xl);
+    background-color: var(--color-primary-600);
+    color: white;
+    border: none;
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-400);
+    font-weight: var(--typography-weight-semibold);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(95, 103, 182, 0.2);
+}
+
+.saveBtn:hover {
+    background-color: var(--color-primary-700);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(95, 103, 182, 0.3);
+}
+
+.saveBtn:active {
+    transform: translateY(0);
+}

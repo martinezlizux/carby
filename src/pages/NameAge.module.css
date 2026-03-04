@@ -1,0 +1,42 @@
+.description {
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-300);
+    color: var(--color-neutral-600);
+    margin-bottom: var(--spacing-8);
+    line-height: 1.5;
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--spacing-6);
+}
+
+.label {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: var(--typography-scale-400);
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-neutral-900);
+    margin-bottom: var(--spacing-3);
+}
+
+.inputField {
+    background-color: var(--surface-primary-bg-light);
+    border: 2px solid var(--border-neutral-light);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-4);
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-400);
+    color: var(--color-neutral-900);
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.inputField:focus {
+    border-color: var(--color-primary-500);
+    box-shadow: 0 0 0 4px rgba(119, 129, 228, 0.1);
+}
+
+.inputField::placeholder {
+    color: var(--color-neutral-400);
+}

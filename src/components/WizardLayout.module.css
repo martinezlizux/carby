@@ -1,0 +1,115 @@
+.layoutContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    background-color: var(--surface-primary-bg-light);
+    overflow: hidden;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-4) var(--spacing-6);
+    height: 64px;
+}
+
+.backButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-neutral-900);
+    padding: var(--spacing-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: -var(--spacing-2);
+    transition: opacity 0.2s ease;
+}
+
+.backButton:hover {
+    opacity: 0.7;
+}
+
+.progressBar {
+    flex: 1;
+    height: 8px;
+    background-color: var(--surface-neutral-bg-base);
+    border-radius: var(--radius-full);
+    margin: 0 var(--spacing-6);
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-primary-400), var(--color-primary-600));
+    border-radius: var(--radius-full);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.placeholder {
+    width: 40px;
+    /* same as backButton to center progress bar */
+}
+
+.mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-6);
+    overflow-y: auto;
+}
+
+.title {
+    font-family: var(--typography-family-heading, 'Outfit'), sans-serif;
+    font-size: var(--typography-scale-600);
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-neutral-900);
+    margin-bottom: var(--spacing-6);
+    line-height: 1.2;
+}
+
+.contentArea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    padding: var(--spacing-6);
+    background-color: var(--surface-primary-bg-light);
+    border-top: 1px solid var(--border-neutral-light);
+}
+
+.nextButton {
+    width: 100%;
+    height: 56px;
+    border-radius: var(--radius-2xl);
+    background-color: var(--color-primary-600);
+    color: white;
+    border: none;
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-400);
+    font-weight: var(--typography-weight-semibold);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(95, 103, 182, 0.2);
+}
+
+.nextButton:hover:not(.disabled) {
+    background-color: var(--color-primary-700);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(95, 103, 182, 0.3);
+}
+
+.nextButton:active:not(.disabled) {
+    transform: translateY(0);
+}
+
+.nextButton.disabled {
+    background-color: var(--color-neutral-300);
+    color: var(--color-neutral-500);
+    cursor: not-allowed;
+    box-shadow: none;
+}

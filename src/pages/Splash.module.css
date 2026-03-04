@@ -1,0 +1,113 @@
+.splashContainer {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--surface-primary-bg-light);
+  overflow: hidden;
+  z-index: 10;
+}
+
+.backgroundBlur {
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle at 50% 30%, var(--surface-primary-bg-base) 0%, transparent 60%);
+  filter: blur(80px);
+  opacity: 0.6;
+  z-index: 0;
+  animation: pulseBg 6s infinite alternate ease-in-out;
+}
+
+@keyframes pulseBg {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.1); opacity: 0.8; }
+}
+
+.logoContainer {
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logoContainer.animateIn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.iconWrapper {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-2xl);
+  background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-700));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: var(--spacing-6);
+  box-shadow: 0 16px 32px rgba(119, 129, 228, 0.25);
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.icon {
+  color: white;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+.appName {
+  font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+  font-size: var(--typography-scale-800);
+  font-weight: var(--typography-weight-bold);
+  color: var(--color-primary-900);
+  margin-bottom: var(--spacing-2);
+  letter-spacing: -1px;
+}
+
+.tagline {
+  font-size: var(--typography-scale-300);
+  color: var(--color-neutral-600);
+  font-weight: var(--typography-weight-medium);
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+.loadingPulse {
+  position: absolute;
+  bottom: 64px;
+  width: 48px;
+  height: 4px;
+  background-color: var(--surface-primary-bg-base);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.loadingPulse::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background-color: var(--color-primary-500);
+  border-radius: var(--radius-full);
+  animation: load 1.5s ease-in-out infinite;
+}
+
+@keyframes load {
+  0% { left: -50%; }
+  100% { left: 150%; }
+}

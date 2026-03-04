@@ -1,0 +1,18 @@
+.appContainer {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    /* Mobile browser height handling */
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.contentArea {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+    display: flex;
+    flex-direction: column;
+}
