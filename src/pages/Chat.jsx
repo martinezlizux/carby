@@ -30,6 +30,8 @@ const Chat = () => {
                 .from('food_database')
                 .select('*')
                 .ilike('food_name', cleanQuery) // Búsqueda exacta (sin los %) para evitar falsos positivos
+                .not('calories', 'is', null) // <-- Clave: Ignorar filas antiguas donde calorías es null
+                .order('created_at', { ascending: false }) // Traer siempre la versión más actualizada
                 .limit(1);
 
             if (error) throw error;
