@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['carby-character.png', 'vite.svg'],
+      includeAssets: ['carby-icon.png', 'vite.svg'],
       manifest: {
         name: 'Carby App',
         short_name: 'Carby',
@@ -18,12 +18,12 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: 'carby-character.png',
+            src: 'carby-icon.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'carby-character.png',
+            src: 'carby-icon.png',
             sizes: '512x512',
             type: 'image/png'
           }
