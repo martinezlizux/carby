@@ -25,11 +25,11 @@ const Chat = () => {
 
     const searchFoodInDatabase = async (foodName) => {
         try {
-            const query = `%${foodName.toLowerCase().trim()}%`;
+            const cleanQuery = foodName.toLowerCase().trim();
             const { data, error } = await supabase
                 .from('food_database')
                 .select('*')
-                .ilike('food_name', query)
+                .ilike('food_name', cleanQuery) // Búsqueda exacta (sin los %) para evitar falsos positivos
                 .limit(1);
 
             if (error) throw error;
