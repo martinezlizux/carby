@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useWizard } from '../contexts/WizardContext';
 import { analyzeFoodWithAI } from '../lib/ai';
+import { searchOpenFoodFacts, searchUSDA } from '../lib/foodApis';
 import styles from './Chat.module.css';
 import { Send, Activity, Info, Bot } from 'lucide-react';
 
@@ -72,48 +73,74 @@ const Chat = () => {
         setIsTyping(true);
 
         try {
-            // 1. Search DB first (Cache)
-            const dbFood = await searchFoodInDatabase(userText);
+            let foodResult = null;
+            let source = '';
+            let needsCache = false;
 
+            // 1. Buscamos en Base de Datos Local
+            const dbFood = await searchFoodInDatabase(userText);
             if (dbFood) {
-                setIsTyping(false);
+                foodResult = dbFood;
+                source = 'Local Database (Supabase)';
+                // Maintain backwards compatibility if it lacks explanation
+                foodResult.explanation = t('chatFoundDb');
+            }
+
+            // 2. Si no, buscamos en Open Food Facts
+            if (!foodResult) {
+                const offResult = await searchOpenFoodFacts(userText);
+                if (offResult) {
+                    foodResult = offResult;
+                    source = 'Open Food Facts API';
+                    needsCache = true;
+                }
+            }
+
+            // 3. Si no, buscamos en USDA FoodData Central
+            if (!foodResult) {
+                const usdaResult = await searchUSDA(userText);
+                if (usdaResult) {
+                    foodResult = usdaResult;
+                    source = 'USDA FoodData Central API';
+                    needsCache = true;
+                }
+            }
+
+            // 4. Si tampoco existe, como último recurso llamamos a AI
+            if (!foodResult) {
+                const aiResult = await analyzeFoodWithAI(userText, userData.language);
+                if (aiResult) {
+                    foodResult = aiResult;
+                    source = 'Carby AI (Llama 3)';
+                    needsCache = true;
+                }
+            }
+
+            setIsTyping(false);
+
+            if (foodResult) {
+                // Si lo encontramos en API externa o IA, guardamos local para no preguntar de nuevo
+                if (needsCache) {
+                    await saveFoodToDatabase(foodResult);
+                }
+
                 setMessages(prev => [...prev, {
                     id: Date.now().toString() + 'ai',
                     sender: 'ai',
                     type: 'card',
-                    food: dbFood.food_name,
-                    carbs: dbFood.carbs,
-                    insulin: calculateInsulin(dbFood.carbs),
-                    source: 'Database',
-                    text: t('chatFoundDb')
+                    food: foodResult.food_name,
+                    carbs: foodResult.carbs,
+                    insulin: calculateInsulin(foodResult.carbs),
+                    source: source,
+                    text: foodResult.explanation || t('chatFoundDb')
                 }]);
             } else {
-                // 2. Not in DB? Call real AI
-                const aiResult = await analyzeFoodWithAI(userText, userData.language);
-                setIsTyping(false);
-
-                if (aiResult) {
-                    // 3. Cache the AI result for future use
-                    await saveFoodToDatabase(aiResult);
-
-                    setMessages(prev => [...prev, {
-                        id: Date.now().toString() + 'ai',
-                        sender: 'ai',
-                        type: 'card',
-                        food: aiResult.food_name,
-                        carbs: aiResult.carbs,
-                        insulin: calculateInsulin(aiResult.carbs),
-                        source: 'Carby AI (GPT-4o)',
-                        text: aiResult.explanation
-                    }]);
-                } else {
-                    // Fallback if AI fails or Key is missing
-                    setMessages(prev => [...prev, {
-                        id: Date.now().toString() + 'err',
-                        sender: 'ai',
-                        text: t('chatError')
-                    }]);
-                }
+                // Fallback si todos fallaron
+                setMessages(prev => [...prev, {
+                    id: Date.now().toString() + 'err',
+                    sender: 'ai',
+                    text: t('chatError')
+                }]);
             }
         } catch (error) {
             console.error(error);
