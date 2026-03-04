@@ -216,15 +216,12 @@ const Chat = () => {
 
                             {msg.type === 'card' && (
                                 <div className={styles.receiptCard}>
-                                    <div className={styles.receiptHeader}>
-                                        <h3>🍽️ Macros {msg.insulin !== null && '& Insulina'}</h3>
-                                    </div>
                                     <div className={styles.itemList}>
                                         {msg.items.map((item, idx) => (
-                                            <div key={idx} className={styles.itemRow}>
+                                            <div key={idx} className={styles.itemBox}>
                                                 <span className={styles.itemName}>{item.name}</span>
                                                 <span className={styles.itemStats}>
-                                                    {item.carbs}g C | {item.calories} kcal
+                                                    {item.carbs} {item.carbs === 0 ? 'carbs' : 'g C'} | {item.calories} kcal
                                                 </span>
                                             </div>
                                         ))}
@@ -234,24 +231,24 @@ const Chat = () => {
 
                                     <div className={styles.totalsArea}>
                                         <div className={styles.totalRow}>
-                                            <span className={styles.totalLabel}>Carbs (g)</span>
-                                            <span className={styles.totalValue}>{msg.totalCarbs}</span>
+                                            <span className={styles.totalLabel}>Total Carbs</span>
+                                            <span className={styles.totalValueBadge}>{msg.totalCarbs} gr</span>
                                         </div>
                                         <div className={styles.totalRow}>
-                                            <span className={styles.totalLabel}>Calorías</span>
-                                            <span className={styles.totalValue}>{msg.totalCalories} kcal</span>
+                                            <span className={styles.totalLabel}>Total Calories</span>
+                                            <span className={styles.totalValueBadge}>{msg.totalCalories} cal</span>
                                         </div>
-                                        {msg.insulin !== null && (
-                                            <div className={`${styles.totalRow} ${styles.insulinRow}`}>
-                                                <span className={styles.totalLabel}>💉 Insulina (U)</span>
-                                                <span className={styles.insulinValue}>{msg.insulin}</span>
-                                            </div>
-                                        )}
                                     </div>
 
+                                    {msg.insulin !== null && (
+                                        <div className={styles.insulinBadge}>
+                                            <span className={styles.insulinLabel}>Insuline Vol (U)</span>
+                                            <span className={styles.insulinValue}>{msg.insulin}</span>
+                                        </div>
+                                    )}
+
                                     <div className={styles.sourceFooter}>
-                                        <Info size={12} className={styles.sourceIcon} />
-                                        {t('retrievedFrom')} {msg.source}
+                                        Retrived from {msg.source}
                                     </div>
                                 </div>
                             )}
