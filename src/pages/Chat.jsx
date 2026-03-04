@@ -46,7 +46,8 @@ const Chat = () => {
                 .from('food_database')
                 .insert([{
                     food_name: food.food_name.toLowerCase(),
-                    carbs: food.carbs
+                    carbs: food.carbs,
+                    calories: food.calories || 0
                 }]);
 
             if (error) {
@@ -76,8 +77,8 @@ const Chat = () => {
             // Dividimos la entrada por comas, "y", "e", "and" para procesar múltiples alimentos
             const items = userText.split(/\s+y\s+|\s+e\s+|\s+and\s+|\s*,\s*/i).filter(item => item.trim() !== '');
             let totalCarbs = 0;
+            let totalCalories = 0;
             let sources = new Set();
-            let allDetails = [];
             let someFailed = false;
 
             const results = await Promise.all(items.map(async (itemText) => {
@@ -129,8 +130,8 @@ const Chat = () => {
             for (const res of results) {
                 if (res.foodResult) {
                     totalCarbs += res.foodResult.carbs;
+                    totalCalories += res.foodResult.calories || 0;
                     sources.add(res.source);
-                    allDetails.push(`• ${res.originalItem}: ${res.foodResult.carbs}g`);
 
                     if (res.needsCache) {
                         // Guardamos el item con el nombre exacto que escribió el usuario
@@ -144,19 +145,21 @@ const Chat = () => {
             setIsTyping(false);
 
             if (results.length > 0 && !someFailed) {
-                const combinedFoodName = items.map(i => i.charAt(0).toUpperCase() + i.slice(1)).join(' + ');
                 const combinedSource = Array.from(sources).join(', ');
-                const explanation = `${totalCarbs > 0 ? t('chatFoundDb') : ''}\n${allDetails.join('\n')}`;
 
                 setMessages(prev => [...prev, {
                     id: Date.now().toString() + 'ai',
                     sender: 'ai',
                     type: 'card',
-                    food: combinedFoodName,
-                    carbs: parseFloat(totalCarbs.toFixed(1)),
+                    items: results.map(r => ({
+                        name: r.originalItem.charAt(0).toUpperCase() + r.originalItem.slice(1),
+                        carbs: r.foodResult.carbs,
+                        calories: r.foodResult.calories || 0
+                    })),
+                    totalCarbs: parseFloat(totalCarbs.toFixed(1)),
+                    totalCalories: parseFloat(totalCalories.toFixed(0)),
                     insulin: calculateInsulin(totalCarbs),
-                    source: combinedSource,
-                    text: explanation.trim()
+                    source: combinedSource
                 }]);
             } else {
                 // Fallback si alguno falló
@@ -206,20 +209,38 @@ const Chat = () => {
                             {msg.text && <p className={styles.msgText}>{msg.text}</p>}
 
                             {msg.type === 'card' && (
-                                <div className={styles.foodCard}>
-                                    <div className={styles.foodCardHeader}>
-                                        <span className={styles.foodName}>{msg.food}</span>
+                                <div className={styles.receiptCard}>
+                                    <div className={styles.receiptHeader}>
+                                        <h3>🍽️ Macros & Insulina</h3>
                                     </div>
-                                    <div className={styles.foodStats}>
-                                        <div className={styles.statBox}>
-                                            <span className={styles.statLabel}>{t('carbsLabel')}</span>
-                                            <span className={styles.statValue}>{msg.carbs}</span>
+                                    <div className={styles.itemList}>
+                                        {msg.items.map((item, idx) => (
+                                            <div key={idx} className={styles.itemRow}>
+                                                <span className={styles.itemName}>{item.name}</span>
+                                                <span className={styles.itemStats}>
+                                                    {item.carbs}g C | {item.calories} kcal
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <div className={styles.divider}></div>
+
+                                    <div className={styles.totalsArea}>
+                                        <div className={styles.totalRow}>
+                                            <span className={styles.totalLabel}>Carbs (g)</span>
+                                            <span className={styles.totalValue}>{msg.totalCarbs}</span>
                                         </div>
-                                        <div className={styles.statBoxHighlight}>
-                                            <span className={styles.statLabel}>{t('insulinLabel')}</span>
-                                            <span className={styles.statValue}>{msg.insulin}</span>
+                                        <div className={styles.totalRow}>
+                                            <span className={styles.totalLabel}>Calorías</span>
+                                            <span className={styles.totalValue}>{msg.totalCalories} kcal</span>
+                                        </div>
+                                        <div className={`${styles.totalRow} ${styles.insulinRow}`}>
+                                            <span className={styles.totalLabel}>💉 Insulina (U)</span>
+                                            <span className={styles.insulinValue}>{msg.insulin}</span>
                                         </div>
                                     </div>
+
                                     <div className={styles.sourceFooter}>
                                         <Info size={12} className={styles.sourceIcon} />
                                         {t('retrievedFrom')} {msg.source}

@@ -6,12 +6,14 @@ export const searchOpenFoodFacts = async (foodName) => {
 
         if (data.products && data.products.length > 0) {
             const product = data.products[0];
-            const carbs = product.nutriments ? product.nutriments.carbohydrates_100g : null;
+            const carbs = product.nutriments?.carbohydrates_100g ?? null;
+            const calories = product.nutriments?.['energy-kcal_100g'] ?? 0;
 
-            if (carbs !== undefined && carbs !== null) {
+            if (carbs !== null && carbs !== undefined) {
                 return {
                     food_name: product.product_name || foodName,
                     carbs: carbs,
+                    calories: calories,
                     explanation: 'Información obtenida de Open Food Facts. (Porción aproximada: 100g)'
                 };
             }
@@ -33,11 +35,13 @@ export const searchUSDA = async (foodName) => {
         if (data.foods && data.foods.length > 0) {
             const food = data.foods[0];
             const carbNutrient = food.foodNutrients.find(n => n.nutrientId === 1005 || (n.nutrientName && n.nutrientName.toLowerCase().includes('carbohydrate')));
+            const calNutrient = food.foodNutrients.find(n => n.nutrientId === 1008 || (n.nutrientName && n.nutrientName.toLowerCase().includes('energy')));
 
             if (carbNutrient) {
                 return {
                     food_name: food.description,
                     carbs: carbNutrient.value,
+                    calories: calNutrient ? calNutrient.value : 0,
                     explanation: 'Información obtenida de USDA FoodData Central. (Porción típica)'
                 };
             }

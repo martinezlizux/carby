@@ -29,7 +29,7 @@ export const analyzeFoodWithAI = async (userInput, userLanguage = 'English') => 
                         role: "system",
                         content: `You are Carby AI, a professional nutrition assistant for people with diabetes. 
                         Respond ONLY with a valid JSON object.
-                        JSON structure: { "food_name": "string", "carbs": number, "explanation": "string" }
+                        JSON structure: { "food_name": "string", "carbs": number, "calories": number, "explanation": "string" }
                         The explanation should be short and in ${userLanguage}.`
                     },
                     {
