@@ -8,14 +8,15 @@ export const WizardProvider = ({ children }) => {
         name: '',
         age: '',
         gender: '',
-        height: 170,
-        weight: 70,
-        diabetesType: 'Type 1',
-        usesInsulin: true,
-        useCarbRatio: true,
-        carbRatio: 10, // 1 unit for every 10g of carbs
-        avatar: null, // Base64 or URL
-        medications: [{ name: 'Insulin', timing: 'Morning' }],
+        height: null,
+        weight: null,
+        hasCondition: undefined,
+        diabetesType: '',
+        takesMedication: undefined,
+        useCarbRatio: undefined,
+        carbRatio: null,
+        avatar: null,
+        medications: [],
         language: 'English',
         notificationsEnabled: true,
         achievements: {

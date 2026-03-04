@@ -118,12 +118,18 @@ const HeightWeight = () => {
         navigate('/insuline');
     };
 
+    const handleSkip = () => {
+        navigate('/thanks');
+    };
+
     return (
         <WizardLayout
             title={t('wizHeightWeightTitle')}
             currentStep={4}
             totalSteps={5}
             onNext={handleNext}
+            onSkip={handleSkip}
+            skipLabel={t('wizardSkip')}
             nextLabel={t('wizardContinue')}
             disabled={!height || !weight}
         >

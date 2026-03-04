@@ -79,12 +79,18 @@ const Insuline = () => {
         }
     };
 
+    const handleSkip = () => {
+        navigate('/thanks');
+    };
+
     return (
         <WizardLayout
             title={t('wizManageTitle')}
             currentStep={5}
             totalSteps={5}
             onNext={handleNext}
+            onSkip={handleSkip}
+            skipLabel={t('wizardSkip')}
             nextLabel={isSaving ? t('wizManageSaving') : t('wizManageFinish')}
             disabled={isSaving}
         >

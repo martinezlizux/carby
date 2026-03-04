@@ -233,3 +233,57 @@
     color: #C0C4D6;
     margin: 0;
 }
+
+.avatarPlaceholder {
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-primary-100, #DEE1FB);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatarInitials {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: 32px;
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-primary-700, #323B6F);
+}
+
+.incompleteProfile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+    padding: var(--spacing-1) 0;
+}
+
+.incompleteMsg {
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-200);
+    color: var(--color-neutral-600);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.completeProfileBtn {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--color-primary-600, #5F67B6);
+    color: white;
+    border: none;
+    padding: var(--spacing-3) var(--spacing-5);
+    border-radius: var(--radius-full);
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-300);
+    font-weight: var(--typography-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(95, 103, 182, 0.2);
+}
+
+.completeProfileBtn:hover {
+    background-color: var(--color-primary-700, #4C5392);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(95, 103, 182, 0.3);
+}

@@ -3,7 +3,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import styles from './WizardLayout.module.css';
 
-const WizardLayout = ({ children, title, onBack, onNext, nextLabel = "Continue", disabled = false, currentStep, totalSteps = 3 }) => {
+const WizardLayout = ({ children, title, onBack, onNext, nextLabel = "Continue", disabled = false, currentStep, totalSteps = 3, onSkip = null, skipLabel = "Skip" }) => {
     const navigate = useNavigate();
 
     const handleBack = () => {
@@ -23,7 +23,13 @@ const WizardLayout = ({ children, title, onBack, onNext, nextLabel = "Continue",
                         style={{ width: `${(currentStep / totalSteps) * 100}%` }}
                     />
                 </div>
-                <div className={styles.placeholder}></div>
+                <div className={styles.placeholder}>
+                    {onSkip && (
+                        <button className={styles.skipButton} onClick={onSkip} aria-label="Skip">
+                            {skipLabel}
+                        </button>
+                    )}
+                </div>
             </header>
 
             <main className={styles.mainContent}>

@@ -14,7 +14,11 @@ const Splash = () => {
         const timer1 = setTimeout(() => setAnimate(true), 100);
         // Transition to next view slightly after animation completes
         const timer2 = setTimeout(() => {
-            navigate('/language');
+            if (localStorage.getItem('wizardCompleted') === 'true') {
+                navigate('/dashboard');
+            } else {
+                navigate('/language');
+            }
         }, 2500);
 
         return () => {

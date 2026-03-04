@@ -1,5 +1,5 @@
 .container {
-    background-color: white;
+    background-color: var(--surface-primary-bg-light, #FDFDFF);
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -25,6 +25,7 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-600);
     color: var(--color-neutral-900);
+    margin: 0;
 }
 
 .closeBtn {
@@ -47,11 +48,11 @@
     padding: var(--spacing-6);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-6);
+    gap: var(--spacing-2);
     padding-bottom: 120px;
-    /* Extra padding for the footer area */
 }
 
+/* Avatar Styles */
 .avatarSection {
     display: flex;
     flex-direction: column;
@@ -61,10 +62,10 @@
 }
 
 .avatarPreview {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 100px;
     border-radius: var(--radius-full);
-    background-color: var(--surface-primary-bg-lighter);
+    background-color: var(--surface-primary-bg-lighter, #DEE1FB);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -84,11 +85,18 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-primary-100, #DEE1FB);
     color: var(--color-primary-500);
 }
 
-.avatarPlaceholder i {
+.avatarInitials {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: 40px;
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-primary-700, #323B6F);
 }
 
 .uploadOverlay {
@@ -111,87 +119,444 @@
     opacity: 1;
 }
 
-.form {
+/* Base Form Styles copied from Insuline wizard */
+.section {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-5);
+    margin-top: var(--spacing-4);
+    padding: var(--spacing-6);
+    background-color: white;
+    border-radius: var(--radius-2xl);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-neutral-light);
+}
+
+.label {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: var(--typography-scale-400);
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-neutral-900);
+    margin-bottom: var(--spacing-4);
+    display: block;
+}
+
+.subLabel {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: var(--typography-scale-200);
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-neutral-700);
+    display: block;
+    margin: 0 0 var(--spacing-2) 0;
 }
 
 .formGroup {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-4);
 }
 
-.formGroup label {
-    font-family: var(--typography-family-body, "Inter"), sans-serif;
-    font-size: var(--typography-scale-200);
-    color: var(--color-neutral-600);
-    font-weight: var(--typography-weight-medium);
-}
-
-.input,
-.select {
-    padding: var(--spacing-3) var(--spacing-4);
+.textInput {
+    width: 100%;
+    border: 2px solid var(--border-neutral-light);
     border-radius: var(--radius-lg);
-    border: 1px solid var(--border-neutral-light);
+    background-color: var(--surface-neutral-bg-light);
+    padding: var(--spacing-3) var(--spacing-4);
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-300);
-    background-color: white;
-    width: 100%;
+    color: var(--color-neutral-900);
+    transition: all 0.2s ease;
     box-sizing: border-box;
 }
 
-.input:focus,
-.select:focus {
+.textInput:focus {
     outline: none;
     border-color: var(--color-primary-500);
+    background-color: white;
 }
 
-.medList {
+.flexBetween {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.toggleGroup {
+    display: flex;
+    gap: var(--spacing-3);
+    flex-wrap: wrap;
+}
+
+.toggleBtn {
+    flex: 1;
+    min-width: calc(33.333% - var(--spacing-3));
+    padding: var(--spacing-3) var(--spacing-2);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-neutral-light);
+    background-color: transparent;
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-300);
+    font-weight: var(--typography-weight-medium);
+    color: var(--color-neutral-600);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.toggleBtn.active {
+    background-color: var(--color-primary-50);
+    border-color: var(--color-primary-600);
+    color: var(--color-primary-800);
+    font-weight: var(--typography-weight-bold);
+}
+
+/* Unit Toggle */
+.unitToggle {
+    display: flex;
+    background-color: var(--surface-neutral-bg-light);
+    border-radius: var(--radius-full);
+    padding: 2px;
+}
+
+.toggleButton {
+    background: transparent;
+    border: none;
+    padding: var(--spacing-1) var(--spacing-3);
+    border-radius: var(--radius-full);
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-100);
+    font-weight: var(--typography-weight-medium);
+    color: var(--color-neutral-600);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.toggleButton.toggleActive {
+    background: white;
+    color: var(--color-primary-600);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Height/Weight Inputs */
+.inputWrapper {
+    display: flex;
+    align-items: center;
+    background-color: var(--surface-neutral-bg-light);
+    border: 2px solid var(--border-neutral-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-1) var(--spacing-4);
+    transition: all 0.2s ease;
+}
+
+.inputWrapper:focus-within {
+    border-color: var(--color-primary-500);
+    background-color: white;
+}
+
+.valueInput {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: var(--typography-scale-500);
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-primary-600);
+    padding: var(--spacing-2) 0;
+    text-align: right;
+    min-width: 0;
+}
+
+.valueInput:focus {
+    outline: none;
+}
+
+.valueInput::-webkit-outer-spin-button,
+.valueInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.valueInput[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.unit {
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-300);
+    color: var(--color-neutral-500);
+    margin-left: var(--spacing-2);
+    min-width: 40px;
+}
+
+/* Imperial specific inputs */
+.imperialInput {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: var(--typography-scale-500);
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-primary-600);
+    padding: var(--spacing-2) 0;
+    text-align: right;
+    max-width: 60px;
+}
+
+.imperialInput:focus {
+    outline: none;
+}
+
+.imperialInput::-webkit-outer-spin-button,
+.imperialInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.imperialInput[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.imperialUnit {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: var(--typography-scale-500);
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-neutral-500);
+    margin-left: 2px;
+    margin-right: var(--spacing-3);
+}
+
+.imperialUnit:last-child {
+    margin-right: 0;
+}
+
+/* Toggle Switch CSS */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.sliderRound {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-neutral-300);
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.sliderRound:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+input:checked+.sliderRound {
+    background-color: var(--color-primary-500);
+}
+
+input:focus+.sliderRound {
+    box-shadow: 0 0 1px var(--color-primary-500);
+}
+
+input:checked+.sliderRound:before {
+    transform: translateX(22px);
+}
+
+.animateFadeIn {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Medications List */
+.medicationList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+    margin-bottom: var(--spacing-4);
+}
+
+.medicationItem {
+    background-color: var(--surface-neutral-bg-light);
+    border: 1px solid var(--border-neutral-light);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.medicationItem .textInput {
+    background-color: white;
+}
+
+.medicationHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.medNumber {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: var(--typography-scale-200);
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-primary-600);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.removeBtn {
+    background: transparent;
+    border: none;
+    color: var(--color-danger);
+    font-size: var(--typography-scale-400);
+    cursor: pointer;
+    padding: var(--spacing-2);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.removeBtn:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.chipsContainer {
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-2);
 }
 
-.medTag {
-    background: var(--surface-primary-bg-lighter);
-    color: var(--color-primary-500);
+.chip {
+    background-color: white;
+    border: 1px solid var(--border-neutral-light);
+    border-radius: var(--radius-full);
+    padding: var(--spacing-2) var(--spacing-3);
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-200);
+    color: var(--color-neutral-600);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.chipActive {
+    background-color: var(--color-primary-100);
+    border-color: var(--color-primary-300);
+    color: var(--color-primary-800);
+    font-weight: var(--typography-weight-medium);
+}
+
+.addMedicationBtn {
+    width: 100%;
+    background-color: transparent;
+    border: 2px dashed var(--border-neutral-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-3);
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: var(--typography-scale-300);
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-primary-600);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.addMedicationBtn:hover {
+    background-color: var(--color-primary-50);
+    border-color: var(--color-primary-300);
+}
+
+/* Ratio Counter */
+.labelRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-2);
+}
+
+.tag {
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-800);
     padding: var(--spacing-1) var(--spacing-3);
     border-radius: var(--radius-full);
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-200);
+    font-weight: var(--typography-weight-bold);
+}
+
+.counterControl {
     display: flex;
     align-items: center;
-    gap: var(--spacing-2);
-    font-size: 14px;
+    justify-content: space-between;
+    background-color: var(--surface-neutral-bg-light);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-2);
+    border: 1px solid var(--border-neutral-light);
 }
 
-.removeMed {
-    border: none;
-    background: transparent;
-    color: var(--color-primary-400);
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-}
-
-.addMedRow {
-    display: flex;
-    gap: var(--spacing-2);
-}
-
-.addMedBtn {
-    padding: 0 var(--spacing-4);
+.counterBtn {
+    width: 48px;
+    height: 48px;
     border-radius: var(--radius-lg);
     border: none;
-    background: var(--color-primary-500);
-    color: white;
-    cursor: pointer;
+    background-color: white;
+    color: var(--color-neutral-800);
+    font-size: var(--typography-scale-600);
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
 }
 
+.counterBtn:hover {
+    background-color: var(--color-neutral-50);
+    transform: scale(1.05);
+}
+
+.counterValue {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: var(--typography-scale-800);
+    font-weight: var(--typography-weight-bold);
+    color: var(--color-primary-600);
+    min-width: 60px;
+    text-align: center;
+}
+
+/* Footer / Save Button */
 .footer {
     position: absolute;
     bottom: 0;

@@ -7,6 +7,9 @@ const Thanks = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // Mark wizard as completed
+        localStorage.setItem('wizardCompleted', 'true');
+
         // Automatically transition to the dashboard
         const timer = setTimeout(() => {
             navigate('/dashboard');

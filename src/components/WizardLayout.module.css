@@ -49,8 +49,25 @@
 }
 
 .placeholder {
-    width: 40px;
-    /* same as backButton to center progress bar */
+    width: 60px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.skipButton {
+    background: transparent;
+    border: none;
+    color: var(--color-neutral-500);
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-300);
+    font-weight: var(--typography-weight-medium);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding: var(--spacing-2);
+}
+
+.skipButton:hover {
+    color: var(--color-neutral-800);
 }
 
 .mainContent {

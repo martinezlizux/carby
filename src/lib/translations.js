@@ -22,6 +22,8 @@ export const translations = {
         med: "Med",
         none: "None",
         daily: "Daily",
+        completeProfileMsg: "Please complete your information to enjoy a fully personalized experience.",
+        completeProfileBtn: "Complete Profile",
 
         // Settings
         personalize: "Personalize your experience.",
@@ -134,7 +136,8 @@ export const translations = {
 
         wizardContinue: "Continue",
         splashTagline: "Smart macros & insulin tracking",
-        langSelectDesc: "Select the language you want to use in Carby."
+        langSelectDesc: "Select the language you want to use in Carby.",
+        wizardSkip: "Skip"
     },
     Spanish: {
         // Bottom Nav
@@ -159,6 +162,8 @@ export const translations = {
         med: "Med",
         none: "Ninguno",
         daily: "Diario",
+        completeProfileMsg: "Por favor completa tu información para disfrutar de una experiencia totalmente personalizada.",
+        completeProfileBtn: "Completar Perfil",
 
         // Settings
         personalize: "Personaliza tu experiencia.",
@@ -271,7 +276,8 @@ export const translations = {
 
         wizardContinue: "Continuar",
         splashTagline: "Rastreo inteligente de macros e insulina",
-        langSelectDesc: "Selecciona el idioma que deseas usar en Carby."
+        langSelectDesc: "Selecciona el idioma que deseas usar en Carby.",
+        wizardSkip: "Omitir"
     }
 };
 
