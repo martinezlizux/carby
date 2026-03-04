@@ -94,7 +94,17 @@ const Chat = () => {
                     source = 'Local Database';
                 }
 
-                // 2. Si no, buscamos en Open Food Facts
+                // 2. Prioridad a la IA (Groq) porque entiende las porciones (ej. "6 nuggets", "1 vaso")
+                if (!foodResult) {
+                    const aiResult = await analyzeFoodWithAI(item, userData.language);
+                    if (aiResult) {
+                        foodResult = aiResult;
+                        source = 'Carby AI';
+                        needsCache = true;
+                    }
+                }
+
+                // 3. Fallback: Open Food Facts (trae todo en 100g, no ideal para NLP pero salva)
                 if (!foodResult) {
                     const offResult = await searchOpenFoodFacts(item);
                     if (offResult) {
@@ -104,22 +114,12 @@ const Chat = () => {
                     }
                 }
 
-                // 3. Si no, buscamos en USDA FoodData Central
+                // 4. Fallback final: USDA FoodData Central
                 if (!foodResult) {
                     const usdaResult = await searchUSDA(item);
                     if (usdaResult) {
                         foodResult = usdaResult;
                         source = 'USDA';
-                        needsCache = true;
-                    }
-                }
-
-                // 4. Si tampoco existe, como último recurso llamamos a AI
-                if (!foodResult) {
-                    const aiResult = await analyzeFoodWithAI(item, userData.language);
-                    if (aiResult) {
-                        foodResult = aiResult;
-                        source = 'Carby AI';
                         needsCache = true;
                     }
                 }
