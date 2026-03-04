@@ -73,69 +73,93 @@ const Chat = () => {
         setIsTyping(true);
 
         try {
-            let foodResult = null;
-            let source = '';
-            let needsCache = false;
+            // Dividimos la entrada por comas, "y", "e", "and" para procesar múltiples alimentos
+            const items = userText.split(/\s+y\s+|\s+e\s+|\s+and\s+|\s*,\s*/i).filter(item => item.trim() !== '');
+            let totalCarbs = 0;
+            let sources = new Set();
+            let allDetails = [];
+            let someFailed = false;
 
-            // 1. Buscamos en Base de Datos Local
-            const dbFood = await searchFoodInDatabase(userText);
-            if (dbFood) {
-                foodResult = dbFood;
-                source = 'Local Database (Supabase)';
-                // Maintain backwards compatibility if it lacks explanation
-                foodResult.explanation = t('chatFoundDb');
-            }
+            const results = await Promise.all(items.map(async (itemText) => {
+                const item = itemText.trim();
+                let foodResult = null;
+                let source = '';
+                let needsCache = false;
 
-            // 2. Si no, buscamos en Open Food Facts
-            if (!foodResult) {
-                const offResult = await searchOpenFoodFacts(userText);
-                if (offResult) {
-                    foodResult = offResult;
-                    source = 'Open Food Facts API';
-                    needsCache = true;
+                // 1. Buscamos en Base de Datos Local
+                const dbFood = await searchFoodInDatabase(item);
+                if (dbFood) {
+                    foodResult = dbFood;
+                    source = 'Local Database';
                 }
-            }
 
-            // 3. Si no, buscamos en USDA FoodData Central
-            if (!foodResult) {
-                const usdaResult = await searchUSDA(userText);
-                if (usdaResult) {
-                    foodResult = usdaResult;
-                    source = 'USDA FoodData Central API';
-                    needsCache = true;
+                // 2. Si no, buscamos en Open Food Facts
+                if (!foodResult) {
+                    const offResult = await searchOpenFoodFacts(item);
+                    if (offResult) {
+                        foodResult = offResult;
+                        source = 'Open Food Facts';
+                        needsCache = true;
+                    }
                 }
-            }
 
-            // 4. Si tampoco existe, como último recurso llamamos a AI
-            if (!foodResult) {
-                const aiResult = await analyzeFoodWithAI(userText, userData.language);
-                if (aiResult) {
-                    foodResult = aiResult;
-                    source = 'Carby AI (Llama 3)';
-                    needsCache = true;
+                // 3. Si no, buscamos en USDA FoodData Central
+                if (!foodResult) {
+                    const usdaResult = await searchUSDA(item);
+                    if (usdaResult) {
+                        foodResult = usdaResult;
+                        source = 'USDA';
+                        needsCache = true;
+                    }
+                }
+
+                // 4. Si tampoco existe, como último recurso llamamos a AI
+                if (!foodResult) {
+                    const aiResult = await analyzeFoodWithAI(item, userData.language);
+                    if (aiResult) {
+                        foodResult = aiResult;
+                        source = 'Carby AI';
+                        needsCache = true;
+                    }
+                }
+
+                return { foodResult, source, needsCache, originalItem: item };
+            }));
+
+            for (const res of results) {
+                if (res.foodResult) {
+                    totalCarbs += res.foodResult.carbs;
+                    sources.add(res.source);
+                    allDetails.push(`• ${res.originalItem}: ${res.foodResult.carbs}g`);
+
+                    if (res.needsCache) {
+                        // Guardamos el item con el nombre exacto que escribió el usuario
+                        await saveFoodToDatabase({ ...res.foodResult, food_name: res.originalItem });
+                    }
+                } else {
+                    someFailed = true;
                 }
             }
 
             setIsTyping(false);
 
-            if (foodResult) {
-                // Si lo encontramos en API externa o IA, guardamos local para no preguntar de nuevo
-                if (needsCache) {
-                    await saveFoodToDatabase(foodResult);
-                }
+            if (results.length > 0 && !someFailed) {
+                const combinedFoodName = items.map(i => i.charAt(0).toUpperCase() + i.slice(1)).join(' + ');
+                const combinedSource = Array.from(sources).join(', ');
+                const explanation = `${totalCarbs > 0 ? t('chatFoundDb') : ''}\n${allDetails.join('\n')}`;
 
                 setMessages(prev => [...prev, {
                     id: Date.now().toString() + 'ai',
                     sender: 'ai',
                     type: 'card',
-                    food: foodResult.food_name,
-                    carbs: foodResult.carbs,
-                    insulin: calculateInsulin(foodResult.carbs),
-                    source: source,
-                    text: foodResult.explanation || t('chatFoundDb')
+                    food: combinedFoodName,
+                    carbs: parseFloat(totalCarbs.toFixed(1)),
+                    insulin: calculateInsulin(totalCarbs),
+                    source: combinedSource,
+                    text: explanation.trim()
                 }]);
             } else {
-                // Fallback si todos fallaron
+                // Fallback si alguno falló
                 setMessages(prev => [...prev, {
                     id: Date.now().toString() + 'err',
                     sender: 'ai',
