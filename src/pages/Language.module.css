@@ -1,0 +1,91 @@
+.description {
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-300);
+    color: var(--color-neutral-600);
+    margin-bottom: var(--spacing-8);
+    line-height: 1.5;
+}
+
+.optionsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4);
+}
+
+.optionCard {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-4);
+    background-color: var(--surface-primary-bg-light);
+    border: 2px solid var(--border-primary-light);
+    border-radius: var(--radius-2xl);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.optionCard:hover {
+    border-color: var(--color-primary-400);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(95, 103, 182, 0.1);
+}
+
+.optionCard.selected {
+    border-color: var(--color-primary-600);
+    background-color: var(--color-primary-50);
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: var(--color-neutral-50);
+    border-radius: var(--radius-xl);
+    margin-right: var(--spacing-4);
+    color: var(--color-neutral-600);
+    transition: all 0.2s ease;
+}
+
+.selected .iconWrapper {
+    background-color: var(--color-primary-100);
+    color: var(--color-primary-700);
+}
+
+.optionLabel {
+    flex: 1;
+    text-align: left;
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: var(--typography-scale-400);
+    font-weight: var(--typography-weight-medium);
+    color: var(--color-neutral-900);
+}
+
+.radioIndicator {
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--border-neutral-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.radioInner {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary-600);
+    transform: scale(0);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.selected .radioIndicator {
+    border-color: var(--color-primary-600);
+}
+
+.selected .radioInner {
+    transform: scale(1);
+}

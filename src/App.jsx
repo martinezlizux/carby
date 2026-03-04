@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Splash from './pages/Splash.jsx';
+import Language from './pages/Language.jsx';
 import NameAge from './pages/NameAge.jsx';
 import Gender from './pages/Gender.jsx';
 import HeightWeight from './pages/HeightWeight.jsx';
@@ -19,6 +20,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Splash />} />
+          <Route path="/language" element={<Language />} />
           <Route path="/name-age" element={<NameAge />} />
           <Route path="/gender" element={<Gender />} />
           <Route path="/height-weight" element={<HeightWeight />} />

@@ -21,8 +21,8 @@ const NameAge = () => {
     return (
         <WizardLayout
             title="Let's get to know you"
-            currentStep={1}
-            totalSteps={4}
+            currentStep={2}
+            totalSteps={5}
             onNext={handleNext}
             disabled={!isFormValid}
         >

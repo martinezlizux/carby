@@ -121,8 +121,8 @@ const HeightWeight = () => {
     return (
         <WizardLayout
             title="What are your measurements?"
-            currentStep={3}
-            totalSteps={4}
+            currentStep={4}
+            totalSteps={5}
             onNext={handleNext}
             disabled={!height || !weight}
         >

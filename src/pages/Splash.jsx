@@ -12,7 +12,7 @@ const Splash = () => {
         const timer1 = setTimeout(() => setAnimate(true), 100);
         // Transition to next view slightly after animation completes
         const timer2 = setTimeout(() => {
-            navigate('/name-age');
+            navigate('/language');
         }, 2500);
 
         return () => {

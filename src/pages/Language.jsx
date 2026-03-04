@@ -2,35 +2,33 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WizardLayout from '../components/WizardLayout';
 import { useWizard } from '../contexts/WizardContext';
-import styles from './Gender.module.css';
-import { User, Activity } from 'lucide-react';
+import styles from './Language.module.css';
 
-const Gender = () => {
+const Language = () => {
     const navigate = useNavigate();
     const { userData, updateUserData } = useWizard();
-    const [selected, setSelected] = useState(userData.gender);
+    const [selected, setSelected] = useState(userData.language || 'English');
 
     const handleNext = () => {
-        updateUserData('gender', selected);
-        navigate('/height-weight');
+        updateUserData('language', selected);
+        navigate('/name-age');
     };
 
     const options = [
-        { id: 'female', label: 'Female', icon: <User size={24} /> },
-        { id: 'male', label: 'Male', icon: <User size={24} /> },
-        { id: 'other', label: 'Other', icon: <User size={24} /> },
+        { id: 'English', label: 'English', icon: '🇺🇸' },
+        { id: 'Español', label: 'Español', icon: '🇲🇽' },
     ];
 
     return (
         <WizardLayout
-            title="What's your biological sex?"
-            currentStep={3}
+            title="Choose your language"
+            currentStep={1}
             totalSteps={5}
             onNext={handleNext}
             disabled={!selected}
         >
             <p className={styles.description}>
-                This helps us calculate your macro requirements more accurately.
+                Select the language you want to use in Carby.
             </p>
 
             <div className={styles.optionsContainer}>
@@ -40,7 +38,7 @@ const Gender = () => {
                         className={`${styles.optionCard} ${selected === option.id ? styles.selected : ''}`}
                         onClick={() => setSelected(option.id)}
                     >
-                        <div className={styles.iconWrapper}>
+                        <div className={styles.iconWrapper} style={{ fontSize: '24px' }}>
                             {option.icon}
                         </div>
                         <span className={styles.optionLabel}>{option.label}</span>
@@ -54,4 +52,4 @@ const Gender = () => {
     );
 };
 
-export default Gender;
+export default Language;

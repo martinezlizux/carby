@@ -9,6 +9,7 @@ const Insuline = () => {
     const navigate = useNavigate();
     const { userData, updateUserData } = useWizard();
 
+    const [hasCondition, setHasCondition] = useState(userData.hasCondition !== undefined ? userData.hasCondition : true);
     const [diabetesType, setDiabetesType] = useState(userData.diabetesType || 'Type 1');
     const [takesMedication, setTakesMedication] = useState(userData.takesMedication !== undefined ? userData.takesMedication : true);
 
@@ -43,6 +44,7 @@ const Insuline = () => {
             : [];
 
         // Save to context
+        updateUserData('hasCondition', hasCondition);
         updateUserData('diabetesType', diabetesType);
         updateUserData('takesMedication', takesMedication);
         updateUserData('medications', activeMedications);
@@ -57,11 +59,12 @@ const Insuline = () => {
                 gender: userData.gender,
                 height: userData.height,
                 weight: userData.weight,
-                diabetes_type: diabetesType,
-                takes_medication: takesMedication,
-                medications: activeMedications, // Stored as JSONB in DB
-                use_carb_ratio: useCarbRatio,
-                carb_ratio: carbRatio
+                has_condition: hasCondition,
+                diabetes_type: hasCondition ? diabetesType : null,
+                takes_medication: hasCondition ? takesMedication : false,
+                medications: hasCondition ? activeMedications : [], // Stored as JSONB in DB
+                use_carb_ratio: hasCondition ? useCarbRatio : false,
+                carb_ratio: hasCondition ? carbRatio : 10
             }]);
 
             if (error) {
@@ -79,42 +82,60 @@ const Insuline = () => {
     return (
         <WizardLayout
             title="How do you manage it?"
-            currentStep={4}
-            totalSteps={4}
+            currentStep={5}
+            totalSteps={5}
             onNext={handleNext}
             nextLabel={isSaving ? "Saving..." : "Finish Registration"}
             disabled={isSaving}
         >
             <div className={styles.section}>
-                <label className={styles.label}>Diabetes Type</label>
-                <div className={styles.toggleGroup}>
-                    {['Type 1', 'Type 2', 'Gestational'].map(type => (
-                        <button
-                            key={type}
-                            className={`${styles.toggleBtn} ${diabetesType === type ? styles.active : ''}`}
-                            onClick={() => setDiabetesType(type)}
-                        >
-                            {type}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            <div className={styles.section}>
                 <div className={styles.flexBetween}>
-                    <label className={styles.label}>Do you take any medication?</label>
+                    <label className={styles.label}>Do you have diabetes or another condition?</label>
                     <label className={styles.switch}>
                         <input
                             type="checkbox"
-                            checked={takesMedication}
-                            onChange={(e) => setTakesMedication(e.target.checked)}
+                            checked={hasCondition}
+                            onChange={(e) => setHasCondition(e.target.checked)}
                         />
                         <span className={styles.sliderRound}></span>
                     </label>
                 </div>
             </div>
 
-            {takesMedication && (
+            {hasCondition && (
+                <>
+                    <div className={`${styles.section} ${styles.animateFadeIn}`}>
+                        <label className={styles.label}>Diabetes Type</label>
+                        <div className={styles.toggleGroup}>
+                            {['Type 1', 'Type 2', 'Gestational'].map(type => (
+                                <button
+                                    key={type}
+                                    className={`${styles.toggleBtn} ${diabetesType === type ? styles.active : ''}`}
+                                    onClick={() => setDiabetesType(type)}
+                                >
+                                    {type}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className={`${styles.section} ${styles.animateFadeIn}`}>
+                        <div className={styles.flexBetween}>
+                            <label className={styles.label}>Do you take any medication?</label>
+                            <label className={styles.switch}>
+                                <input
+                                    type="checkbox"
+                                    checked={takesMedication}
+                                    onChange={(e) => setTakesMedication(e.target.checked)}
+                                />
+                                <span className={styles.sliderRound}></span>
+                            </label>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {hasCondition && takesMedication && (
                 <div className={`${styles.section} ${styles.animateFadeIn}`}>
                     <label className={styles.label}>Which medication(s) do you take?</label>
                     <p className={styles.helperText}>
@@ -168,7 +189,7 @@ const Insuline = () => {
                 </div>
             )}
 
-            {takesMedication && (
+            {hasCondition && takesMedication && (
                 <div className={`${styles.section} ${styles.animateFadeIn}`}>
                     <div className={styles.flexBetween}>
                         <label className={styles.label}>Use an Insulin-to-Carb Ratio?</label>
