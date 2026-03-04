@@ -4,7 +4,7 @@
  */
 
 // Usaremos esta llave como la de Groq para que sea rápido de cambiar
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY; 
+const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
 export const analyzeFoodWithAI = async (userInput, userLanguage = 'English') => {
     console.log("DEBUG: Starting AI analysis for:", userInput);
@@ -23,7 +23,7 @@ export const analyzeFoodWithAI = async (userInput, userLanguage = 'English') => 
                 'Authorization': `Bearer ${API_KEY}`
             },
             body: JSON.stringify({
-                model: "llama3-8b-8192", // Modelo de Llama 3 (Gratis y ultra rápido)
+                model: "llama-3.3-70b-versatile", // Modelo gratuito, inteligente y rápido de Groq
                 messages: [
                     {
                         role: "system",
@@ -39,7 +39,7 @@ export const analyzeFoodWithAI = async (userInput, userLanguage = 'English') => 
                 ],
                 temperature: 0.3,
                 // Groq soporta la respuesta en formato JSON directamente
-                response_format: { type: "json_object" } 
+                response_format: { type: "json_object" }
             })
         });
 
