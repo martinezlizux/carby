@@ -21,14 +21,17 @@ const Language = () => {
 
     return (
         <WizardLayout
-            title="Choose your language"
+            title={selected === 'Español' ? 'Elige tu idioma' : 'Choose your language'}
             currentStep={1}
             totalSteps={5}
             onNext={handleNext}
+            nextLabel={selected === 'Español' ? 'Continuar' : 'Continue'}
             disabled={!selected}
         >
             <p className={styles.description}>
-                Select the language you want to use in Carby.
+                {selected === 'Español' 
+                   ? 'Selecciona el idioma que deseas usar en Carby.' 
+                   : 'Select the language you want to use in Carby.'}
             </p>
 
             <div className={styles.optionsContainer}>

@@ -89,7 +89,52 @@ export const translations = {
         chatError: "Sorry, I couldn't analyze that. Please try again.",
         retrievedFrom: "Retrieved from",
         carbsLabel: "Carbs (g)",
-        insulinLabel: "Insulin Vol (U)"
+        insulinLabel: "Insulin Vol (U)",
+
+        // Wizard
+        wizNameAgeTitle: "Let's get to know you",
+        wizNameAgeDesc: "Please enter your name and age to personalize your experience.",
+        wizNameLabel: "What is your name?",
+        wizNamePlaceholder: "e.g. Alex",
+        wizAgeLabel: "How old are you?",
+        wizAgePlaceholder: "e.g. 25",
+
+        wizGenderTitle: "What's your biological sex?",
+        wizGenderDesc: "This helps us calculate your macro requirements more accurately.",
+        wizGenderFemale: "Female",
+        wizGenderMale: "Male",
+        wizGenderOther: "Other",
+
+        wizHeightWeightTitle: "What are your measurements?",
+        wizHeightWeightDesc: "This is crucial to personalize your daily goals.",
+        wizHeightLabel: "Height (cm)",
+        wizWeightLabel: "Weight (kg)",
+
+        wizManageTitle: "How do you manage it?",
+        wizManageDiabetesQuestion: "Do you have diabetes or another condition?",
+        wizManageDiabetesType: "Diabetes Type",
+        wizManageMedicationQuestion: "Do you take any medication?",
+        wizManageWhichMedication: "Which medication(s) do you take?",
+        wizManageWhichMedicationDesc: "E.g. Lantus, Humalog, Metformin, Ozempic...",
+        wizManageMedicationName: "Medication",
+        wizManageMedicationPlaceholder: "Type medication name...",
+        wizManageWhenTake: "When do you take it?",
+        wizManageAddMedication: "+ Add another medication",
+        wizManageUseCarbRatio: "Use an Insulin-to-Carb Ratio?",
+        wizManageYourRatio: "Your Ratio",
+        wizManageRatioDesc: "How many grams of carbohydrates does 1 unit of insulin cover for you?",
+        wizManageFinish: "Finish Registration",
+        wizManageSaving: "Saving...",
+
+        timingMorning: "Morning",
+        timingAfternoon: "Afternoon",
+        timingNight: "Night",
+        timingMeals: "With Meals",
+        timingWeekly: "Weekly",
+
+        wizardContinue: "Continue",
+        splashTagline: "Smart macros & insulin tracking",
+        langSelectDesc: "Select the language you want to use in Carby."
     },
     Spanish: {
         // Bottom Nav
@@ -181,6 +226,53 @@ export const translations = {
         chatError: "Lo siento, no pude analizar eso. Intenta de nuevo.",
         retrievedFrom: "Obtenido de",
         carbsLabel: "Carbohidratos (g)",
-        insulinLabel: "Vol. Insulina (U)"
+        insulinLabel: "Vol. Insulina (U)",
+
+        // Wizard
+        wizNameAgeTitle: "Vamos a conocerte",
+        wizNameAgeDesc: "Por favor, ingresa tu nombre y edad para personalizar tu experiencia.",
+        wizNameLabel: "¿Cuál es tu nombre?",
+        wizNamePlaceholder: "Ej. Alex",
+        wizAgeLabel: "¿Cuántos años tienes?",
+        wizAgePlaceholder: "Ej. 25",
+
+        wizGenderTitle: "¿Cuál es tu sexo biológico?",
+        wizGenderDesc: "Esto nos ayuda a calcular tus requerimientos (macros) con mayor precisión.",
+        wizGenderFemale: "Femenino",
+        wizGenderMale: "Masculino",
+        wizGenderOther: "Otro",
+
+        wizHeightWeightTitle: "¿Cuáles son tus medidas?",
+        wizHeightWeightDesc: "Esto es crucial para personalizar tus metas diarias.",
+        wizHeightLabel: "Altura (cm)",
+        wizWeightLabel: "Peso (kg)",
+
+        wizManageTitle: "¿Cómo lo manejas?",
+        wizManageDiabetesQuestion: "¿Tienes diabetes u otra condición?",
+        wizManageDiabetesType: "Tipo de Diabetes",
+        wizManageMedicationQuestion: "¿Tomas algún medicamento?",
+        wizManageWhichMedication: "¿Qué medicamento(s) tomas?",
+        wizManageWhichMedicationDesc: "Ej. Lantus, Humalog, Metformina, Ozempic...",
+        wizManageMedicationName: "Medicamento",
+        wizManageMedicationPlaceholder: "Escribe el nombre del medicamento...",
+        wizManageWhenTake: "¿Cuándo lo tomas?",
+        wizManageAddMedication: "+ Añadir otro medicamento",
+        wizManageUseCarbRatio: "¿Usas ratio insulina-carbohidratos?",
+        wizManageYourRatio: "Tu Ratio",
+        wizManageRatioDesc: "¿Cuántos gramos de carbohidratos cubre 1 unidad de insulina para ti?",
+        wizManageFinish: "Terminar Registro",
+        wizManageSaving: "Guardando...",
+
+        timingMorning: "Mañana",
+        timingAfternoon: "Tarde",
+        timingNight: "Noche",
+        timingMeals: "Con Comidas",
+        timingWeekly: "Semanal",
+
+        wizardContinue: "Continuar",
+        splashTagline: "Rastreo inteligente de macros e insulina",
+        langSelectDesc: "Selecciona el idioma que deseas usar en Carby."
     }
 };
+
+translations['Español'] = translations.Spanish;

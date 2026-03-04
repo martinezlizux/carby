@@ -7,7 +7,7 @@ import { User, Activity } from 'lucide-react';
 
 const Gender = () => {
     const navigate = useNavigate();
-    const { userData, updateUserData } = useWizard();
+    const { userData, updateUserData, t } = useWizard();
     const [selected, setSelected] = useState(userData.gender);
 
     const handleNext = () => {
@@ -16,21 +16,22 @@ const Gender = () => {
     };
 
     const options = [
-        { id: 'female', label: 'Female', icon: <User size={24} /> },
-        { id: 'male', label: 'Male', icon: <User size={24} /> },
-        { id: 'other', label: 'Other', icon: <User size={24} /> },
+        { id: 'female', label: t('wizGenderFemale'), icon: <User size={24} /> },
+        { id: 'male', label: t('wizGenderMale'), icon: <User size={24} /> },
+        { id: 'other', label: t('wizGenderOther'), icon: <User size={24} /> },
     ];
 
     return (
         <WizardLayout
-            title="What's your biological sex?"
+            title={t('wizGenderTitle')}
             currentStep={3}
             totalSteps={5}
             onNext={handleNext}
+            nextLabel={t('wizardContinue')}
             disabled={!selected}
         >
             <p className={styles.description}>
-                This helps us calculate your macro requirements more accurately.
+                {t('wizGenderDesc')}
             </p>
 
             <div className={styles.optionsContainer}>

@@ -6,7 +6,7 @@ import styles from './HeightWeight.module.css';
 
 const HeightWeight = () => {
     const navigate = useNavigate();
-    const { userData, updateUserData } = useWizard();
+    const { userData, updateUserData, t } = useWizard();
 
     const [height, setHeight] = useState(userData.height || 170);
     const [weight, setWeight] = useState(userData.weight || 70);
@@ -120,10 +120,11 @@ const HeightWeight = () => {
 
     return (
         <WizardLayout
-            title="What are your measurements?"
+            title={t('wizHeightWeightTitle')}
             currentStep={4}
             totalSteps={5}
             onNext={handleNext}
+            nextLabel={t('wizardContinue')}
             disabled={!height || !weight}
         >
             <div className={styles.unitToggle}>
@@ -151,7 +152,7 @@ const HeightWeight = () => {
 
             <div className={styles.section}>
                 <div className={styles.labelRow}>
-                    <label className={styles.label}>Height</label>
+                    <label className={styles.label}>{t('wizHeightLabel').split(' ')[0]}</label>
                     {renderHeightInput()}
                 </div>
                 <input
@@ -170,7 +171,7 @@ const HeightWeight = () => {
 
             <div className={styles.section}>
                 <div className={styles.labelRow}>
-                    <label className={styles.label}>Weight</label>
+                    <label className={styles.label}>{t('wizWeightLabel').split(' ')[0]}</label>
                     {renderWeightInput()}
                 </div>
                 <input

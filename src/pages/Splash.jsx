@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Splash.module.css';
-import { Activity } from 'lucide-react';
+import balanceImg from '../assets/balance.png';
+import { useWizard } from '../contexts/WizardContext';
 
 const Splash = () => {
     const navigate = useNavigate();
+    const { t } = useWizard();
     const [animate, setAnimate] = useState(false);
 
     useEffect(() => {
@@ -25,11 +27,15 @@ const Splash = () => {
         <div className={styles.splashContainer}>
             <div className={styles.backgroundBlur}></div>
             <div className={`${styles.logoContainer} ${animate ? styles.animateIn : ''}`}>
-                <div className={styles.iconWrapper}>
-                    <Activity size={48} className={styles.icon} />
+                <div className={styles.imgWrapper}>
+                    <img
+                        src={balanceImg}
+                        alt="Carby Logo"
+                        className={styles.image}
+                    />
                 </div>
                 <h1 className={styles.appName}>Carby</h1>
-                <p className={styles.tagline}>Smart macros & insulin tracking</p>
+                <p className={styles.tagline}>{t('splashTagline')}</p>
             </div>
             <div className={styles.loadingPulse}></div>
         </div>

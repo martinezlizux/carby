@@ -6,7 +6,7 @@ import styles from './NameAge.module.css';
 
 const NameAge = () => {
     const navigate = useNavigate();
-    const { userData, updateUserData } = useWizard();
+    const { userData, updateUserData, t } = useWizard();
     const [name, setName] = useState(userData.name || '');
     const [age, setAge] = useState(userData.age || '');
 
@@ -20,35 +20,36 @@ const NameAge = () => {
 
     return (
         <WizardLayout
-            title="Let's get to know you"
+            title={t('wizNameAgeTitle')}
             currentStep={2}
             totalSteps={5}
             onNext={handleNext}
+            nextLabel={t('wizardContinue')}
             disabled={!isFormValid}
         >
             <p className={styles.description}>
-                Please enter your name and age to personalize your experience.
+                {t('wizNameAgeDesc')}
             </p>
 
             <div className={styles.formGroup}>
-                <label className={styles.label} htmlFor="name">What is your name?</label>
+                <label className={styles.label} htmlFor="name">{t('wizNameLabel')}</label>
                 <input
                     id="name"
                     type="text"
                     className={styles.inputField}
-                    placeholder="e.g. Alex"
+                    placeholder={t('wizNamePlaceholder')}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                 />
             </div>
 
             <div className={styles.formGroup}>
-                <label className={styles.label} htmlFor="age">How old are you?</label>
+                <label className={styles.label} htmlFor="age">{t('wizAgeLabel')}</label>
                 <input
                     id="age"
                     type="number"
                     className={styles.inputField}
-                    placeholder="e.g. 25"
+                    placeholder={t('wizAgePlaceholder')}
                     value={age}
                     onChange={(e) => setAge(e.target.value)}
                     min="1"

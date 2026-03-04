@@ -61,7 +61,7 @@ const Chat = () => {
     };
 
     const calculateInsulin = (carbs) => {
-        if (!userData.carbRatio) return null;
+        if (!userData.hasCondition || !userData.useCarbRatio || !userData.carbRatio) return null;
         return (carbs / userData.carbRatio).toFixed(1);
     };
 
@@ -195,11 +195,9 @@ const Chat = () => {
                     </div>
                 </div>
                 <div className={styles.userRatio}>
-                    {userData.carbRatio ? (
+                    {userData.hasCondition && userData.useCarbRatio && userData.carbRatio ? (
                         <>Ratio: 1U/<b>{userData.carbRatio}g</b></>
-                    ) : (
-                        <span style={{ fontSize: '0.85em', opacity: 0.8 }}>Configura tu ratio en perfil</span>
-                    )}
+                    ) : null}
                 </div>
             </header>
 

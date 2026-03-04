@@ -7,16 +7,16 @@ import styles from './Insuline.module.css';
 
 const Insuline = () => {
     const navigate = useNavigate();
-    const { userData, updateUserData } = useWizard();
+    const { userData, updateUserData, t } = useWizard();
 
-    const [hasCondition, setHasCondition] = useState(userData.hasCondition !== undefined ? userData.hasCondition : true);
+    const [hasCondition, setHasCondition] = useState(userData.hasCondition !== undefined ? userData.hasCondition : false);
     const [diabetesType, setDiabetesType] = useState(userData.diabetesType || 'Type 1');
     const [takesMedication, setTakesMedication] = useState(userData.takesMedication !== undefined ? userData.takesMedication : true);
 
     // Instead of a single string, we'll store medications as an array of objects
     // Example: [{ id: 1, name: 'Lantus', timing: 'Night' }]
     const [medications, setMedications] = useState(
-        userData.medications || [{ id: Date.now(), name: '', timing: 'Morning' }]
+        userData.medications || [{ id: Date.now(), name: '', timing: t('timingMorning') || 'Morning' }]
     );
 
     const [useCarbRatio, setUseCarbRatio] = useState(userData.useCarbRatio !== undefined ? userData.useCarbRatio : false);
@@ -24,7 +24,7 @@ const Insuline = () => {
     const [isSaving, setIsSaving] = useState(false);
 
     const addMedication = () => {
-        setMedications([...medications, { id: Date.now(), name: '', timing: 'Morning' }]);
+        setMedications([...medications, { id: Date.now(), name: '', timing: t('timingMorning') || 'Morning' }]);
     };
 
     const updateMedication = (id, field, value) => {
@@ -81,16 +81,16 @@ const Insuline = () => {
 
     return (
         <WizardLayout
-            title="How do you manage it?"
+            title={t('wizManageTitle')}
             currentStep={5}
             totalSteps={5}
             onNext={handleNext}
-            nextLabel={isSaving ? "Saving..." : "Finish Registration"}
+            nextLabel={isSaving ? t('wizManageSaving') : t('wizManageFinish')}
             disabled={isSaving}
         >
             <div className={styles.section}>
                 <div className={styles.flexBetween}>
-                    <label className={styles.label}>Do you have diabetes or another condition?</label>
+                    <label className={styles.label}>{t('wizManageDiabetesQuestion')}</label>
                     <label className={styles.switch}>
                         <input
                             type="checkbox"
@@ -105,7 +105,7 @@ const Insuline = () => {
             {hasCondition && (
                 <>
                     <div className={`${styles.section} ${styles.animateFadeIn}`}>
-                        <label className={styles.label}>Diabetes Type</label>
+                        <label className={styles.label}>{t('wizManageDiabetesType')}</label>
                         <div className={styles.toggleGroup}>
                             {['Type 1', 'Type 2', 'Gestational'].map(type => (
                                 <button
@@ -121,7 +121,7 @@ const Insuline = () => {
 
                     <div className={`${styles.section} ${styles.animateFadeIn}`}>
                         <div className={styles.flexBetween}>
-                            <label className={styles.label}>Do you take any medication?</label>
+                            <label className={styles.label}>{t('wizManageMedicationQuestion')}</label>
                             <label className={styles.switch}>
                                 <input
                                     type="checkbox"
@@ -137,16 +137,16 @@ const Insuline = () => {
 
             {hasCondition && takesMedication && (
                 <div className={`${styles.section} ${styles.animateFadeIn}`}>
-                    <label className={styles.label}>Which medication(s) do you take?</label>
+                    <label className={styles.label}>{t('wizManageWhichMedication')}</label>
                     <p className={styles.helperText}>
-                        E.g. Lantus, Humalog, Metformin, Ozempic...
+                        {t('wizManageWhichMedicationDesc')}
                     </p>
 
                     <div className={styles.medicationList}>
                         {medications.map((med, index) => (
                             <div key={med.id} className={styles.medicationItem}>
                                 <div className={styles.medicationHeader}>
-                                    <span className={styles.medNumber}>Medication {index + 1}</span>
+                                    <span className={styles.medNumber}>{t('wizManageMedicationName')} {index + 1}</span>
                                     {medications.length > 1 && (
                                         <button
                                             className={styles.removeBtn}
@@ -161,12 +161,12 @@ const Insuline = () => {
                                 <input
                                     type="text"
                                     className={styles.textInput}
-                                    placeholder="Type medication name..."
+                                    placeholder={t('wizManageMedicationPlaceholder')}
                                     value={med.name}
                                     onChange={(e) => updateMedication(med.id, 'name', e.target.value)}
                                 />
                                 <div className={styles.timingGroup}>
-                                    <label className={styles.subLabel}>When do you take it?</label>
+                                    <label className={styles.subLabel}>{t('wizManageWhenTake')}</label>
                                     <div className={styles.chipsContainer}>
                                         {['Morning', 'Afternoon', 'Night', 'With Meals', 'Weekly'].map(timing => (
                                             <button
@@ -184,7 +184,7 @@ const Insuline = () => {
                     </div>
 
                     <button className={styles.addMedicationBtn} onClick={addMedication}>
-                        + Add another medication
+                        {t('wizManageAddMedication')}
                     </button>
                 </div>
             )}
@@ -192,7 +192,7 @@ const Insuline = () => {
             {hasCondition && takesMedication && (
                 <div className={`${styles.section} ${styles.animateFadeIn}`}>
                     <div className={styles.flexBetween}>
-                        <label className={styles.label}>Use an Insulin-to-Carb Ratio?</label>
+                        <label className={styles.label}>{t('wizManageUseCarbRatio')}</label>
                         <label className={styles.switch}>
                             <input
                                 type="checkbox"
@@ -205,11 +205,11 @@ const Insuline = () => {
                     {useCarbRatio && (
                         <div className={styles.animateFadeIn} style={{ marginTop: '24px' }}>
                             <div className={styles.labelRow}>
-                                <label className={styles.label}>Your Ratio</label>
+                                <label className={styles.label}>{t('wizManageYourRatio')}</label>
                                 <span className={styles.tag}>1U / {carbRatio}g</span>
                             </div>
                             <p className={styles.helperText}>
-                                How many grams of carbohydrates does 1 unit of insulin cover for you?
+                                {t('wizManageRatioDesc')}
                             </p>
                             <div className={styles.counterControl}>
                                 <button className={styles.counterBtn} onClick={() => setCarbRatio(Math.max(1, carbRatio - 1))}>-</button>
