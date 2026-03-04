@@ -61,8 +61,8 @@ const Chat = () => {
     };
 
     const calculateInsulin = (carbs) => {
-        const ratio = userData.carbRatio || 10;
-        return (carbs / ratio).toFixed(1);
+        if (!userData.carbRatio) return null;
+        return (carbs / userData.carbRatio).toFixed(1);
     };
 
     const handleSend = async () => {
@@ -195,7 +195,11 @@ const Chat = () => {
                     </div>
                 </div>
                 <div className={styles.userRatio}>
-                    Ratio: 1U/<b>{userData.carbRatio || 10}g</b>
+                    {userData.carbRatio ? (
+                        <>Ratio: 1U/<b>{userData.carbRatio}g</b></>
+                    ) : (
+                        <span style={{ fontSize: '0.85em', opacity: 0.8 }}>Configura tu ratio en perfil</span>
+                    )}
                 </div>
             </header>
 
@@ -213,7 +217,7 @@ const Chat = () => {
                             {msg.type === 'card' && (
                                 <div className={styles.receiptCard}>
                                     <div className={styles.receiptHeader}>
-                                        <h3>🍽️ Macros & Insulina</h3>
+                                        <h3>🍽️ Macros {msg.insulin !== null && '& Insulina'}</h3>
                                     </div>
                                     <div className={styles.itemList}>
                                         {msg.items.map((item, idx) => (
@@ -237,10 +241,12 @@ const Chat = () => {
                                             <span className={styles.totalLabel}>Calorías</span>
                                             <span className={styles.totalValue}>{msg.totalCalories} kcal</span>
                                         </div>
-                                        <div className={`${styles.totalRow} ${styles.insulinRow}`}>
-                                            <span className={styles.totalLabel}>💉 Insulina (U)</span>
-                                            <span className={styles.insulinValue}>{msg.insulin}</span>
-                                        </div>
+                                        {msg.insulin !== null && (
+                                            <div className={`${styles.totalRow} ${styles.insulinRow}`}>
+                                                <span className={styles.totalLabel}>💉 Insulina (U)</span>
+                                                <span className={styles.insulinValue}>{msg.insulin}</span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className={styles.sourceFooter}>
