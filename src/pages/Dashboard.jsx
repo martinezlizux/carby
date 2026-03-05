@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
 import { useWizard } from '../contexts/WizardContext';
+import carbyCharacter from '../assets/carby-character.png';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -33,7 +34,7 @@ const Dashboard = () => {
             </header>
 
             <div className={styles.characterContainer}>
-                <img src="/carby-character.png" alt="Carby Character" className={styles.character} />
+                <img src={carbyCharacter} alt="Carby Character" className={styles.character} />
             </div>
 
             <main className={styles.main}>

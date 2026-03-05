@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Goals.module.css';
 import { useWizard } from '../contexts/WizardContext';
+import carbyCharacter from '../assets/carby-character.png';
 
 const Particles = ({ active }) => {
     if (!active) return null;
@@ -106,7 +107,7 @@ const Goals = () => {
                     <p className={styles.subtitle}>{t('goalsSubtitle')}</p>
                 </div>
                 <img
-                    src="/carby-character.png"
+                    src={carbyCharacter}
                     alt="Carby"
                     className={`${styles.characterThumb} ${isJumping ? styles.characterJump : ''}`}
                     onClick={() => setIsJumping(true)}
