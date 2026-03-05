@@ -137,7 +137,15 @@ export const translations = {
         wizardContinue: "Continue",
         splashTagline: "Smart macros & insulin tracking",
         langSelectDesc: "Select the language you want to use in Carby.",
-        wizardSkip: "Skip"
+        wizardSkip: "Skip",
+
+        // Onboarding
+        obSlide1Title: "Achieve a perfect balance",
+        obSlide1Desc: "Log your carbs and effortlessly calculate your insulin doses.",
+        obSlide2Title: "Ask Carby",
+        obSlide2Desc: "Your intelligent assistant is ready to calculate your meal metrics in seconds.",
+        obNext: "Next",
+        obStart: "Start Now"
     },
     Spanish: {
         // Bottom Nav
@@ -277,7 +285,15 @@ export const translations = {
         wizardContinue: "Continuar",
         splashTagline: "Rastreo inteligente de macros e insulina",
         langSelectDesc: "Selecciona el idioma que deseas usar en Carby.",
-        wizardSkip: "Omitir"
+        wizardSkip: "Omitir",
+
+        // Onboarding
+        obSlide1Title: "Logra un balance perfecto",
+        obSlide1Desc: "Registra tus carbohidratos y calcula tus dosis de insulina sin complicaciones.",
+        obSlide2Title: "Pídele ayuda a Carby",
+        obSlide2Desc: "Tu asistente inteligente está listo para calcular las métricas de tu comida en segundos.",
+        obNext: "Siguiente",
+        obStart: "Comenzar"
     }
 };
 

@@ -11,7 +11,7 @@ const Language = () => {
 
     const handleNext = () => {
         updateUserData('language', selected);
-        navigate('/name-age');
+        navigate('/onboarding');
     };
 
     const options = [
@@ -29,9 +29,9 @@ const Language = () => {
             disabled={!selected}
         >
             <p className={styles.description}>
-                {selected === 'Español' 
-                   ? 'Selecciona el idioma que deseas usar en Carby.' 
-                   : 'Select the language you want to use in Carby.'}
+                {selected === 'Español'
+                    ? 'Selecciona el idioma que deseas usar en Carby.'
+                    : 'Select the language you want to use in Carby.'}
             </p>
 
             <div className={styles.optionsContainer}>
