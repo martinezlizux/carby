@@ -12,77 +12,129 @@ const Scan = () => {
     const [productData, setProductData] = useState(null);
     const [error, setError] = useState(null);
     const scannerRef = useRef(null);
+    const fileInputRef = useRef(null);
 
+    // Initialize scanner preview only (don't auto process frames for barcodes)
     useEffect(() => {
-        // Evitar inicializar múltiples veces en Strict Mode
         if (!scannerRef.current) {
             scannerRef.current = new Html5Qrcode("reader");
         }
 
-        const startScanning = async () => {
+        const startPreview = async () => {
             try {
+                // start without providing qrCodeSuccessCallback to just show preview
                 await scannerRef.current.start(
                     { facingMode: "environment" },
                     { fps: 10, qrbox: { width: 250, height: 250 } },
-                    async (decodedText) => {
-                        // onScanSuccess
-                        if (loading) return;
-
-                        setLoading(true);
-                        setError(null);
-
-                        // Pausar el escaneo
-                        try {
-                            await scannerRef.current.pause(true);
-                        } catch (e) {
-                            console.warn("No se pudo pausar el escáner", e);
-                        }
-
-                        try {
-                            const product = await fetchProductByBarcode(decodedText);
-                            if (product) {
-                                setProductData(product);
-                            } else {
-                                setError(t('scanProductNotFound', 'Producto no encontrado en la base de datos.'));
-                                try { await scannerRef.current.resume(); } catch (e) { }
-                            }
-                        } catch (err) {
-                            console.error('Error al escanear/buscar', err);
-                            setError(t('scanError', 'Hubo un error al buscar la información del producto.'));
-                            try { await scannerRef.current.resume(); } catch (e) { }
-                        } finally {
-                            setLoading(false);
-                        }
-                    },
-                    (error) => {
-                        // onScanFailure - silently ignore usually
-                    }
+                    () => { }, // Ignoramos el éxito automático
+                    () => { }  // Ignoramos errores automáticos
                 );
             } catch (err) {
-                console.error("Error al iniciar el escáner de la cámara", err);
+                console.error("Error al iniciar la vista previa de la cámara", err);
                 setError(t('scanErrorCamera', 'No se pudo acceder a la cámara trasera. Verifica los permisos.'));
             }
         };
 
-        if (scannerRef.current.getState() !== 2) { // 2 corresponds to scanning state in Html5Qrcode
-            startScanning();
+        if (scannerRef.current.getState() !== 2) {
+            startPreview();
         }
 
         return () => {
             if (scannerRef.current) {
-                scannerRef.current.stop().then(() => {
-                    scannerRef.current.clear();
-                }).catch(e => console.warn(e));
+                if (scannerRef.current.getState() === 2) {
+                    scannerRef.current.stop().then(() => {
+                        scannerRef.current.clear();
+                    }).catch(e => console.warn(e));
+                }
             }
         };
-    }, [loading, t]);
+    }, [t]);
+
+    const processBarcode = async (decodedText) => {
+        if (loading) return;
+        setLoading(true);
+        setError(null);
+
+        // Pausamos la cámara si está encendida
+        if (scannerRef.current && scannerRef.current.getState() === 2) {
+            try { await scannerRef.current.pause(true); } catch (e) { }
+        }
+
+        try {
+            const product = await fetchProductByBarcode(decodedText);
+            if (product) {
+                setProductData(product);
+            } else {
+                setError(t('scanProductNotFound', 'Producto no encontrado en la base de datos.'));
+                if (scannerRef.current && scannerRef.current.getState() === 3) {
+                    try { await scannerRef.current.resume(); } catch (e) { }
+                }
+            }
+        } catch (err) {
+            console.error('Error al escanear/buscar', err);
+            setError(t('scanError', 'Hubo un error al buscar la información del producto.'));
+            if (scannerRef.current && scannerRef.current.getState() === 3) {
+                try { await scannerRef.current.resume(); } catch (e) { }
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Función para "tomar foto" (Forzar escaneo de la imagen actual del video)
+    const handleManualScan = () => {
+        if (!scannerRef.current || scannerRef.current.getState() !== 2) return;
+
+        // Html5Qrcode no expone una función para capturar un frame directamente.
+        // Pero obtenemos el elemento de video y usamos un canvas intermedio.
+        const videoElement = document.querySelector('#reader video');
+        if (!videoElement) return;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+        // Convertimos el canvas a File para pasarlo a scanFile
+        canvas.toBlob(async (blob) => {
+            if (!blob) return;
+            const file = new File([blob], "capture.jpg", { type: "image/jpeg" });
+            try {
+                const result = await scannerRef.current.scanFile(file, false);
+                processBarcode(result);
+            } catch (err) {
+                setError(t('scanNoBarcodeDetected', 'No se ha detectado ningún código en esa imagen. Intenta enfocar mejor.'));
+            }
+        }, 'image/jpeg');
+    };
+
+    const handleFileUploadOptions = (e) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        const file = e.target.files[0];
+
+        setLoading(true);
+        setError(null);
+
+        if (!scannerRef.current) {
+            scannerRef.current = new Html5Qrcode("reader");
+        }
+
+        scannerRef.current.scanFile(file, false)
+            .then(decodedText => {
+                processBarcode(decodedText);
+            })
+            .catch(err => {
+                setError(t('scanNoBarcodeDetectedImage', 'No pudimos encontrar un código de barras en la foto proporcionada.'));
+                setLoading(false);
+            });
+    };
 
     const handleBack = () => {
         navigate('/dashboard');
     };
 
     const handleAddLog = () => {
-        // En el futuro, esto se conectaría a la funcionalidad de añadir comidas.
         alert(t('scanAdded', `Se han añadido ${productData?.carbs || 0}g de carbohidratos a tu registro.`));
         navigate('/dashboard');
     };
@@ -90,8 +142,6 @@ const Scan = () => {
     const handleTryAgain = () => {
         setProductData(null);
         setError(null);
-        // Nota: El useEffect idealmente reanudaría el scanner o lo reiniciaría.
-        // Para simplificar, forzamos recarga del componente o volver a montar.
         window.location.reload();
     };
 
@@ -108,9 +158,31 @@ const Scan = () => {
                 <div className={styles.scannerContainer}>
                     <div id="reader" className={styles.reader}></div>
                     <p className={styles.scannerTip}>
-                        {t('scanTip', 'Apunta la cámara al código de barras del producto.')}
+                        {t('scanTip', 'Apunta al código de barras o sube una foto.')}
                     </p>
-                    {loading && <p className={styles.loadingText}>{t('scanLoading', 'Buscando producto...')}</p>}
+
+                    <div className={styles.scanActionsBox}>
+                        <button onClick={handleManualScan} className={styles.captureButton} disabled={loading}>
+                            {t('scanActionBtn', 'Escanear ahora')}
+                        </button>
+
+                        <input
+                            type="file"
+                            accept="image/*"
+                            ref={fileInputRef}
+                            style={{ display: 'none' }}
+                            onChange={handleFileUploadOptions}
+                        />
+                        <button
+                            onClick={() => fileInputRef.current.click()}
+                            className={styles.uploadImageButton}
+                            disabled={loading}
+                        >
+                            {t('scanUploadBtn', 'Abrir galería')}
+                        </button>
+                    </div>
+
+                    {loading && <p className={styles.loadingText}>{t('scanLoading', 'Procesando...')}</p>}
                 </div>
             )}
 

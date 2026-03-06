@@ -1,10 +1,60 @@
 .container {
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    background-color: var(--bg-primary);
-    min-height: 100vh;
-    color: var(--text-primary);
+    height: 100vh;
+    background-color: var(--surface-neutral-bg-light);
+    color: var(--color-neutral-900);
+}
+
+.scanActionsBox {
+    display: flex;
+    gap: var(--spacing-4);
+    justify-content: center;
+    align-items: center;
+    margin-top: var(--spacing-4);
+    width: 100%;
+}
+
+.captureButton {
+    background-color: var(--surface-primary-bg-base);
+    color: var(--color-neutral-0);
+    border: none;
+    padding: var(--spacing-3) var(--spacing-6);
+    border-radius: var(--radius-full);
+    font-size: var(--typography-body-large-font-size);
+    font-weight: var(--typography-weight-bold);
+    font-family: var(--typography-family-heading);
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.2s ease;
+}
+
+.captureButton:hover:not(:disabled) {
+    background-color: var(--surface-primary-bg-dark);
+}
+
+.uploadImageButton {
+    background-color: transparent;
+    color: var(--surface-primary-bg-base);
+    border: 2px solid var(--surface-primary-bg-base);
+    padding: var(--spacing-3) var(--spacing-6);
+    border-radius: var(--radius-full);
+    font-size: var(--typography-body-large-font-size);
+    font-weight: var(--typography-weight-bold);
+    font-family: var(--typography-family-heading);
+    cursor: pointer;
+    flex: 1;
+    transition: all 0.2s ease;
+}
+
+.uploadImageButton:hover:not(:disabled) {
+    background-color: var(--color-primary-50);
+}
+
+.captureButton:disabled,
+.uploadImageButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .header {
