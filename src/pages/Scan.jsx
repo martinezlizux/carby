@@ -13,6 +13,7 @@ const Scan = () => {
     const [error, setError] = useState(null);
     const scannerRef = useRef(null);
     const fileInputRef = useRef(null);
+    const latestCodeRef = useRef(null);
 
     useEffect(() => {
         // Aseguramos que el contenedor exista y no haya errores o productos cargados
@@ -32,9 +33,9 @@ const Scan = () => {
 
                     await scannerRef.current.start(
                         backCamera.id,
-                        { fps: 10, qrbox: { width: 250, height: 250 } },
-                        () => { }, // Ignoramos lectura auto
-                        () => { }  // Ignoramos errores transitorios auto
+                        { fps: 15, qrbox: { width: 250, height: 250 } },
+                        (decodedText) => { latestCodeRef.current = decodedText; },
+                        () => { latestCodeRef.current = null; }
                     );
                 } else {
                     throw new Error("No se detectaron cámaras en el dispositivo");
@@ -45,9 +46,9 @@ const Scan = () => {
                     // Fallback genérico para algunos dispositivos
                     await scannerRef.current.start(
                         { facingMode: "environment" },
-                        { fps: 10, qrbox: { width: 250, height: 250 } },
-                        () => { },
-                        () => { }
+                        { fps: 15, qrbox: { width: 250, height: 250 } },
+                        (decodedText) => { latestCodeRef.current = decodedText; },
+                        () => { latestCodeRef.current = null; }
                     );
                 } catch (fallbackErr) {
                     console.error("Error colosal al iniciar vista previa de cámara", fallbackErr);
@@ -109,32 +110,15 @@ const Scan = () => {
         }
     };
 
-    // Función para "tomar foto" (Forzar escaneo de la imagen actual del video)
+    // Función para procesar con el último frame escaneado exitoso
     const handleManualScan = () => {
         if (!scannerRef.current || scannerRef.current.getState() !== 2) return;
 
-        // Html5Qrcode no expone una función para capturar un frame directamente.
-        // Pero obtenemos el elemento de video y usamos un canvas intermedio.
-        const videoElement = document.querySelector('#reader video');
-        if (!videoElement) return;
-
-        const canvas = document.createElement('canvas');
-        canvas.width = videoElement.videoWidth;
-        canvas.height = videoElement.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-
-        // Convertimos el canvas a File para pasarlo a scanFile
-        canvas.toBlob(async (blob) => {
-            if (!blob) return;
-            const file = new File([blob], "capture.jpg", { type: "image/jpeg" });
-            try {
-                const result = await scannerRef.current.scanFile(file, false);
-                processBarcode(result);
-            } catch (err) {
-                setError(t('scanNoBarcodeDetected', 'No se ha detectado ningún código en esa imagen. Intenta enfocar mejor.'));
-            }
-        }, 'image/jpeg');
+        if (latestCodeRef.current) {
+            processBarcode(latestCodeRef.current);
+        } else {
+            setError(t('scanNoBarcodeDetected', 'No detectamos código de barras. Enfócalo en el centro e intenta de nuevo.'));
+        }
     };
 
     const handleFileUploadOptions = (e) => {
