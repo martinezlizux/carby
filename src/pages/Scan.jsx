@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWizard } from '../contexts/WizardContext';
+import { fetchProductByBarcode } from '../lib/foodApis';
 import { analyzeImageWithAI } from '../lib/ai';
-import { Camera, Image as ImageIcon } from 'lucide-react';
+import { Html5Qrcode } from 'html5-qrcode';
+import { Image as ImageIcon } from 'lucide-react';
 import styles from './Scan.module.css';
 
 const Scan = () => {
@@ -13,103 +15,141 @@ const Scan = () => {
     const [productData, setProductData] = useState(null);
     const [error, setError] = useState(null);
 
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
-    const streamRef = useRef(null);
+    const scannerRef = useRef(null);
+    const scanningRef = useRef(false);
     const fileInputRef = useRef(null);
 
-    // Initialize camera
     useEffect(() => {
         if (productData || error) return;
 
-        const startCamera = async () => {
+        scannerRef.current = new Html5Qrcode("reader");
+
+        const startScanner = async () => {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment' }
-                });
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                }
-                streamRef.current = stream;
+                await scannerRef.current.start(
+                    { facingMode: "environment" },
+                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    (decodedText) => {
+                        handleBarcodeDetected(decodedText);
+                    },
+                    (errorMessage) => {
+                        // ignore background scan errors
+                    }
+                );
             } catch (err) {
-                console.error("Camera access error:", err);
-                setError(t('scanErrorCamera', 'No se pudo acceder a la cámara. Revisa los permisos o sube una foto.'));
+                console.warn("Error starting scanner", err);
             }
         };
 
-        startCamera();
+        if (scannerRef.current.getState() !== 2) {
+            startScanner();
+        }
 
         return () => {
-            if (streamRef.current) {
-                streamRef.current.getTracks().forEach(track => track.stop());
+            if (scannerRef.current) {
+                try {
+                    if (scannerRef.current.getState() === 2) {
+                        scannerRef.current.stop().then(() => {
+                            scannerRef.current.clear();
+                        }).catch(e => console.warn(e));
+                    }
+                } catch (e) { }
             }
         };
-    }, [productData, error, t]);
+    }, [productData, error]);
 
-    const stopCamera = () => {
-        if (streamRef.current) {
-            streamRef.current.getTracks().forEach(track => track.stop());
-        }
-    };
-
-    const processImage = async (base64Data) => {
+    const handleBarcodeDetected = async (decodedText) => {
+        if (loading || scanSuccess || scanningRef.current) return;
+        scanningRef.current = true;
         setLoading(true);
         setScanSuccess(true);
         setError(null);
-        stopCamera();
 
-        // Haptic feedback
         if (window.navigator && window.navigator.vibrate) {
             try { window.navigator.vibrate(200); } catch (e) { }
         }
 
+        if (scannerRef.current && scannerRef.current.getState() === 2) {
+            try { await scannerRef.current.pause(true); } catch (e) { }
+        }
+
         try {
-            const result = await analyzeImageWithAI(base64Data, 'Spanish');
-            if (result && result.food_name) {
-                setProductData(result);
+            const product = await fetchProductByBarcode(decodedText);
+            if (product) {
+                setProductData(product);
             } else {
-                setError(t('scanAiUnknown', 'La IA no pudo reconocer los detalles nutricionales de este producto.'));
+                setError(t('scanProductNotFound', 'Producto no encontrado en la base de datos.'));
                 setScanSuccess(false);
             }
         } catch (err) {
-            console.error('Error processing image via AI:', err);
-            setError(t('scanAiError', 'Ocurrió un error al analizar la imagen. Intenta de nuevo.'));
+            console.error('Error al escanear/buscar', err);
+            setError(t('scanError', 'Hubo un error al buscar la información del producto.'));
             setScanSuccess(false);
         } finally {
             setLoading(false);
+            scanningRef.current = false;
         }
     };
 
-    const handleTakePhoto = () => {
-        if (!videoRef.current || !canvasRef.current) return;
-
-        const video = videoRef.current;
-        const canvas = canvasRef.current;
-
-        // Copy video frame to canvas
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Get base64 string
-        const base64Data = canvas.toDataURL('image/jpeg', 0.8);
-        processImage(base64Data);
+    const compressImage = (file, maxWidth = 800) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const scaleSize = maxWidth / img.width;
+                    if (scaleSize < 1) {
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * scaleSize;
+                    } else {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                    }
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.8));
+                };
+            };
+        });
     };
 
-    const handleFileUpload = (e) => {
+    const handleFileUploadOptions = async (e) => {
         if (!e.target.files || e.target.files.length === 0) return;
         const file = e.target.files[0];
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            processImage(reader.result);
-        };
-        reader.readAsDataURL(file);
+        setLoading(true);
+        setError(null);
+        setScanSuccess(false);
+
+        if (scannerRef.current && scannerRef.current.getState() === 2) {
+            try { await scannerRef.current.pause(true); } catch (e) { }
+        }
+
+        if (window.navigator && window.navigator.vibrate) {
+            try { window.navigator.vibrate(100); } catch (e) { }
+        }
+
+        try {
+            const compressedBase64 = await compressImage(file);
+            const result = await analyzeImageWithAI(compressedBase64, 'Spanish');
+            if (result && result.food_name) {
+                setProductData(result);
+            } else {
+                setError(t('scanAiUnknown', 'La IA no pudo reconocer los detalles nutricionales de la imagen.'));
+            }
+        } catch (err) {
+            console.error('Error procesando foto con IA', err);
+            setError(t('scanAiError', 'Ocurrió un error al analizar la imagen con IA. Intenta de nuevo.'));
+        } finally {
+            setLoading(false);
+            // We do not resume scanner here; it will unmount or stay paused on error until Try Again.
+        }
     };
 
     const handleBack = () => {
-        stopCamera();
         navigate('/dashboard');
     };
 
@@ -122,7 +162,8 @@ const Scan = () => {
         setProductData(null);
         setError(null);
         setScanSuccess(false);
-        // Effect will automatically restart the camera because productData and error are null.
+        scanningRef.current = false;
+        // useEffect will restart scanner if needed
     };
 
     return (
@@ -131,46 +172,26 @@ const Scan = () => {
                 <button onClick={handleBack} className={styles.backButton}>
                     &#8592; {t('back', 'Atrás')}
                 </button>
-                <h1 className={styles.title}>{t('scanProductAI', 'Analizar Producto')}</h1>
+                <h1 className={styles.title}>{t('scanTitle', 'Escanear o Analizar')}</h1>
             </header>
 
             {!productData && !error && (
                 <div className={styles.scannerContainer}>
                     <div className={`${styles.readerWrapper} ${scanSuccess ? styles.successWrapper : ''}`}>
-                        {/* We hide the video if it's processing to avoid awkward freeze frame, 
-                             or keep it until loading is done. */}
-                        <video
-                            ref={videoRef}
-                            autoPlay
-                            playsInline
-                            muted
-                            className={`${styles.reader} ${scanSuccess ? styles.readerSuccess : ''}`}
-                            style={{ objectFit: 'cover', opacity: loading ? 0.5 : 1 }}
-                        />
-                        <canvas ref={canvasRef} style={{ display: 'none' }} />
+                        <div id="reader" className={`${styles.reader} ${scanSuccess ? styles.readerSuccess : ''}`}></div>
+                        {scanSuccess && <div className={styles.successOverlay}></div>}
                     </div>
                     <p className={styles.scannerTip}>
-                        {t('scanAiTip', 'Toma una foto del producto o su etiqueta nutricional.')}
+                        {t('scanTip', 'Apunta a un código de barras para detectarlo automáticamente.')}
                     </p>
 
                     <div className={styles.scanActionsBox}>
-                        <button
-                            className={styles.captureButton}
-                            onClick={handleTakePhoto}
-                            disabled={loading || scanSuccess}
-                        >
-                            <Camera size={24} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                            <span>{t('btnCapture', 'Capturar')}</span>
-                        </button>
-                    </div>
-
-                    <div className={styles.scanActionsBox} style={{ marginTop: '16px' }}>
                         <input
                             type="file"
                             accept="image/*"
                             ref={fileInputRef}
                             style={{ display: 'none' }}
-                            onChange={handleFileUpload}
+                            onChange={handleFileUploadOptions}
                         />
                         <button
                             onClick={() => fileInputRef.current.click()}
@@ -178,11 +199,11 @@ const Scan = () => {
                             disabled={loading || scanSuccess}
                         >
                             <ImageIcon size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                            {t('scanUploadBtn', 'Abrir Galería')}
+                            {t('scanUploadBtn', 'Tomar foto o Abrir Galería')}
                         </button>
                     </div>
 
-                    {loading && <p className={styles.loadingText}>{t('scanLoading', 'Analizando con IA...')}</p>}
+                    {loading && <p className={styles.loadingText}>{t('scanLoading', 'Analizando...')}</p>}
                 </div>
             )}
 
@@ -197,7 +218,8 @@ const Scan = () => {
 
             {productData && (
                 <div className={styles.resultContainer}>
-                    <h2 className={styles.productName}>{productData.food_name || t('scanUnknownProduct', 'Producto')}</h2>
+                    <h2 className={styles.productName}>{productData.food_name || t('scanUnknownProduct', 'Producto Desconocido')}</h2>
+                    {productData.brands && <p className={styles.productBrand}>{productData.brands}</p>}
                     {productData.explanation && (
                         <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '14px', fontStyle: 'italic' }}>
                             🤖 {productData.explanation}
@@ -205,7 +227,7 @@ const Scan = () => {
                     )}
 
                     <div className={styles.nutritionCard}>
-                        <h3>{t('scanNutritionFacts', 'Información Nutricional Estimada')}</h3>
+                        <h3>{t('scanNutritionFacts', 'Información Nutricional')}</h3>
                         <ul className={styles.nutritionList}>
                             <li>
                                 <span>{t('calories', 'Calorías')}</span>
@@ -234,7 +256,7 @@ const Scan = () => {
                         {t('scanAddLog', 'Añadir al Registro')}
                     </button>
                     <button onClick={handleTryAgain} className={styles.cancelButton}>
-                        {t('scanCancel', 'Analizar Otro')}
+                        {t('scanCancel', 'Cancelar')}
                     </button>
                 </div>
             )}

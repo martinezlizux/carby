@@ -8,57 +8,34 @@
 
 .scanActionsBox {
     display: flex;
+    gap: var(--spacing-4);
     justify-content: center;
     align-items: center;
     margin-top: var(--spacing-4);
     width: 100%;
 }
 
-.captureButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: var(--color-primary-500, #fb923c);
-    color: var(--color-neutral-0, #ffffff);
-    border: none;
-    padding: var(--spacing-4) var(--spacing-6);
-    border-radius: var(--radius-full);
-    font-size: var(--typography-body-large-font-size, 18px);
-    font-weight: var(--typography-weight-bold, bold);
-    cursor: pointer;
-    width: 100%;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 6px rgba(251, 146, 60, 0.4);
-}
-
-.captureButton:hover:not(:disabled) {
-    background-color: var(--surface-primary-bg-dark, #f97316);
-}
-
-/* Upload image button is secondary */
 .uploadImageButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background-color: transparent;
-    color: var(--color-primary-500, #fb923c);
-    border: 2px solid var(--color-primary-500, #fb923c);
+    background-color: var(--surface-primary-bg-base);
+    color: var(--color-neutral-0);
+    border: none;
     padding: var(--spacing-3) var(--spacing-6);
     border-radius: var(--radius-full);
-    font-size: var(--typography-body-large-font-size, 18px);
-    font-weight: var(--typography-weight-bold, bold);
+    font-size: var(--typography-body-large-font-size);
+    font-weight: var(--typography-weight-bold);
+    font-family: var(--typography-family-heading);
     cursor: pointer;
-    width: 100%;
+    flex: 1;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .uploadImageButton:hover:not(:disabled) {
     background-color: var(--surface-primary-bg-dark);
 }
 
-.captureButton:disabled,
 .uploadImageButton:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -89,36 +66,66 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+    padding: 0 16px;
 }
 
 .readerWrapper {
+    position: relative;
     width: 100%;
     max-width: 400px;
+    border-radius: 12px;
+    overflow: hidden;
     margin-bottom: 16px;
-    border-radius: 14px;
-    padding: 6px;
-    background-color: transparent;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .successWrapper {
-    background-color: var(--color-success-500, #22c55e);
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.8), inset 0 0 10px rgba(0, 0, 0, 0.1);
-    transform: scale(1.03);
+    box-shadow: 0 0 0 4px #4ade80, 0 4px 12px rgba(74, 222, 128, 0.3);
 }
 
 .reader {
     width: 100%;
-    border-radius: 10px;
+    height: 100%;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    background-color: #000;
+}
+
+/* Success animation overlay */
+.successOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(74, 222, 128, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    animation: flash 0.5s ease-out;
+}
+
+@keyframes flash {
+    0% {
+        background-color: rgba(74, 222, 128, 0.6);
+    }
+
+    100% {
+        background-color: rgba(74, 222, 128, 0);
+    }
+}
+
+.readerSuccess {
+    filter: brightness(1.1);
 }
 
 .scannerTip {
     font-size: 14px;
     color: var(--text-secondary);
     text-align: center;
+    margin-bottom: 16px;
 }
 
 .loadingText {
@@ -133,6 +140,7 @@
     flex-direction: column;
     align-items: center;
     margin-top: 40px;
+    padding: 0 20px;
 }
 
 .errorText {
@@ -143,7 +151,7 @@
 
 .tryAgainButton {
     padding: 12px 24px;
-    background-color: var(--accent-secondary, #ff4d4f);
+    background-color: var(--surface-primary-bg-base);
     color: white;
     border: none;
     border-radius: 8px;
@@ -154,6 +162,7 @@
     display: flex;
     flex-direction: column;
     margin-top: 20px;
+    padding: 0 20px;
 }
 
 .productName {
@@ -169,7 +178,7 @@
 }
 
 .nutritionCard {
-    background-color: var(--bg-surface-1);
+    background-color: var(--surface-neutral-bg-low);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 24px;
@@ -179,7 +188,7 @@
 .nutritionCard h3 {
     font-size: 18px;
     margin-bottom: 16px;
-    color: var(--text-secondary);
+    color: var(--color-neutral-900);
 }
 
 .nutritionList {
@@ -202,7 +211,7 @@
 
 .addButton {
     padding: 16px;
-    background-color: var(--accent-primary);
+    background-color: var(--surface-primary-bg-base);
     color: white;
     border: none;
     border-radius: 12px;
@@ -215,8 +224,8 @@
 .cancelButton {
     padding: 16px;
     background-color: transparent;
-    color: var(--text-secondary);
-    border: 1px solid var(--border-light);
+    color: var(--color-neutral-900);
+    border: 1px solid var(--color-neutral-300);
     border-radius: 12px;
     font-size: 16px;
     cursor: pointer;
