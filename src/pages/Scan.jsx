@@ -35,7 +35,7 @@ const Scan = () => {
                         backCamera.id,
                         { fps: 15, qrbox: { width: 250, height: 250 } },
                         (decodedText) => { latestCodeRef.current = decodedText; },
-                        () => { latestCodeRef.current = null; }
+                        () => { /* No borramos el valor si temporalmente pierde foco */ }
                     );
                 } else {
                     throw new Error("No se detectaron cámaras en el dispositivo");
@@ -48,7 +48,7 @@ const Scan = () => {
                         { facingMode: "environment" },
                         { fps: 15, qrbox: { width: 250, height: 250 } },
                         (decodedText) => { latestCodeRef.current = decodedText; },
-                        () => { latestCodeRef.current = null; }
+                        () => { /* No borramos el valor si temporalmente pierde foco */ }
                     );
                 } catch (fallbackErr) {
                     console.error("Error colosal al iniciar vista previa de cámara", fallbackErr);
