@@ -14,41 +14,69 @@ const Scan = () => {
     const scannerRef = useRef(null);
     const fileInputRef = useRef(null);
 
-    // Initialize scanner preview only (don't auto process frames for barcodes)
     useEffect(() => {
+        // Aseguramos que el contenedor exista y no haya errores o productos cargados
+        if (!document.getElementById("reader") || error || productData) return;
+
         if (!scannerRef.current) {
             scannerRef.current = new Html5Qrcode("reader");
         }
 
         const startPreview = async () => {
             try {
-                // start without providing qrCodeSuccessCallback to just show preview
-                await scannerRef.current.start(
-                    { facingMode: "environment" },
-                    { fps: 10, qrbox: { width: 250, height: 250 } },
-                    () => { }, // Ignoramos el éxito automático
-                    () => { }  // Ignoramos errores automáticos
-                );
+                // Primero solicitamos permiso al usuario directamente obteniendo las cámaras
+                const cameras = await Html5Qrcode.getCameras();
+                if (cameras && cameras.length > 0) {
+                    // Seleccionamos cámara trasera, o la última de la lista (normalmente trasera en celulares)
+                    const backCamera = cameras.find(c => c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('trasera')) || cameras[cameras.length - 1];
+
+                    await scannerRef.current.start(
+                        backCamera.id,
+                        { fps: 10, qrbox: { width: 250, height: 250 } },
+                        () => { }, // Ignoramos lectura auto
+                        () => { }  // Ignoramos errores transitorios auto
+                    );
+                } else {
+                    throw new Error("No se detectaron cámaras en el dispositivo");
+                }
             } catch (err) {
-                console.error("Error al iniciar la vista previa de la cámara", err);
-                setError(t('scanErrorCamera', 'No se pudo acceder a la cámara trasera. Verifica los permisos.'));
+                console.warn("Intento de cámara por ID falló, iterando fallback...", err);
+                try {
+                    // Fallback genérico para algunos dispositivos
+                    await scannerRef.current.start(
+                        { facingMode: "environment" },
+                        { fps: 10, qrbox: { width: 250, height: 250 } },
+                        () => { },
+                        () => { }
+                    );
+                } catch (fallbackErr) {
+                    console.error("Error colosal al iniciar vista previa de cámara", fallbackErr);
+                    setError(t('scanErrorCamera', 'No se pudo acceder a la cámara. Asegúrate de darle permisos al navegador y recargar.'));
+                }
             }
         };
 
-        if (scannerRef.current.getState() !== 2) {
+        // Estado 2 == SCANNING
+        try {
+            if (scannerRef.current.getState() !== 2) {
+                startPreview();
+            }
+        } catch (e) {
             startPreview();
         }
 
         return () => {
             if (scannerRef.current) {
-                if (scannerRef.current.getState() === 2) {
-                    scannerRef.current.stop().then(() => {
-                        scannerRef.current.clear();
-                    }).catch(e => console.warn(e));
-                }
+                try {
+                    if (scannerRef.current.getState() === 2) {
+                        scannerRef.current.stop().then(() => {
+                            scannerRef.current.clear();
+                        }).catch(e => console.warn(e));
+                    }
+                } catch (e) { }
             }
         };
-    }, [t]);
+    }, [t, error, productData]);
 
     const processBarcode = async (decodedText) => {
         if (loading) return;
