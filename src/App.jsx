@@ -14,6 +14,7 @@ import Settings from './pages/Settings.jsx';
 import EditProfile from './pages/EditProfile.jsx';
 import AppLayout from './components/AppLayout.jsx';
 import { WizardProvider } from './contexts/WizardContext.jsx';
+import Scan from './pages/Scan.jsx';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             <Route path="/settings" element={<Settings />} />
           </Route>
           <Route path="/profile/edit" element={<EditProfile />} />
+          <Route path="/scan" element={<Scan />} />
         </Routes>
       </BrowserRouter>
     </WizardProvider>

@@ -1,3 +1,5 @@
+import { supabase } from './supabase';
+
 export const searchOpenFoodFacts = async (foodName) => {
     try {
         const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(foodName)}&search_simple=1&action=process&json=1&page_size=1`;
@@ -49,6 +51,51 @@ export const searchUSDA = async (foodName) => {
         return null;
     } catch (e) {
         console.error('DEBUG: USDA Error:', e);
+        return null;
+    }
+};
+
+export const fetchProductByBarcode = async (barcode) => {
+    try {
+        // 1. Check Supabase Cache
+        const { data: cachedProduct, error: cacheError } = await supabase
+            .from('scanned_products')
+            .select('*')
+            .eq('barcode', barcode)
+            .single();
+
+        if (cachedProduct && !cacheError) {
+            console.log('Product found in cache/DB');
+            return cachedProduct;
+        }
+
+        // 2. Fetch from Open Food Facts if not in cache
+        const url = `https://world.openfoodfacts.org/api/v0/product/${encodeURIComponent(barcode)}.json`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data && data.status === 1 && data.product) {
+            const product = data.product;
+            const newProductData = {
+                barcode: barcode,
+                food_name: product.product_name || 'Desconocido',
+                brands: product.brands || '',
+                calories: product.nutriments?.['energy-kcal_100g'] ?? 0,
+                carbs: product.nutriments?.carbohydrates_100g ?? 0,
+                proteins: product.nutriments?.proteins_100g ?? 0,
+                fat: product.nutriments?.fat_100g ?? 0,
+                sugars: product.nutriments?.sugars_100g ?? 0,
+            };
+
+            // 3. Save to Supabase (ignore errors if it fails to cache to avoid breaking the UI)
+            await supabase.from('scanned_products').insert([newProductData]).catch(e => console.error('Cache save error', e));
+
+            return newProductData;
+        }
+
+        return null;
+    } catch (error) {
+        console.error('Error fetching product by barcode:', error);
         return null;
     }
 };

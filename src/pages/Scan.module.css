@@ -1,0 +1,151 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: var(--bg-primary);
+    min-height: 100vh;
+    color: var(--text-primary);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.backButton {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--accent-primary);
+    cursor: pointer;
+    padding: 8px;
+}
+
+.title {
+    margin-left: 16px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.scannerContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.reader {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scannerTip {
+    font-size: 14px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.loadingText {
+    margin-top: 12px;
+    font-size: 16px;
+    color: var(--accent-primary);
+    font-weight: 500;
+}
+
+.errorContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.errorText {
+    color: #ff4d4f;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.tryAgainButton {
+    padding: 12px 24px;
+    background-color: var(--accent-secondary, #ff4d4f);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.resultContainer {
+    display: flex;
+    flex-direction: column;
+    margin-top: 20px;
+}
+
+.productName {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.productBrand {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+.nutritionCard {
+    background-color: var(--bg-surface-1);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.nutritionCard h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+}
+
+.nutritionList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nutritionList li {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 16px;
+}
+
+.nutritionList li:last-child {
+    border-bottom: none;
+}
+
+.addButton {
+    padding: 16px;
+    background-color: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+}
+
+.cancelButton {
+    padding: 16px;
+    background-color: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+}

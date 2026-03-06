@@ -1,0 +1,85 @@
+.card {
+    background-color: white;
+    border-radius: 20px;
+    padding: var(--spacing-4);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    border: 1px solid #F0F1F5;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    margin-bottom: var(--spacing-4);
+}
+
+.iconWrapper {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #FFF5F2;
+    /* Ligero naranjo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.iconWrapper i {
+    font-size: 24px;
+    color: #FF7444;
+    /* Naranjo Carby */
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.title {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: 16px;
+    font-weight: var(--typography-weight-bold);
+    margin: 0;
+    color: #1A1C1E;
+}
+
+.subtitle {
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    font-size: 13px;
+    color: #6C707F;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.actionArea {
+    display: flex;
+    align-items: center;
+}
+
+.scanBtn {
+    background-color: var(--surface-primary-bg-base);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--radius-full, 99px);
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: 14px;
+    font-weight: var(--typography-weight-bold);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.scanBtn:hover {
+    background-color: var(--surface-primary-bg-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(50, 59, 111, 0.25);
+}
+
+.scanBtn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}

@@ -145,7 +145,29 @@ export const translations = {
         obSlide2Title: "Ask Carby",
         obSlide2Desc: "Your intelligent assistant is ready to calculate your meal metrics in seconds.",
         obNext: "Next",
-        obStart: "Start Now"
+        obStart: "Start Now",
+
+        // Scanner
+        scanLabelTitle: "Scan Label",
+        scanLabelSubtitle: "Discover nutritional facts instantly",
+        scanButton: "Scan",
+        scanTitle: "Scan Product",
+        scanProductNotFound: "Product not found in database.",
+        scanError: "Error fetching product information.",
+        scanAdded: "Added {carbs}g of carbs to your log.",
+        back: "Back",
+        scanTip: "Point the camera at the product's barcode.",
+        scanLoading: "Searching product...",
+        scanTryAgain: "Try Again",
+        scanUnknownProduct: "Unknown Product",
+        scanNutritionFacts: "Nutrition Facts",
+        scanAddLog: "Add to Log",
+        scanCancel: "Cancel & Scan Another",
+        calories: "Calories",
+        carbs: "Carbs",
+        sugars: "Sugars",
+        proteins: "Proteins",
+        fat: "Fat",
     },
     Spanish: {
         // Bottom Nav
@@ -293,7 +315,29 @@ export const translations = {
         obSlide2Title: "Pídele ayuda a Carby",
         obSlide2Desc: "Tu asistente inteligente está listo para calcular las métricas de tu comida en segundos.",
         obNext: "Siguiente",
-        obStart: "Comenzar"
+        obStart: "Comenzar",
+
+        // Scanner
+        scanLabelTitle: "Escanear Etiqueta",
+        scanLabelSubtitle: "Descubre los carbos al instante",
+        scanButton: "Escanear",
+        scanTitle: "Escanear Producto",
+        scanProductNotFound: "Producto no encontrado en la base de datos.",
+        scanError: "Hubo un error al buscar la información del producto.",
+        scanAdded: "Se han añadido {carbs}g de carbohidratos a tu registro.",
+        back: "Atrás",
+        scanTip: "Apunta la cámara al código de barras del producto.",
+        scanLoading: "Buscando producto...",
+        scanTryAgain: "Intentar de nuevo",
+        scanUnknownProduct: "Producto Desconocido",
+        scanNutritionFacts: "Información Nutricional",
+        scanAddLog: "Añadir al Registro",
+        scanCancel: "Cancelar y Escanear Otro",
+        calories: "Calorías",
+        carbs: "Carbohidratos",
+        sugars: "Azúcares",
+        proteins: "Proteínas",
+        fat: "Grasas",
     }
 };
 

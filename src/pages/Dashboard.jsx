@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
 import { useWizard } from '../contexts/WizardContext';
 import carbyCharacter from '../assets/carby-character.png';
+import ScannerCard from '../components/ScannerCard';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -45,6 +46,14 @@ const Dashboard = () => {
                     <i className="fa-solid fa-utensils"></i>
                     <span>{t('logMeal')}</span>
                 </button>
+
+                <ScannerCard
+                    title={t('scanLabelTitle')}
+                    subtitle={t('scanLabelSubtitle')}
+                    icon="fa-barcode"
+                    buttonText={t('scanButton')}
+                    onClick={() => navigate('/scan')}
+                />
 
                 <div className={styles.profileSection}>
                     <div className={styles.sectionHeader}>
