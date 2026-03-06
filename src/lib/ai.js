@@ -67,3 +67,61 @@ export const analyzeFoodWithAI = async (userInput, userLanguage = 'English') => 
         return null;
     }
 };
+
+export const analyzeImageWithAI = async (base64Image, userLanguage = 'English') => {
+    console.log("DEBUG: Starting AI Image analysis");
+
+    if (!API_KEY) {
+        console.error("DEBUG: API_KEY is missing in import.meta.env");
+        return null;
+    }
+
+    try {
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${API_KEY}`
+            },
+            body: JSON.stringify({
+                model: "llama-3.2-90b-vision-preview",
+                messages: [
+                    {
+                        role: "user",
+                        content: [
+                            {
+                                type: "text",
+                                text: `You are Carby AI, a nutritionist. Look at this product image. 
+Identify the product and estimate its nutritional values per 100g/ml if possible.
+Respond ONLY with a valid JSON object.
+JSON structure: { "food_name": "Product Name", "carbs": number, "calories": number, "proteins": number, "fat": number, "sugars": number, "explanation": "Brief reasoning in ${userLanguage}" }`
+                            },
+                            {
+                                type: "image_url",
+                                image_url: { url: base64Image }
+                            }
+                        ]
+                    }
+                ],
+                temperature: 0.2,
+                response_format: { type: "json_object" }
+            })
+        });
+
+        const data = await response.json();
+        console.log("DEBUG: Raw API Vision Data:", data);
+
+        if (data.error) {
+            console.error("DEBUG: Groq Vision API error:", data.error.message);
+            return null;
+        }
+
+        const content = data.choices[0]?.message?.content;
+        const cleanJson = content ? content.replace(/```json|```/g, '').trim() : "{}";
+        return JSON.parse(cleanJson);
+
+    } catch (error) {
+        console.error("DEBUG: AI Vision Analysis Error:", error);
+        return null;
+    }
+};

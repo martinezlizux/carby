@@ -1,148 +1,115 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Html5Qrcode } from 'html5-qrcode';
-import { fetchProductByBarcode } from '../lib/foodApis';
 import { useWizard } from '../contexts/WizardContext';
+import { analyzeImageWithAI } from '../lib/ai';
+import { Camera, Image as ImageIcon } from 'lucide-react';
 import styles from './Scan.module.css';
 
 const Scan = () => {
     const navigate = useNavigate();
     const { t } = useWizard();
     const [loading, setLoading] = useState(false);
+    const [scanSuccess, setScanSuccess] = useState(false);
     const [productData, setProductData] = useState(null);
     const [error, setError] = useState(null);
-    const scannerRef = useRef(null);
+
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+    const streamRef = useRef(null);
     const fileInputRef = useRef(null);
-    const latestCodeRef = useRef(null);
 
+    // Initialize camera
     useEffect(() => {
-        // Aseguramos que el contenedor exista y no haya errores o productos cargados
-        if (!document.getElementById("reader") || error || productData) return;
+        if (productData || error) return;
 
-        if (!scannerRef.current) {
-            scannerRef.current = new Html5Qrcode("reader");
-        }
-
-        const startPreview = async () => {
+        const startCamera = async () => {
             try {
-                // Primero solicitamos permiso al usuario directamente obteniendo las cámaras
-                const cameras = await Html5Qrcode.getCameras();
-                if (cameras && cameras.length > 0) {
-                    // Seleccionamos cámara trasera, o la última de la lista (normalmente trasera en celulares)
-                    const backCamera = cameras.find(c => c.label.toLowerCase().includes('back') || c.label.toLowerCase().includes('trasera')) || cameras[cameras.length - 1];
-
-                    await scannerRef.current.start(
-                        backCamera.id,
-                        { fps: 15, qrbox: { width: 250, height: 250 } },
-                        (decodedText) => { latestCodeRef.current = decodedText; },
-                        () => { /* No borramos el valor si temporalmente pierde foco */ }
-                    );
-                } else {
-                    throw new Error("No se detectaron cámaras en el dispositivo");
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                if (videoRef.current) {
+                    videoRef.current.srcObject = stream;
                 }
+                streamRef.current = stream;
             } catch (err) {
-                console.warn("Intento de cámara por ID falló, iterando fallback...", err);
-                try {
-                    // Fallback genérico para algunos dispositivos
-                    await scannerRef.current.start(
-                        { facingMode: "environment" },
-                        { fps: 15, qrbox: { width: 250, height: 250 } },
-                        (decodedText) => { latestCodeRef.current = decodedText; },
-                        () => { /* No borramos el valor si temporalmente pierde foco */ }
-                    );
-                } catch (fallbackErr) {
-                    console.error("Error colosal al iniciar vista previa de cámara", fallbackErr);
-                    setError(t('scanErrorCamera', 'No se pudo acceder a la cámara. Asegúrate de darle permisos al navegador y recargar.'));
-                }
+                console.error("Camera access error:", err);
+                setError(t('scanErrorCamera', 'No se pudo acceder a la cámara. Revisa los permisos o sube una foto.'));
             }
         };
 
-        // Estado 2 == SCANNING
-        try {
-            if (scannerRef.current.getState() !== 2) {
-                startPreview();
-            }
-        } catch (e) {
-            startPreview();
-        }
+        startCamera();
 
         return () => {
-            if (scannerRef.current) {
-                try {
-                    if (scannerRef.current.getState() === 2) {
-                        scannerRef.current.stop().then(() => {
-                            scannerRef.current.clear();
-                        }).catch(e => console.warn(e));
-                    }
-                } catch (e) { }
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop());
             }
         };
-    }, [t, error, productData]);
+    }, [productData, error, t]);
 
-    const processBarcode = async (decodedText, fromUpload = false) => {
-        if (loading && !fromUpload) return;
+    const stopCamera = () => {
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach(track => track.stop());
+        }
+    };
+
+    const processImage = async (base64Data) => {
         setLoading(true);
+        setScanSuccess(true);
         setError(null);
+        stopCamera();
 
-        // Pausamos la cámara si está encendida
-        if (scannerRef.current && scannerRef.current.getState() === 2) {
-            try { await scannerRef.current.pause(true); } catch (e) { }
+        // Haptic feedback
+        if (window.navigator && window.navigator.vibrate) {
+            try { window.navigator.vibrate(200); } catch (e) { }
         }
 
         try {
-            const product = await fetchProductByBarcode(decodedText);
-            if (product) {
-                setProductData(product);
+            const result = await analyzeImageWithAI(base64Data, 'Spanish');
+            if (result && result.food_name) {
+                setProductData(result);
             } else {
-                setError(t('scanProductNotFound', 'Producto no encontrado en la base de datos.'));
-                if (scannerRef.current && scannerRef.current.getState() === 3) {
-                    try { await scannerRef.current.resume(); } catch (e) { }
-                }
+                setError(t('scanAiUnknown', 'La IA no pudo reconocer los detalles nutricionales de este producto.'));
+                setScanSuccess(false);
             }
         } catch (err) {
-            console.error('Error al escanear/buscar', err);
-            setError(t('scanError', 'Hubo un error al buscar la información del producto.'));
-            if (scannerRef.current && scannerRef.current.getState() === 3) {
-                try { await scannerRef.current.resume(); } catch (e) { }
-            }
+            console.error('Error processing image via AI:', err);
+            setError(t('scanAiError', 'Ocurrió un error al analizar la imagen. Intenta de nuevo.'));
+            setScanSuccess(false);
         } finally {
             setLoading(false);
         }
     };
 
-    // Función para procesar con el último frame escaneado exitoso
-    const handleManualScan = () => {
-        if (!scannerRef.current || scannerRef.current.getState() !== 2) return;
+    const handleTakePhoto = () => {
+        if (!videoRef.current || !canvasRef.current) return;
 
-        if (latestCodeRef.current) {
-            processBarcode(latestCodeRef.current);
-        } else {
-            setError(t('scanNoBarcodeDetected', 'No detectamos código de barras. Enfócalo en el centro e intenta de nuevo.'));
-        }
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+
+        // Copy video frame to canvas
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Get base64 string
+        const base64Data = canvas.toDataURL('image/jpeg', 0.8);
+        processImage(base64Data);
     };
 
-    const handleFileUploadOptions = (e) => {
+    const handleFileUpload = (e) => {
         if (!e.target.files || e.target.files.length === 0) return;
         const file = e.target.files[0];
 
-        setLoading(true);
-        setError(null);
-
-        if (!scannerRef.current) {
-            scannerRef.current = new Html5Qrcode("reader");
-        }
-
-        scannerRef.current.scanFile(file, false)
-            .then(decodedText => {
-                processBarcode(decodedText, true);
-            })
-            .catch(err => {
-                setError(t('scanNoBarcodeDetectedImage', 'No pudimos encontrar un código de barras en la foto proporcionada.'));
-                setLoading(false);
-            });
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            processImage(reader.result);
+        };
+        reader.readAsDataURL(file);
     };
 
     const handleBack = () => {
+        stopCamera();
         navigate('/dashboard');
     };
 
@@ -154,7 +121,8 @@ const Scan = () => {
     const handleTryAgain = () => {
         setProductData(null);
         setError(null);
-        window.location.reload();
+        setScanSuccess(false);
+        // Effect will automatically restart the camera because productData and error are null.
     };
 
     return (
@@ -163,38 +131,58 @@ const Scan = () => {
                 <button onClick={handleBack} className={styles.backButton}>
                     &#8592; {t('back', 'Atrás')}
                 </button>
-                <h1 className={styles.title}>{t('scanTitle', 'Escanear Producto')}</h1>
+                <h1 className={styles.title}>{t('scanProductAI', 'Analizar Producto')}</h1>
             </header>
 
             {!productData && !error && (
                 <div className={styles.scannerContainer}>
-                    <div id="reader" className={styles.reader}></div>
+                    <div className={`${styles.readerWrapper} ${scanSuccess ? styles.successWrapper : ''}`}>
+                        {/* We hide the video if it's processing to avoid awkward freeze frame, 
+                             or keep it until loading is done. */}
+                        <video
+                            ref={videoRef}
+                            autoPlay
+                            playsInline
+                            muted
+                            className={`${styles.reader} ${scanSuccess ? styles.readerSuccess : ''}`}
+                            style={{ objectFit: 'cover', opacity: loading ? 0.5 : 1 }}
+                        />
+                        <canvas ref={canvasRef} style={{ display: 'none' }} />
+                    </div>
                     <p className={styles.scannerTip}>
-                        {t('scanTip', 'Apunta al código de barras o sube una foto.')}
+                        {t('scanAiTip', 'Toma una foto del producto o su etiqueta nutricional.')}
                     </p>
 
                     <div className={styles.scanActionsBox}>
-                        <button onClick={handleManualScan} className={styles.captureButton} disabled={loading}>
-                            {t('scanActionBtn', 'Escanear ahora')}
+                        <button
+                            className={styles.captureButton}
+                            onClick={handleTakePhoto}
+                            disabled={loading || scanSuccess}
+                        >
+                            <Camera size={24} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                            <span>{t('btnCapture', 'Capturar')}</span>
                         </button>
+                    </div>
 
+                    <div className={styles.scanActionsBox} style={{ marginTop: '16px' }}>
                         <input
                             type="file"
                             accept="image/*"
                             ref={fileInputRef}
                             style={{ display: 'none' }}
-                            onChange={handleFileUploadOptions}
+                            onChange={handleFileUpload}
                         />
                         <button
                             onClick={() => fileInputRef.current.click()}
                             className={styles.uploadImageButton}
-                            disabled={loading}
+                            disabled={loading || scanSuccess}
                         >
-                            {t('scanUploadBtn', 'Abrir galería')}
+                            <ImageIcon size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
+                            {t('scanUploadBtn', 'Abrir Galería')}
                         </button>
                     </div>
 
-                    {loading && <p className={styles.loadingText}>{t('scanLoading', 'Procesando...')}</p>}
+                    {loading && <p className={styles.loadingText}>{t('scanLoading', 'Analizando con IA...')}</p>}
                 </div>
             )}
 
@@ -209,15 +197,19 @@ const Scan = () => {
 
             {productData && (
                 <div className={styles.resultContainer}>
-                    <h2 className={styles.productName}>{productData.food_name || t('scanUnknownProduct', 'Producto Desconocido')}</h2>
-                    {productData.brands && <p className={styles.productBrand}>{productData.brands}</p>}
+                    <h2 className={styles.productName}>{productData.food_name || t('scanUnknownProduct', 'Producto')}</h2>
+                    {productData.explanation && (
+                        <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '14px', fontStyle: 'italic' }}>
+                            🤖 {productData.explanation}
+                        </p>
+                    )}
 
                     <div className={styles.nutritionCard}>
-                        <h3>{t('scanNutritionFacts', 'Información Nutricional')} (100g/ml)</h3>
+                        <h3>{t('scanNutritionFacts', 'Información Nutricional Estimada')}</h3>
                         <ul className={styles.nutritionList}>
                             <li>
                                 <span>{t('calories', 'Calorías')}</span>
-                                <strong>{productData.calories ? `${productData.calories} kcal` : '-'}</strong>
+                                <strong>{productData.calories !== undefined ? `${productData.calories} kcal` : '-'}</strong>
                             </li>
                             <li>
                                 <span>{t('carbs', 'Carbohidratos')}</span>
@@ -242,7 +234,7 @@ const Scan = () => {
                         {t('scanAddLog', 'Añadir al Registro')}
                     </button>
                     <button onClick={handleTryAgain} className={styles.cancelButton}>
-                        {t('scanCancel', 'Cancelar y Escanear Otro')}
+                        {t('scanCancel', 'Analizar Otro')}
                     </button>
                 </div>
             )}

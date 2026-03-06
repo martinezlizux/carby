@@ -14,15 +14,41 @@
     width: 100%;
 }
 
-.uploadImageButton {
-    background-color: var(--surface-primary-bg-base);
-    color: var(--color-neutral-0);
+.captureButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--color-primary-500, #fb923c);
+    color: var(--color-neutral-0, #ffffff);
     border: none;
+    padding: var(--spacing-4) var(--spacing-6);
+    border-radius: var(--radius-full);
+    font-size: var(--typography-body-large-font-size, 18px);
+    font-weight: var(--typography-weight-bold, bold);
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px rgba(251, 146, 60, 0.4);
+}
+
+.captureButton:hover:not(:disabled) {
+    background-color: var(--surface-primary-bg-dark, #f97316);
+}
+
+/* Upload image button is secondary */
+.uploadImageButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: transparent;
+    color: var(--color-primary-500, #fb923c);
+    border: 2px solid var(--color-primary-500, #fb923c);
     padding: var(--spacing-3) var(--spacing-6);
     border-radius: var(--radius-full);
-    font-size: var(--typography-body-large-font-size);
-    font-weight: var(--typography-weight-bold);
-    font-family: var(--typography-family-heading);
+    font-size: var(--typography-body-large-font-size, 18px);
+    font-weight: var(--typography-weight-bold, bold);
     cursor: pointer;
     width: 100%;
     transition: all 0.2s ease;
@@ -32,6 +58,7 @@
     background-color: var(--surface-primary-bg-dark);
 }
 
+.captureButton:disabled,
 .uploadImageButton:disabled {
     opacity: 0.6;
     cursor: not-allowed;
