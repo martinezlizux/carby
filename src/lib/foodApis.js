@@ -57,23 +57,45 @@ export const searchUSDA = async (foodName) => {
 
 export const fetchProductByBarcode = async (barcode) => {
     try {
-        // 1. Check Supabase Cache
-        const { data: cachedProduct, error: cacheError } = await supabase
+        console.log(`Buscando producto con código: ${barcode}`);
+
+        // Helper para Timeout
+        const fetchWithTimeout = async (url, options = {}, timeout = 8000) => {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), timeout);
+            const response = await fetch(url, {
+                ...options,
+                signal: controller.signal
+            });
+            clearTimeout(id);
+            return response;
+        };
+
+        // 1. Check Supabase Cache (con timeout rudimentario usando Promise.race)
+        const cachePromise = supabase
             .from('scanned_products')
             .select('*')
             .eq('barcode', barcode)
             .single();
 
-        if (cachedProduct && !cacheError) {
-            console.log('Product found in cache/DB');
-            return cachedProduct;
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Cache timeout')), 3000));
+
+        try {
+            const { data: cachedProduct, error: cacheError } = await Promise.race([cachePromise, timeoutPromise]);
+            if (cachedProduct && !cacheError) {
+                console.log('Producto encontrado en cache/DB');
+                return cachedProduct;
+            }
+        } catch (e) {
+            console.warn('Cache check omitido por error/timeout:', e.message);
         }
 
         // 2. Fetch from Open Food Facts if not in cache
         const tryFetchOFF = async (bc) => {
             try {
+                // "world" busca en global, por lo que incluye EU y MX.
                 const url = `https://world.openfoodfacts.org/api/v0/product/${encodeURIComponent(bc)}.json`;
-                const res = await fetch(url);
+                const res = await fetchWithTimeout(url, {}, 5000); // 5 segundos
                 const data = await res.json();
                 if (data && data.status === 1 && data.product) {
                     return data.product;
@@ -95,17 +117,22 @@ export const fetchProductByBarcode = async (barcode) => {
         let product = null;
         let finalBarcode = barcode;
 
-        for (const variant of variants) {
-            product = await tryFetchOFF(variant);
-            if (product) {
-                finalBarcode = variant;
-                break;
-            }
+        // Lanzar todas las peticiones a OFF en paralelo para no hacer esperar al usuario
+        const offResults = await Promise.all(variants.map(async (v) => {
+            const p = await tryFetchOFF(v);
+            return p ? { p, v } : null;
+        }));
+
+        const validOff = offResults.find(res => res !== null);
+
+        if (validOff) {
+            product = validOff.p;
+            finalBarcode = validOff.v;
         }
 
         if (product) {
             const newProductData = {
-                barcode: finalBarcode, // Podría ser la variante reparada
+                barcode: finalBarcode,
                 food_name: product.product_name || 'Desconocido',
                 brands: product.brands || '',
                 calories: product.nutriments?.['energy-kcal_100g'] ?? 0,
@@ -115,28 +142,30 @@ export const fetchProductByBarcode = async (barcode) => {
                 sugars: product.nutriments?.sugars_100g ?? 0,
             };
 
-            // 3. Save to Supabase (ignore errors if it fails to cache to avoid breaking the UI)
-            await supabase.from('scanned_products').insert([newProductData]).catch(e => console.error('Cache save error', e));
+            // 3. Save to Supabase (Fire and forget, para no bloquear la UI si supabase es lento)
+            supabase.from('scanned_products').insert([newProductData]).catch(e => console.error('Cache save error', e));
 
             return newProductData;
         }
 
-        // 3. Fallback: Fetch from USDA if Open Food Facts fails
+        // 3. Fallback: Fetch from USDA (FoodData Central) if OFF fails
         const apiKey = import.meta.env.VITE_USDA_API_KEY || 'DEMO_KEY';
         let usdaData = null;
         try {
             let usdaUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(barcode)}&pageSize=1`;
-            let usdaRes = await fetch(usdaUrl);
+            let usdaRes = await fetchWithTimeout(usdaUrl, {}, 6000);
             usdaData = await usdaRes.json();
 
-            // Intento 2.1: Muchos códigos USA vienen escaneados en formato EAN-13 (con un cero inicial). USDA guarda los UPC de 12.
+            // Intento 2.1: Muchos códigos US (UPC-A, 12 digitos) vienen escaneados en formato EAN-13 (con un cero inicial).
             if ((!usdaData.foods || usdaData.foods.length === 0) && barcode.length > 11 && barcode.startsWith('0')) {
                 const altBarcode = barcode.substring(1);
                 usdaUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(altBarcode)}&pageSize=1`;
-                usdaRes = await fetch(usdaUrl);
+                usdaRes = await fetchWithTimeout(usdaUrl, {}, 6000);
                 usdaData = await usdaRes.json();
             }
-        } catch (e) { console.error('USDA search err', e); }
+        } catch (e) {
+            console.warn('USDA search timeout o error', e.message);
+        }
 
         if (usdaData && usdaData.foods && usdaData.foods.length > 0) {
             const food = usdaData.foods[0];
@@ -157,22 +186,21 @@ export const fetchProductByBarcode = async (barcode) => {
                 sugars: sugarNutrient ? sugarNutrient.value : 0,
             };
 
-            await supabase.from('scanned_products').insert([newProductData]).catch(e => console.error('Cache save error', e));
+            supabase.from('scanned_products').insert([newProductData]).catch(e => console.error('Cache save error', e));
             return newProductData;
         }
 
-        // 4. Fallback Extremo: Usar UPCitemdb para sacar el "Nombre" del producto con el código de barras, y buscar ese nombre de texto en texto en USDA
+        // 4. Fallback Extremo: Usar UPCitemdb para sacar el "Nombre", y buscar ese nombre en USDA
         try {
-            // UPCitemdb requiere 12 dígitos, así que si empieza con 0 suele requerir quitárselo
             const parsedUpc = (barcode.length > 11 && barcode.startsWith('0')) ? barcode.substring(1) : barcode;
             const upcUrl = `https://api.upcitemdb.com/prod/trial/lookup?upc=${encodeURIComponent(parsedUpc)}`;
-            const upcRes = await fetch(upcUrl);
+            // UPCitemDB es la más lenta a veces
+            const upcRes = await fetchWithTimeout(upcUrl, {}, 6000);
             const upcData = await upcRes.json();
 
             if (upcData && upcData.items && upcData.items.length > 0) {
                 let upcTitle = upcData.items[0].title;
                 if (upcTitle) {
-                    // Limpiamos un poco el titulo para USDA
                     upcTitle = upcTitle.split(',')[0].substring(0, 30);
                     const usdaFallback = await searchUSDA(upcTitle);
                     if (usdaFallback) {
@@ -181,15 +209,16 @@ export const fetchProductByBarcode = async (barcode) => {
                             brands: upcData.items[0].brand || '',
                             ...usdaFallback
                         };
-                        await supabase.from('scanned_products').insert([newProductData]).catch(e => console.error('Cache save error', e));
+                        supabase.from('scanned_products').insert([newProductData]).catch(e => console.error('Cache save error', e));
                         return newProductData;
                     } else {
-                        // Al menos devolvemos el título, marca y 0 carbs en lugar de lanzar "NotFound" para que puedan guardarlo manualmente
                         return { barcode, food_name: upcTitle, brands: upcData.items[0].brand || '', calories: 0, carbs: 0, proteins: 0, fat: 0, sugars: 0 };
                     }
                 }
             }
-        } catch (e) { console.error('UPCitemdb fallback error', e); }
+        } catch (e) {
+            console.warn('UPCitemdb fallback error o timeout', e.message);
+        }
 
         return null;
     } catch (error) {

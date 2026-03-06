@@ -581,7 +581,7 @@ input:checked+.sliderRound:before {
     border: none;
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-400);
-    font-weight: var(--typography-weight-semibold);
+    font-weight: var(--typography-weight-semi-bold);
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 4px 12px rgba(95, 103, 182, 0.2);

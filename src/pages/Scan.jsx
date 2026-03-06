@@ -79,8 +79,8 @@ const Scan = () => {
         };
     }, [t, error, productData]);
 
-    const processBarcode = async (decodedText) => {
-        if (loading) return;
+    const processBarcode = async (decodedText, fromUpload = false) => {
+        if (loading && !fromUpload) return;
         setLoading(true);
         setError(null);
 
@@ -134,7 +134,7 @@ const Scan = () => {
 
         scannerRef.current.scanFile(file, false)
             .then(decodedText => {
-                processBarcode(decodedText);
+                processBarcode(decodedText, true);
             })
             .catch(err => {
                 setError(t('scanNoBarcodeDetectedImage', 'No pudimos encontrar un código de barras en la foto proporcionada.'));
