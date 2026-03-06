@@ -93,6 +93,35 @@ export const fetchProductByBarcode = async (barcode) => {
             return newProductData;
         }
 
+        // 3. Fallback: Fetch from USDA if Open Food Facts fails
+        const apiKey = import.meta.env.VITE_USDA_API_KEY || 'DEMO_KEY';
+        const usdaUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(barcode)}&pageSize=1`;
+        const usdaRes = await fetch(usdaUrl);
+        const usdaData = await usdaRes.json();
+
+        if (usdaData.foods && usdaData.foods.length > 0) {
+            const food = usdaData.foods[0];
+            const carbNutrient = food.foodNutrients.find(n => n.nutrientId === 1005 || (n.nutrientName && n.nutrientName.toLowerCase().includes('carbohydrate')));
+            const calNutrient = food.foodNutrients.find(n => n.nutrientId === 1008 || (n.nutrientName && n.nutrientName.toLowerCase().includes('energy')));
+            const proteinNutrient = food.foodNutrients.find(n => n.nutrientId === 1003 || (n.nutrientName && n.nutrientName.toLowerCase().includes('protein')));
+            const fatNutrient = food.foodNutrients.find(n => n.nutrientId === 1004 || (n.nutrientName && n.nutrientName.toLowerCase().includes('lipid')));
+            const sugarNutrient = food.foodNutrients.find(n => n.nutrientId === 2000 || (n.nutrientName && n.nutrientName.toLowerCase().includes('sugar')));
+
+            const newProductData = {
+                barcode: barcode,
+                food_name: food.description || 'Desconocido',
+                brands: food.brandOwner || '',
+                calories: calNutrient ? calNutrient.value : 0,
+                carbs: carbNutrient ? carbNutrient.value : 0,
+                proteins: proteinNutrient ? proteinNutrient.value : 0,
+                fat: fatNutrient ? fatNutrient.value : 0,
+                sugars: sugarNutrient ? sugarNutrient.value : 0,
+            };
+
+            await supabase.from('scanned_products').insert([newProductData]).catch(e => console.error('Cache save error', e));
+            return newProductData;
+        }
+
         return null;
     } catch (error) {
         console.error('Error fetching product by barcode:', error);
