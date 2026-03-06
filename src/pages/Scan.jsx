@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { fetchProductByBarcode } from '../lib/foodApis';
 import { useWizard } from '../contexts/WizardContext';
 import styles from './Scan.module.css';
@@ -11,50 +11,69 @@ const Scan = () => {
     const [loading, setLoading] = useState(false);
     const [productData, setProductData] = useState(null);
     const [error, setError] = useState(null);
+    const scannerRef = useRef(null);
 
     useEffect(() => {
-        // Configura html5-qrcode
-        const scanner = new Html5QrcodeScanner(
-            'reader',
-            { fps: 10, qrbox: { width: 250, height: 250 } },
-            false
-        );
+        // Evitar inicializar múltiples veces en Strict Mode
+        if (!scannerRef.current) {
+            scannerRef.current = new Html5Qrcode("reader");
+        }
 
-        const onScanSuccess = async (decodedText) => {
-            // Evitar escanear repetidamente mientras carga
-            if (loading) return;
-
-            setLoading(true);
-            setError(null);
-            scanner.pause(true); // Pausar escáner para evitar múltiples peticiones
-
+        const startScanning = async () => {
             try {
-                const product = await fetchProductByBarcode(decodedText);
-                if (product) {
-                    setProductData(product);
-                } else {
-                    setError(t('scanProductNotFound', 'Producto no encontrado en la base de datos.'));
-                    scanner.resume(); // Reanudar escáner si no se encontró
-                }
+                await scannerRef.current.start(
+                    { facingMode: "environment" },
+                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    async (decodedText) => {
+                        // onScanSuccess
+                        if (loading) return;
+
+                        setLoading(true);
+                        setError(null);
+
+                        // Pausar el escaneo
+                        try {
+                            await scannerRef.current.pause(true);
+                        } catch (e) {
+                            console.warn("No se pudo pausar el escáner", e);
+                        }
+
+                        try {
+                            const product = await fetchProductByBarcode(decodedText);
+                            if (product) {
+                                setProductData(product);
+                            } else {
+                                setError(t('scanProductNotFound', 'Producto no encontrado en la base de datos.'));
+                                try { await scannerRef.current.resume(); } catch (e) { }
+                            }
+                        } catch (err) {
+                            console.error('Error al escanear/buscar', err);
+                            setError(t('scanError', 'Hubo un error al buscar la información del producto.'));
+                            try { await scannerRef.current.resume(); } catch (e) { }
+                        } finally {
+                            setLoading(false);
+                        }
+                    },
+                    (error) => {
+                        // onScanFailure - silently ignore usually
+                    }
+                );
             } catch (err) {
-                console.error('Error al escanear/buscar', err);
-                setError(t('scanError', 'Hubo un error al buscar la información del producto.'));
-                scanner.resume();
-            } finally {
-                setLoading(false);
+                console.error("Error al iniciar el escáner de la cámara", err);
+                setError(t('scanErrorCamera', 'No se pudo acceder a la cámara trasera. Verifica los permisos.'));
             }
         };
 
-        const onScanFailure = (error) => {
-            // Silently ignore scan failures
-        };
-
-        scanner.render(onScanSuccess, onScanFailure);
+        if (scannerRef.current.getState() !== 2) { // 2 corresponds to scanning state in Html5Qrcode
+            startScanning();
+        }
 
         return () => {
-            scanner.clear().catch(error => {
-                console.error("No se pudo limpiar el scanner", error);
-            });
+            if (scannerRef.current) {
+                scannerRef.current.stop().then(() => {
+                    scannerRef.current.clear();
+                }).catch(e => console.warn(e));
+            }
         };
     }, [loading, t]);
 
