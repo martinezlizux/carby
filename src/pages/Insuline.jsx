@@ -14,9 +14,9 @@ const Insuline = () => {
     const [takesMedication, setTakesMedication] = useState(userData.takesMedication !== undefined ? userData.takesMedication : true);
 
     // Instead of a single string, we'll store medications as an array of objects
-    // Example: [{ id: 1, name: 'Lantus', timing: 'Night' }]
+    // Example: [{ id: 1, name: 'Lantus', timing: 'Morning' }]
     const [medications, setMedications] = useState(
-        userData.medications || [{ id: Date.now(), name: '', timing: t('timingMorning') || 'Morning' }]
+        userData.medications || [{ id: Date.now(), name: '', timing: 'Morning' }]
     );
 
     const [useCarbRatio, setUseCarbRatio] = useState(userData.useCarbRatio !== undefined ? userData.useCarbRatio : false);
@@ -24,7 +24,7 @@ const Insuline = () => {
     const [isSaving, setIsSaving] = useState(false);
 
     const addMedication = () => {
-        setMedications([...medications, { id: Date.now(), name: '', timing: t('timingMorning') || 'Morning' }]);
+        setMedications([...medications, { id: Date.now(), name: '', timing: 'Morning' }]);
     };
 
     const updateMedication = (id, field, value) => {
@@ -113,13 +113,17 @@ const Insuline = () => {
                     <div className={`${styles.section} ${styles.animateFadeIn}`}>
                         <label className={styles.label}>{t('wizManageDiabetesType')}</label>
                         <div className={styles.toggleGroup}>
-                            {['Type 1', 'Type 2', 'Gestational'].map(type => (
+                            {[
+                                { id: 'Type 1', label: t('diabetesType1') },
+                                { id: 'Type 2', label: t('diabetesType2') },
+                                { id: 'Gestational', label: t('diabetesGestational') }
+                            ].map(item => (
                                 <button
-                                    key={type}
-                                    className={`${styles.toggleBtn} ${diabetesType === type ? styles.active : ''}`}
-                                    onClick={() => setDiabetesType(type)}
+                                    key={item.id}
+                                    className={`${styles.toggleBtn} ${diabetesType === item.id ? styles.active : ''}`}
+                                    onClick={() => setDiabetesType(item.id)}
                                 >
-                                    {type}
+                                    {item.label}
                                 </button>
                             ))}
                         </div>
@@ -174,13 +178,19 @@ const Insuline = () => {
                                 <div className={styles.timingGroup}>
                                     <label className={styles.subLabel}>{t('wizManageWhenTake')}</label>
                                     <div className={styles.chipsContainer}>
-                                        {['Morning', 'Afternoon', 'Night', 'With Meals', 'Weekly'].map(timing => (
+                                        {[
+                                            { id: 'Morning', key: 'timingMorning' },
+                                            { id: 'Afternoon', key: 'timingAfternoon' },
+                                            { id: 'Night', key: 'timingNight' },
+                                            { id: 'With Meals', key: 'timingMeals' },
+                                            { id: 'Weekly', key: 'timingWeekly' }
+                                        ].map(timing => (
                                             <button
-                                                key={timing}
-                                                className={`${styles.chip} ${med.timing === timing ? styles.chipActive : ''}`}
-                                                onClick={() => updateMedication(med.id, 'timing', timing)}
+                                                key={timing.id}
+                                                className={`${styles.chip} ${med.timing === timing.id ? styles.chipActive : ''}`}
+                                                onClick={() => updateMedication(med.id, 'timing', timing.id)}
                                             >
-                                                {timing}
+                                                {t(timing.key)}
                                             </button>
                                         ))}
                                     </div>

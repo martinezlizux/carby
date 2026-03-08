@@ -162,7 +162,7 @@ const EditProfile = () => {
     return (
         <div className={styles.container}>
             <header className={styles.header}>
-                <h1>{t('profile') || 'Profile'}</h1>
+                <h1>{t('profile')}</h1>
                 <button className={styles.closeBtn} onClick={() => navigate(-1)}>
                     <i className="fa-solid fa-xmark"></i>
                 </button>
@@ -178,7 +178,7 @@ const EditProfile = () => {
                                 <span className={styles.avatarInitials}>{getInitials(name)}</span>
                             </div>
                         )}
-                        <div className={styles.uploadOverlay}>Edit</div>
+                        <div className={styles.uploadOverlay}>{t('edit')}</div>
                     </div>
                     <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept="image/*" onChange={handleFileChange} />
                 </div>
@@ -253,13 +253,17 @@ const EditProfile = () => {
                         <div className={`${styles.section} ${styles.animateFadeIn}`}>
                             <label className={styles.label}>{t('wizManageDiabetesType')}</label>
                             <div className={styles.toggleGroup}>
-                                {['Type 1', 'Type 2', 'Gestational'].map(type => (
+                                {[
+                                    { id: 'Type 1', key: 'diabetesType1' },
+                                    { id: 'Type 2', key: 'diabetesType2' },
+                                    { id: 'Gestational', key: 'diabetesGestational' }
+                                ].map(item => (
                                     <button
-                                        key={type}
-                                        className={`${styles.toggleBtn} ${diabetesType === type ? styles.active : ''}`}
-                                        onClick={() => setDiabetesType(type)}
+                                        key={item.id}
+                                        className={`${styles.toggleBtn} ${diabetesType === item.id ? styles.active : ''}`}
+                                        onClick={() => setDiabetesType(item.id)}
                                     >
-                                        {type}
+                                        {t(item.key)}
                                     </button>
                                 ))}
                             </div>
@@ -291,9 +295,19 @@ const EditProfile = () => {
                                     <div className={styles.timingGroup}>
                                         <label className={styles.subLabel}>{t('wizManageWhenTake')}</label>
                                         <div className={styles.chipsContainer}>
-                                            {['Morning', 'Afternoon', 'Night', 'With Meals', 'Weekly'].map(timing => (
-                                                <button key={timing} className={`${styles.chip} ${med.timing === timing ? styles.chipActive : ''}`} onClick={() => updateMedication(med.id, 'timing', timing)}>
-                                                    {timing}
+                                            {[
+                                                { id: 'Morning', key: 'timingMorning' },
+                                                { id: 'Afternoon', key: 'timingAfternoon' },
+                                                { id: 'Night', key: 'timingNight' },
+                                                { id: 'With Meals', key: 'timingMeals' },
+                                                { id: 'Weekly', key: 'timingWeekly' }
+                                            ].map(item => (
+                                                <button
+                                                    key={item.id}
+                                                    className={`${styles.chip} ${med.timing === item.id ? styles.chipActive : ''}`}
+                                                    onClick={() => updateMedication(med.id, 'timing', item.id)}
+                                                >
+                                                    {t(item.key)}
                                                 </button>
                                             ))}
                                         </div>
@@ -335,7 +349,7 @@ const EditProfile = () => {
 
             <footer className={styles.footer}>
                 <button onClick={handleSave} className={styles.saveBtn}>
-                    {t('saveProfile') || 'Guardar'}
+                    {t('saveProfile')}
                 </button>
             </footer>
         </div>

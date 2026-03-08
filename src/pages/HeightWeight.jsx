@@ -142,7 +142,7 @@ const HeightWeight = () => {
                         if (weight === '') setWeight(70);
                     }}
                 >
-                    Metric (cm/kg)
+                    {t('metricUnit')}
                 </button>
                 <button
                     className={`${styles.toggleButton} ${unit === 'imperial' ? styles.toggleActive : ''}`}
@@ -152,7 +152,7 @@ const HeightWeight = () => {
                         if (weight === '') setWeight(70);
                     }}
                 >
-                    Imperial (ft/lbs)
+                    {t('imperialUnit')}
                 </button>
             </div>
 

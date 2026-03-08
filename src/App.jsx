@@ -15,6 +15,8 @@ import EditProfile from './pages/EditProfile.jsx';
 import AppLayout from './components/AppLayout.jsx';
 import { WizardProvider } from './contexts/WizardContext.jsx';
 import Scan from './pages/Scan.jsx';
+import History from './pages/History.jsx';
+import VoiceEntry from './pages/VoiceEntry.jsx';
 
 function App() {
   return (
@@ -32,12 +34,14 @@ function App() {
 
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/chat" element={<Chat />} />
             <Route path="/goals" element={<Goals />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/history" element={<History />} />
           </Route>
           <Route path="/profile/edit" element={<EditProfile />} />
+          <Route path="/chat" element={<Chat />} />
           <Route path="/scan" element={<Scan />} />
+          <Route path="/voice" element={<VoiceEntry />} />
         </Routes>
       </BrowserRouter>
     </WizardProvider>

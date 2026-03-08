@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useWizard } from '../contexts/WizardContext';
 import styles from './Thanks.module.css';
-import { CheckCircle2 } from 'lucide-react';
 
 const Thanks = () => {
     const navigate = useNavigate();
+    const { t } = useWizard();
 
     useEffect(() => {
         // Mark wizard as completed
@@ -22,14 +23,14 @@ const Thanks = () => {
             <div className={styles.backgroundBlur}></div>
             <div className={styles.card}>
                 <div className={styles.iconCircle}>
-                    <CheckCircle2 size={64} color="var(--color-primary-600)" />
+                    <i className="fas fa-check-circle" style={{ fontSize: '64px', color: 'var(--color-primary-600)' }}></i>
                 </div>
-                <h1 className={styles.title}>All set!</h1>
-                <p className={styles.subtitle}>Your profile has been saved.</p>
+                <h1 className={styles.title}>{t('thanksTitle')}</h1>
+                <p className={styles.subtitle}>{t('thanksSubtitle')}</p>
                 <div className={styles.loader}>
                     <div className={styles.dot}></div>
-                    <div className={styles.dot}></div>
-                    <div className={styles.dot}></div>
+                    <div className={styles.dot} style={{ animationDelay: '0.2s' }}></div>
+                    <div className={styles.dot} style={{ animationDelay: '0.4s' }}></div>
                 </div>
             </div>
         </div>

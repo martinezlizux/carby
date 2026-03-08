@@ -152,7 +152,7 @@ input:checked+.sliderRound:before {
     width: 100%;
     border: 2px solid var(--border-neutral-light);
     border-radius: var(--radius-lg);
-    background-color: var(--surface-neutral-bg-light);
+    background-color: #FFFFFF;
     padding: var(--spacing-4);
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-300);

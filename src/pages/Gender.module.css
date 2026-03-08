@@ -16,7 +16,7 @@
     display: flex;
     align-items: center;
     padding: var(--spacing-4);
-    background-color: var(--surface-primary-bg-light);
+    background-color: #FFFFFF;
     border: 2px solid var(--border-primary-light);
     border-radius: var(--radius-2xl);
     cursor: pointer;

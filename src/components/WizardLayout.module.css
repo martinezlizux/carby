@@ -3,7 +3,7 @@
     flex-direction: column;
     height: 100vh;
     width: 100%;
-    background-color: var(--surface-primary-bg-light);
+    background-color: #FFFFFF;
     overflow: hidden;
 }
 
@@ -95,7 +95,7 @@
 
 .footer {
     padding: var(--spacing-6);
-    background-color: var(--surface-primary-bg-light);
+    background-color: #FFFFFF;
     border-top: 1px solid var(--border-neutral-light);
 }
 

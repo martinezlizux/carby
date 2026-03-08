@@ -1,232 +1,437 @@
-.container {
+.pageContainer {
     display: flex;
     flex-direction: column;
-    height: 100vh;
-    background-color: var(--surface-neutral-bg-light);
-    color: var(--color-neutral-900);
-}
-
-.scanActionsBox {
-    display: flex;
-    gap: var(--spacing-4);
-    justify-content: center;
-    align-items: center;
-    margin-top: var(--spacing-4);
-    width: 100%;
-}
-
-.uploadImageButton {
-    background-color: var(--surface-primary-bg-base);
-    color: var(--color-neutral-0);
-    border: none;
-    padding: var(--spacing-3) var(--spacing-6);
-    border-radius: var(--radius-full);
-    font-size: var(--typography-body-large-font-size);
-    font-weight: var(--typography-weight-bold);
-    font-family: var(--typography-family-heading);
-    cursor: pointer;
-    flex: 1;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.uploadImageButton:hover:not(:disabled) {
-    background-color: var(--surface-primary-bg-dark);
-}
-
-.uploadImageButton:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    min-height: 100vh;
+    background-color: #FFFFFF;
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    color: var(--color-neutral-900, #0F172A);
 }
 
 .header {
     display: flex;
     align-items: center;
-    margin-bottom: 24px;
-}
-
-.backButton {
-    background: none;
-    border: none;
-    font-size: 16px;
-    color: var(--accent-primary);
-    cursor: pointer;
-    padding: 8px;
+    justify-content: space-between;
+    padding: var(--spacing-6, 1.5rem);
+    background: transparent;
 }
 
 .title {
-    margin-left: 16px;
-    font-size: 24px;
-    font-weight: bold;
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0;
+    color: var(--color-neutral-900, #0F172A);
 }
 
-.scannerContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    padding: 0 16px;
-}
-
-.readerWrapper {
-    position: relative;
-    width: 100%;
-    max-width: 400px;
-    border-radius: 12px;
-    overflow: hidden;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.successWrapper {
-    box-shadow: 0 0 0 4px #4ade80, 0 4px 12px rgba(74, 222, 128, 0.3);
-}
-
-.reader {
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-/* Success animation overlay */
-.successOverlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(74, 222, 128, 0.2);
+.closeButton {
+    background: transparent;
+    border: none;
+    width: 40px;
+    height: 40px;
+    color: #43404D;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10;
-    animation: flash 0.5s ease-out;
+    transition: all 0.2s ease;
+    font-size: 20px;
 }
 
-@keyframes flash {
-    0% {
-        background-color: rgba(74, 222, 128, 0.6);
-    }
-
-    100% {
-        background-color: rgba(74, 222, 128, 0);
-    }
+.closeButton:hover {
+    background-color: var(--color-neutral-200, #E2E8F0);
+    transform: scale(1.05);
 }
 
-.readerSuccess {
-    filter: brightness(1.1);
+.closeButton i {
+    font-size: 20px;
 }
 
-.scannerTip {
-    font-size: 14px;
-    color: var(--text-secondary);
-    text-align: center;
-    margin-bottom: 16px;
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 var(--spacing-6, 1.5rem) var(--spacing-10, 2.5rem);
 }
 
-.loadingText {
-    margin-top: 12px;
-    font-size: 16px;
-    color: var(--accent-primary);
-    font-weight: 500;
-}
-
-.errorContainer {
+.centerGroup {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 40px;
-    padding: 0 20px;
+    justify-content: center;
+    text-align: center;
+    gap: var(--spacing-6, 1.5rem);
+}
+
+.iconCircle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    margin-bottom: var(--spacing-4, 1rem);
+    cursor: pointer;
+}
+
+.cameraIcon {
+    color: var(--color-primary-600, #4F46E5);
+}
+
+.instructionTitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-neutral-900, #0F172A);
+}
+
+.instructionSub {
+    font-size: 1rem;
+    color: var(--color-neutral-500, #64748B);
+    max-width: 250px;
 }
 
 .errorText {
-    color: #ff4d4f;
-    margin-bottom: 20px;
-    text-align: center;
+    color: #EF4444;
+    font-size: 0.875rem;
+    font-weight: 600;
 }
 
-.tryAgainButton {
-    padding: 12px 24px;
-    background-color: var(--surface-primary-bg-base);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-.resultContainer {
+.actions {
     display: flex;
     flex-direction: column;
-    margin-top: 20px;
-    padding: 0 20px;
+    gap: var(--spacing-4, 1rem);
 }
 
-.productName {
-    font-size: 28px;
+.recordButton {
+    width: 100%;
+    background-color: var(--color-primary-600, #4F46E5);
+    color: white;
+    border: none;
+    padding: var(--spacing-4, 1.25rem);
+    border-radius: var(--radius-full, 9999px);
+    font-size: 1.125rem;
     font-weight: 700;
-    margin-bottom: 4px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
 }
 
-.productBrand {
-    font-size: 16px;
-    color: var(--text-secondary);
-    margin-bottom: 24px;
+.primaryButton {
+    background: #7378E1;
+    color: white;
+    border: none;
+    border-radius: 100px;
+    padding: 1.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(115, 120, 225, 0.4);
+    transition: all 0.2s ease;
+    width: 100%;
 }
 
-.nutritionCard {
-    background-color: var(--surface-neutral-bg-low);
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 24px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+.secondaryLink {
+    background: none;
+    border: none;
+    color: #94A3B8;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    margin: 0 auto;
 }
 
-.nutritionCard h3 {
-    font-size: 18px;
-    margin-bottom: 16px;
-    color: var(--color-neutral-900);
+/* Loading Area */
+.loadingContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
 }
 
-.nutritionList {
-    list-style: none;
-    padding: 0;
+.previewSmall {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    border: 3px solid white;
+}
+
+.previewSmall img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #E2E8F0;
+    border-top: 5px solid var(--color-primary-600, #4F46E5);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingText {
+    font-size: 1.5rem;
+    font-weight: 800;
     margin: 0;
 }
 
-.nutritionList li {
+.loadingSubtext {
+    color: var(--color-neutral-500, #64748B);
+    margin: 0;
+}
+
+/* Illustration */
+.illustrationContainer {
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.illustration {
+    width: 146px;
+    height: auto;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.05));
+    object-fit: contain;
+    animation: fadeInScale 0.6s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Result Card - Shared with Chat & Voice */
+.resultCard {
+    background: white;
+    border-radius: 32px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    width: 100%;
+}
+
+.successHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #04AA4C;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.875rem;
+}
+
+.starIcon {
+    width: 18px;
+    height: 18px;
+}
+
+.foodNameContainer {
+    text-align: left;
+    background: #F1F0F2;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.fieldLabel {
+    font-size: 0.75rem;
+    color: #ABA5B4;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: block;
+    text-transform: uppercase;
+}
+
+.foodName {
+    font-size: 1.75rem;
+    font-weight: 900;
+    margin: 0;
+    line-height: 1.1;
+    color: #0F172A;
+}
+
+.foodNameInput {
+    width: 100%;
+    background: transparent;
+    border: none;
+    font-size: 1.125rem;
+    font-weight: 900;
+    color: #43404D;
+    outline: none;
+    line-height: 1.2;
+}
+
+.nutritionGrid {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.mainNutrient {
+    flex: 1;
+}
+
+.nutrientBadge {
+    background: #DEE1FB;
+    border-radius: 12px;
+    padding: 1rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.nutrientValueContainer {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.nutrientValueInput {
+    width: 100%;
+    min-width: 0;
+    text-align: right;
+    background: transparent;
+    border: none;
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #6F6B80;
+    outline: none;
+}
+
+.nutrientValueInput::-webkit-outer-spin-button,
+.nutrientValueInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.nutrientValueInput[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.nutrientLabel {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #6F6B80;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.nutrientUnit {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6F6B80;
+}
+
+.otherNutrients {
+    flex: 1.3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #FFFFFF;
+    border: 1px solid #DEE1FB;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    min-width: 0;
+}
+
+.nutrientRow {
     display: flex;
     justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border-light);
-    font-size: 16px;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    align-items: center;
 }
 
-.nutritionList li:last-child {
-    border-bottom: none;
+.smallLabel {
+    color: #6F6B80;
 }
 
-.addButton {
-    padding: 16px;
-    background-color: var(--surface-primary-bg-base);
-    color: white;
+.smallValueContainer {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.smallValueInput {
+    width: 40px;
+    text-align: right;
+    background: transparent;
     border: none;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-bottom: 12px;
+    font-size: 1.125rem;
+    /* ~18px visually */
+    font-weight: 800;
+    outline: none;
 }
 
-.cancelButton {
-    padding: 16px;
-    background-color: transparent;
-    color: var(--color-neutral-900);
-    border: 1px solid var(--color-neutral-300);
-    border-radius: 12px;
-    font-size: 16px;
+.smallValueInput::-webkit-outer-spin-button,
+.smallValueInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.smallValueInput[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.unitSuffix {
+    font-size: 1.125rem;
+    font-weight: 800;
+}
+
+.proteinInput,
+.proteinSuffix {
+    color: #FF7444;
+}
+
+.carbsInput,
+.carbsSuffix {
+    color: #FFA202;
+}
+
+.fatInput,
+.fatSuffix {
+    color: #0971E1;
+}
+
+.closeLink {
+    background: none;
+    border: none;
+    color: #5F67B6;
+    padding: var(--spacing-4, 1rem);
+    font-size: 1.125rem;
+    font-weight: 800;
     cursor: pointer;
+    text-align: center;
+    margin-top: 1rem;
+    width: 100%;
 }

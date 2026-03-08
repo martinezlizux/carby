@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Splash.module.css';
-import balanceImg from '../assets/balance.png';
+import carbyVideo from '../assets/Carby_Grok_hello.mp4';
 import { useWizard } from '../contexts/WizardContext';
 
 const Splash = () => {
@@ -12,14 +12,14 @@ const Splash = () => {
     useEffect(() => {
         // Trigger animation explicitly
         const timer1 = setTimeout(() => setAnimate(true), 100);
-        // Transition to next view slightly after animation completes
         const timer2 = setTimeout(() => {
-            if (localStorage.getItem('wizardCompleted') === 'true') {
+            const hasCompletedWizard = localStorage.getItem('wizardCompleted');
+            if (hasCompletedWizard) {
                 navigate('/dashboard');
             } else {
                 navigate('/language');
             }
-        }, 2500);
+        }, 3500);
 
         return () => {
             clearTimeout(timer1);
@@ -32,10 +32,13 @@ const Splash = () => {
             <div className={styles.backgroundBlur}></div>
             <div className={`${styles.logoContainer} ${animate ? styles.animateIn : ''}`}>
                 <div className={styles.imgWrapper}>
-                    <img
-                        src={balanceImg}
-                        alt="Carby Logo"
-                        className={styles.image}
+                    <video
+                        src={carbyVideo}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className={styles.video}
                     />
                 </div>
                 <h1 className={styles.appName}>Carby</h1>

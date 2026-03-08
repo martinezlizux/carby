@@ -1,0 +1,496 @@
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #FFFFFF;
+    font-family: var(--typography-family-body, "Inter"), sans-serif;
+    color: var(--color-neutral-900, #0F172A);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-6, 1.5rem);
+    background: transparent;
+}
+
+.title {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0;
+    color: var(--color-neutral-900, #0F172A);
+}
+
+.closeButton {
+    background: transparent;
+    border: none;
+    width: 40px;
+    height: 40px;
+    color: #43404D;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 20px;
+}
+
+.closeButton:hover {
+    background-color: var(--color-neutral-200, #E2E8F0);
+    transform: scale(1.05);
+}
+
+.closeButton i {
+    font-size: 20px;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 var(--spacing-6, 1.5rem) var(--spacing-10, 2.5rem);
+}
+
+.card {
+    background: white;
+    border-radius: 32px;
+    padding: 2.5rem 1.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    margin-bottom: 2rem;
+    border: 1px solid #F1F5F9;
+    text-align: center;
+}
+
+.iconCircle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #F8FAFC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-4, 1rem);
+    transition: all 0.3s ease;
+}
+
+.listening {
+    background-color: #FFF2EF;
+    /* Light orange bg */
+    box-shadow: 0 0 30px rgba(255, 129, 89, 0.2);
+}
+
+.micIcon {
+    color: #627AEE;
+    font-size: 3rem;
+}
+
+.micIconActive {
+    color: #FF8159;
+    font-size: 3rem;
+}
+
+.statusTitle {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 0;
+    color: var(--color-neutral-900, #0F172A);
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+}
+
+.listeningTitleText {
+    color: #FF8159;
+}
+
+.statusSub {
+    font-size: 1rem;
+    color: var(--color-neutral-500, #64748B);
+    max-width: 280px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.pulseContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pulseCircle {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #FF8159;
+    opacity: 0.3;
+    animation: pulse 1.5s ease-out infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: scale(2.5);
+        opacity: 0;
+    }
+}
+
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4, 1rem);
+}
+
+.recordButton {
+    width: 100%;
+    background-color: #627AEE;
+    /* Precise blue from Figma */
+    color: white;
+    border: none;
+    padding: var(--spacing-4, 1.25rem);
+    border-radius: var(--radius-full, 9999px);
+    font-size: 1.125rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(98, 122, 238, 0.25);
+}
+
+.stopButton {
+    width: 100%;
+    background-color: #FF8159;
+    /* Precise orange from Figma */
+    color: white;
+    border: none;
+    padding: var(--spacing-4, 1.25rem);
+    border-radius: var(--radius-full, 9999px);
+    font-size: 1.125rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255, 129, 89, 0.3);
+}
+
+.primaryButton {
+    background: #7378E1;
+    color: white;
+    border: none;
+    border-radius: 100px;
+    padding: 1.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(115, 120, 225, 0.4);
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.secondaryLink {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--color-primary-600, #4F46E5);
+    padding: var(--spacing-4, 1rem);
+    font-size: 1.125rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Loading Area */
+.loadingContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #E2E8F0;
+    border-top: 5px solid var(--color-primary-600, #4F46E5);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingText {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.loadingSubtext {
+    color: var(--color-neutral-500, #64748B);
+}
+
+/* Illustration */
+.illustrationContainer {
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.illustration {
+    width: 146px;
+    height: auto;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.05));
+    object-fit: contain;
+    animation: fadeInScale 0.6s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.listeningIllustration {
+    width: 150px;
+    opacity: 0.6;
+    filter: grayscale(0.5);
+    animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Result Card - Shared with Chat */
+.resultCard {
+    background: white;
+    border-radius: 32px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    width: 100%;
+}
+
+.successHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #04AA4C;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.875rem;
+}
+
+.foodNameContainer {
+    text-align: left;
+    background: #F1F0F2;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.fieldLabel {
+    font-size: 0.75rem;
+    color: #ABA5B4;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: block;
+    text-transform: uppercase;
+}
+
+.foodName {
+    font-size: 1.75rem;
+    font-weight: 900;
+    margin: 0;
+    line-height: 1.1;
+    color: #0F172A;
+}
+
+.foodNameInput {
+    width: 100%;
+    background: transparent;
+    border: none;
+    font-size: 1.125rem;
+    font-weight: 900;
+    color: #43404D;
+    outline: none;
+    line-height: 1.2;
+}
+
+.nutritionGrid {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.mainNutrient {
+    flex: 1;
+}
+
+.nutrientBadge {
+    background: #DEE1FB;
+    border-radius: 12px;
+    padding: 1rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.nutrientValueContainer {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.nutrientValueInput {
+    width: 100%;
+    min-width: 0;
+    text-align: right;
+    background: transparent;
+    border: none;
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #6F6B80;
+    outline: none;
+}
+
+.nutrientValueInput::-webkit-outer-spin-button,
+.nutrientValueInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.nutrientValueInput[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.nutrientLabel {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #6F6B80;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.nutrientUnit {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6F6B80;
+}
+
+.otherNutrients {
+    flex: 1.3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #FFFFFF;
+    border: 1px solid #DEE1FB;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    min-width: 0;
+}
+
+.nutrientRow {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    align-items: center;
+}
+
+.smallLabel {
+    color: #6F6B80;
+}
+
+.smallValueContainer {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.smallValueInput {
+    width: 40px;
+    text-align: right;
+    background: transparent;
+    border: none;
+    font-size: 1.125rem;
+    /* ~18px visually */
+    font-weight: 800;
+    outline: none;
+}
+
+.smallValueInput::-webkit-outer-spin-button,
+.smallValueInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.smallValueInput[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.unitSuffix {
+    font-size: 1.125rem;
+    font-weight: 800;
+}
+
+.proteinInput,
+.proteinSuffix {
+    color: #FF7444;
+}
+
+.carbsInput,
+.carbsSuffix {
+    color: #FFA202;
+}
+
+.fatInput,
+.fatSuffix {
+    color: #0971E1;
+}
+
+.closeLink {
+    background: none;
+    border: none;
+    color: #5F67B6;
+    padding: var(--spacing-4, 1rem);
+    font-size: 1.125rem;
+    font-weight: 800;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 1rem;
+    width: 100%;
+}

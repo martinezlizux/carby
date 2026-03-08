@@ -21,7 +21,7 @@
 }
 
 .inputField {
-    background-color: var(--surface-primary-bg-light);
+    background-color: #FFFFFF;
     border: 2px solid var(--border-neutral-light);
     border-radius: var(--radius-xl);
     padding: var(--spacing-4);

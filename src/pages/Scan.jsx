@@ -1,98 +1,32 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+// Lucide icons replaced by FontAwesome
 import { useWizard } from '../contexts/WizardContext';
-import { fetchProductByBarcode } from '../lib/foodApis';
 import { analyzeImageWithAI } from '../lib/ai';
-import { Html5Qrcode } from 'html5-qrcode';
-import { Image as ImageIcon } from 'lucide-react';
+import { saveMeal } from '../lib/mealHistory';
 import styles from './Scan.module.css';
 
 const Scan = () => {
     const navigate = useNavigate();
-    const { t } = useWizard();
-    const [loading, setLoading] = useState(false);
-    const [scanSuccess, setScanSuccess] = useState(false);
-    const [productData, setProductData] = useState(null);
+    const { userData, t } = useWizard();
+    const [step, setStep] = useState('input'); // 'input', 'analyzing', 'confirmation'
+    const [imagePreview, setImagePreview] = useState(null);
+    const [resultData, setResultData] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
 
-    const scannerRef = useRef(null);
-    const scanningRef = useRef(false);
     const fileInputRef = useRef(null);
+    const userLang = userData?.language || (navigator.language.startsWith('es') ? 'Spanish' : 'English');
 
     useEffect(() => {
-        if (productData || error) return;
-
-        scannerRef.current = new Html5Qrcode("reader");
-
-        const startScanner = async () => {
-            try {
-                await scannerRef.current.start(
-                    { facingMode: "environment" },
-                    { fps: 10, qrbox: { width: 250, height: 250 } },
-                    (decodedText) => {
-                        handleBarcodeDetected(decodedText);
-                    },
-                    (errorMessage) => {
-                        // ignore background scan errors
-                    }
-                );
-            } catch (err) {
-                console.warn("Error starting scanner", err);
-            }
-        };
-
-        if (scannerRef.current.getState() !== 2) {
-            startScanner();
+        // Automatically trigger camera on mount
+        if (step === 'input' && !imagePreview) {
+            fileInputRef.current?.click();
         }
-
-        return () => {
-            if (scannerRef.current) {
-                try {
-                    if (scannerRef.current.getState() === 2) {
-                        scannerRef.current.stop().then(() => {
-                            scannerRef.current.clear();
-                        }).catch(e => console.warn(e));
-                    }
-                } catch (e) { }
-            }
-        };
-    }, [productData, error]);
-
-    const handleBarcodeDetected = async (decodedText) => {
-        if (loading || scanSuccess || scanningRef.current) return;
-        scanningRef.current = true;
-        setLoading(true);
-        setScanSuccess(true);
-        setError(null);
-
-        if (window.navigator && window.navigator.vibrate) {
-            try { window.navigator.vibrate(200); } catch (e) { }
-        }
-
-        if (scannerRef.current && scannerRef.current.getState() === 2) {
-            try { await scannerRef.current.pause(true); } catch (e) { }
-        }
-
-        try {
-            const product = await fetchProductByBarcode(decodedText);
-            if (product) {
-                setProductData(product);
-            } else {
-                setError(t('scanProductNotFound', 'Producto no encontrado en la base de datos.'));
-                setScanSuccess(false);
-            }
-        } catch (err) {
-            console.error('Error al escanear/buscar', err);
-            setError(t('scanError', 'Hubo un error al buscar la información del producto.'));
-            setScanSuccess(false);
-        } finally {
-            setLoading(false);
-            scanningRef.current = false;
-        }
-    };
+    }, [step, imagePreview]);
 
     const compressImage = (file, maxWidth = 800) => {
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
             reader.onload = (event) => {
@@ -101,13 +35,8 @@ const Scan = () => {
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
                     const scaleSize = maxWidth / img.width;
-                    if (scaleSize < 1) {
-                        canvas.width = maxWidth;
-                        canvas.height = img.height * scaleSize;
-                    } else {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                    }
+                    canvas.width = maxWidth;
+                    canvas.height = img.height * scaleSize;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     resolve(canvas.toDataURL('image/jpeg', 0.8));
@@ -116,150 +45,211 @@ const Scan = () => {
         });
     };
 
-    const handleFileUploadOptions = async (e) => {
+    const handleFileUpload = async (e) => {
         if (!e.target.files || e.target.files.length === 0) return;
         const file = e.target.files[0];
 
-        setLoading(true);
+        // Preview
+        const reader = new FileReader();
+        reader.onload = (re) => setImagePreview(re.target.result);
+        reader.readAsDataURL(file);
+
+        setStep('analyzing');
         setError(null);
-        setScanSuccess(false);
-
-        if (scannerRef.current && scannerRef.current.getState() === 2) {
-            try { await scannerRef.current.pause(true); } catch (e) { }
-        }
-
-        if (window.navigator && window.navigator.vibrate) {
-            try { window.navigator.vibrate(100); } catch (e) { }
-        }
 
         try {
             const compressedBase64 = await compressImage(file);
-            const result = await analyzeImageWithAI(compressedBase64, 'Spanish');
+            const result = await analyzeImageWithAI(compressedBase64, userLang);
             if (result && result.food_name) {
-                setProductData(result);
+                setResultData(result);
+                setStep('confirmation');
             } else {
-                setError(t('scanAiUnknown', 'La IA no pudo reconocer los detalles nutricionales de la imagen.'));
+                setError(t('scanAiUnknown', 'No pude reconocer la comida.'));
+                setStep('input');
             }
         } catch (err) {
-            console.error('Error procesando foto con IA', err);
-            setError(t('scanAiError', 'Ocurrió un error al analizar la imagen con IA. Intenta de nuevo.'));
-        } finally {
-            setLoading(false);
-            // We do not resume scanner here; it will unmount or stay paused on error until Try Again.
+            console.error('Error procesando foto', err);
+            setError(t('scanAiError', 'Error al analizar la imagen.'));
+            setStep('input');
         }
     };
 
-    const handleBack = () => {
-        navigate('/dashboard');
+    const handleSave = async () => {
+        if (!resultData || isSaving) return;
+        setIsSaving(true);
+        try {
+            const { error } = await saveMeal({
+                food_name: resultData.food_name,
+                carbs: parseFloat(resultData.carbs),
+                calories: parseFloat(resultData.calories),
+                proteins: parseFloat(resultData.proteins),
+                fat: parseFloat(resultData.fat),
+                explanation: resultData.explanation,
+                source: 'scan'
+            });
+
+            if (error) {
+                alert('Ocurrió un error al guardar: ' + error.message);
+                setIsSaving(false);
+            } else {
+                navigate('/history');
+            }
+        } catch (error) {
+            console.error("Save error:", error);
+            setIsSaving(false);
+        }
     };
 
-    const handleAddLog = () => {
-        alert(t('scanAdded', `Se han añadido ${productData?.carbs || 0}g de carbohidratos a tu registro.`));
-        navigate('/dashboard');
-    };
+    const handleBack = () => navigate('/dashboard');
 
-    const handleTryAgain = () => {
-        setProductData(null);
-        setError(null);
-        setScanSuccess(false);
-        scanningRef.current = false;
-        // useEffect will restart scanner if needed
-    };
+    const renderInputStep = () => (
+        <div className={styles.content}>
+            <div className={styles.centerGroup}>
+                <div className={styles.iconCircle} onClick={() => fileInputRef.current?.click()}>
+                    <i className="fa-solid fa-camera" style={{ fontSize: '48px', color: '#627AEE' }}></i>
+                </div>
+                <h2 className={styles.instructionTitle}>Toma una foto</h2>
+                <p className={styles.instructionSub}>Captura tu plato y Carby detectará los nutrientes.</p>
+                {error && <p className={styles.errorText}>{error}</p>}
+            </div>
+            <input
+                type="file"
+                accept="image/*"
+                capture="environment"
+                ref={fileInputRef}
+                style={{ display: 'none' }}
+                onChange={handleFileUpload}
+            />
+            <div className={styles.actions}>
+                <button className={styles.recordButton} onClick={() => fileInputRef.current?.click()}>
+                    Abrir Cámara
+                </button>
+                <button className={styles.secondaryLink} onClick={handleBack}>
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    );
+
+    const renderAnalyzingStep = () => (
+        <div className={styles.content}>
+            <div className={styles.loadingContainer}>
+                {imagePreview && (
+                    <div className={styles.previewSmall}>
+                        <img src={imagePreview} alt="Preview" />
+                    </div>
+                )}
+                <div className={styles.spinner}></div>
+                <p className={styles.loadingText}>Analizando imagen...</p>
+                <p className={styles.loadingSubtext}>Detectando ingredientes y porciones</p>
+            </div>
+        </div>
+    );
+
+    const renderConfirmationStep = () => (
+        <div className={styles.content}>
+            <div className={styles.illustrationContainer}>
+                <img src="/src/assets/balance.svg" alt="Balance" className={styles.illustration} />
+            </div>
+
+            <div className={styles.resultCard}>
+                <div className={styles.successHeader}>
+                    <i className="fa-solid fa-star" style={{ color: '#FBCA08' }}></i>
+                    <span className={styles.successTitle}>Analizado con Exito</span>
+                </div>
+
+                <div className={styles.foodNameContainer}>
+                    <label className={styles.fieldLabel}>COMIDA DETECTADA</label>
+                    <input
+                        type="text"
+                        className={styles.foodNameInput}
+                        value={resultData?.food_name || ''}
+                        onChange={(e) => setResultData({ ...resultData, food_name: e.target.value })}
+                    />
+                </div>
+
+                <div className={styles.nutritionGrid}>
+                    <div className={styles.mainNutrient}>
+                        <div className={styles.nutrientBadge}>
+                            <span className={styles.nutrientLabel}>CALORIAS</span>
+                            <div className={styles.nutrientValueContainer}>
+                                <input
+                                    type="number"
+                                    className={styles.nutrientValueInput}
+                                    value={resultData?.calories || 0}
+                                    onChange={(e) => setResultData({ ...resultData, calories: e.target.value })}
+                                />
+                                <span className={styles.nutrientUnit}>kcl</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={styles.otherNutrients}>
+                        <div className={styles.nutrientRow}>
+                            <span className={styles.smallLabel}>PROTEIN</span>
+                            <div className={styles.smallValueContainer}>
+                                <input
+                                    type="number"
+                                    className={`${styles.smallValueInput} ${styles.proteinInput}`}
+                                    value={resultData?.proteins || 0}
+                                    onChange={(e) => setResultData({ ...resultData, proteins: e.target.value })}
+                                />
+                                <span className={`${styles.unitSuffix} ${styles.proteinSuffix}`}>gr</span>
+                            </div>
+                        </div>
+                        <div className={styles.nutrientRow}>
+                            <span className={styles.smallLabel}>CARBS</span>
+                            <div className={styles.smallValueContainer}>
+                                <input
+                                    type="number"
+                                    className={`${styles.smallValueInput} ${styles.carbsInput}`}
+                                    value={resultData?.carbs || 0}
+                                    onChange={(e) => setResultData({ ...resultData, carbs: e.target.value })}
+                                />
+                                <span className={`${styles.unitSuffix} ${styles.carbsSuffix}`}>gr</span>
+                            </div>
+                        </div>
+                        <div className={styles.nutrientRow}>
+                            <span className={styles.smallLabel}>GRASAS</span>
+                            <div className={styles.smallValueContainer}>
+                                <input
+                                    type="number"
+                                    className={`${styles.smallValueInput} ${styles.fatInput}`}
+                                    value={resultData?.fat || 0}
+                                    onChange={(e) => setResultData({ ...resultData, fat: e.target.value })}
+                                />
+                                <span className={`${styles.unitSuffix} ${styles.fatSuffix}`}>gr</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button
+                    className={styles.primaryButton}
+                    onClick={handleSave}
+                    disabled={isSaving}
+                >
+                    {isSaving ? 'Guardando...' : 'Guardar Registro'}
+                </button>
+            </div>
+
+            <button className={styles.closeLink} onClick={() => { setImagePreview(null); setStep('input'); }}>
+                Cerrar
+            </button>
+        </div>
+    );
 
     return (
-        <div className={styles.container}>
+        <div className={styles.pageContainer}>
             <header className={styles.header}>
-                <button onClick={handleBack} className={styles.backButton}>
-                    &#8592; {t('back', 'Atrás')}
+                <h2 className={styles.title}>Nueva entrada</h2>
+                <button className={styles.closeButton} onClick={handleBack}>
+                    <i className="fa-solid fa-xmark"></i>
                 </button>
-                <h1 className={styles.title}>{t('scanTitle', 'Escanear o Analizar')}</h1>
             </header>
 
-            {!productData && !error && (
-                <div className={styles.scannerContainer}>
-                    <div className={`${styles.readerWrapper} ${scanSuccess ? styles.successWrapper : ''}`}>
-                        <div id="reader" className={`${styles.reader} ${scanSuccess ? styles.readerSuccess : ''}`}></div>
-                        {scanSuccess && <div className={styles.successOverlay}></div>}
-                    </div>
-                    <p className={styles.scannerTip}>
-                        {t('scanTip', 'Apunta a un código de barras para detectarlo automáticamente.')}
-                    </p>
-
-                    <div className={styles.scanActionsBox}>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            ref={fileInputRef}
-                            style={{ display: 'none' }}
-                            onChange={handleFileUploadOptions}
-                        />
-                        <button
-                            onClick={() => fileInputRef.current.click()}
-                            className={styles.uploadImageButton}
-                            disabled={loading || scanSuccess}
-                        >
-                            <ImageIcon size={20} style={{ marginRight: '8px', verticalAlign: 'middle' }} />
-                            {t('scanUploadBtn', 'Tomar foto o Abrir Galería')}
-                        </button>
-                    </div>
-
-                    {loading && <p className={styles.loadingText}>{t('scanLoading', 'Analizando...')}</p>}
-                </div>
-            )}
-
-            {error && (
-                <div className={styles.errorContainer}>
-                    <p className={styles.errorText}>{error}</p>
-                    <button onClick={handleTryAgain} className={styles.tryAgainButton}>
-                        {t('scanTryAgain', 'Intentar de nuevo')}
-                    </button>
-                </div>
-            )}
-
-            {productData && (
-                <div className={styles.resultContainer}>
-                    <h2 className={styles.productName}>{productData.food_name || t('scanUnknownProduct', 'Producto Desconocido')}</h2>
-                    {productData.brands && <p className={styles.productBrand}>{productData.brands}</p>}
-                    {productData.explanation && (
-                        <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '14px', fontStyle: 'italic' }}>
-                            🤖 {productData.explanation}
-                        </p>
-                    )}
-
-                    <div className={styles.nutritionCard}>
-                        <h3>{t('scanNutritionFacts', 'Información Nutricional')}</h3>
-                        <ul className={styles.nutritionList}>
-                            <li>
-                                <span>{t('calories', 'Calorías')}</span>
-                                <strong>{productData.calories !== undefined ? `${productData.calories} kcal` : '-'}</strong>
-                            </li>
-                            <li>
-                                <span>{t('carbs', 'Carbohidratos')}</span>
-                                <strong>{productData.carbs !== undefined ? `${productData.carbs}g` : '-'}</strong>
-                            </li>
-                            <li>
-                                <span>{t('sugars', 'Azúcares')}</span>
-                                <strong>{productData.sugars !== undefined ? `${productData.sugars}g` : '-'}</strong>
-                            </li>
-                            <li>
-                                <span>{t('proteins', 'Proteínas')}</span>
-                                <strong>{productData.proteins !== undefined ? `${productData.proteins}g` : '-'}</strong>
-                            </li>
-                            <li>
-                                <span>{t('fat', 'Grasas')}</span>
-                                <strong>{productData.fat !== undefined ? `${productData.fat}g` : '-'}</strong>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <button onClick={handleAddLog} className={styles.addButton}>
-                        {t('scanAddLog', 'Añadir al Registro')}
-                    </button>
-                    <button onClick={handleTryAgain} className={styles.cancelButton}>
-                        {t('scanCancel', 'Cancelar')}
-                    </button>
-                </div>
-            )}
+            {step === 'input' && renderInputStep()}
+            {step === 'analyzing' && renderAnalyzingStep()}
+            {step === 'confirmation' && renderConfirmationStep()}
         </div>
     );
 };

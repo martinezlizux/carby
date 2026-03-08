@@ -1,0 +1,486 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(180deg, rgba(245, 245, 247, 0.95) 0%, rgba(255, 255, 255, 1) 100%);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    padding: var(--spacing-6);
+    box-sizing: border-box;
+}
+
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    max-width: 430px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-8);
+}
+
+.title {
+    font-size: var(--typography-scale-500);
+    color: var(--color-neutral-900);
+    font-family: var(--typography-family-heading);
+    font-weight: var(--typography-weight-bold);
+}
+
+.closeBtn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-neutral-600);
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Illustration Area */
+.illustrationArea {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.illustration {
+    width: 250px;
+    height: auto;
+    object-fit: contain;
+    transition: transform 0.5s ease;
+}
+
+.illustration.isAnimating {
+    animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* Controls Area */
+.controlsArea {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-10);
+}
+
+.recordingState {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-6);
+    background: white;
+    border-radius: var(--radius-2xl);
+    border: 1px solid var(--border-neutral-light);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+}
+
+.recordButton {
+    width: 110px;
+    height: 110px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-neutral-50);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-neutral-300);
+    margin-bottom: var(--spacing-6);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.recordButton.isRecording {
+    background-color: #FF3B30;
+    /* Red pulse */
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 15px rgba(255, 59, 48, 0.1);
+    animation: pulseRed 1.5s infinite;
+}
+
+@keyframes pulseRed {
+    0% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 0px rgba(255, 59, 48, 0.4);
+    }
+
+    70% {
+        transform: scale(1.15);
+        box-shadow: 0 0 0 20px rgba(255, 59, 48, 0);
+    }
+
+    100% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 0px rgba(255, 59, 48, 0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 0px rgba(255, 116, 68, 0.2);
+    }
+
+    70% {
+        transform: scale(1.15);
+        box-shadow: 0 0 0 20px rgba(255, 116, 68, 0);
+    }
+
+    100% {
+        transform: scale(1.1);
+        box-shadow: 0 0 0 0px rgba(255, 116, 68, 0);
+    }
+}
+
+.statusText {
+    font-size: var(--typography-scale-400);
+    color: var(--color-neutral-900);
+    font-family: var(--typography-family-heading);
+    font-weight: var(--typography-weight-bold);
+    margin-bottom: var(--spacing-2);
+}
+
+.hintText {
+    font-size: var(--typography-scale-200);
+    color: var(--color-neutral-500);
+    margin-bottom: var(--spacing-8);
+    max-width: 200px;
+}
+
+/* Actions Buttons */
+.actionBtnPrimary {
+    width: 100%;
+    padding: var(--spacing-4);
+    background-color: var(--color-primary-500);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: var(--typography-scale-300);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(119, 130, 224, 0.3);
+}
+
+.actionBtnAccent {
+    width: 100%;
+    padding: var(--spacing-4);
+    background-color: var(--color-accent-500);
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: var(--typography-scale-300);
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(242, 109, 77, 0.3);
+}
+
+.actionBtnDisabled {
+    width: 100%;
+    padding: var(--spacing-4);
+    background-color: var(--color-neutral-200);
+    color: var(--color-neutral-400);
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: var(--typography-scale-300);
+    cursor: not-allowed;
+}
+
+.cancelTextBtn {
+    background: none;
+    border: none;
+    color: var(--color-neutral-600);
+    font-weight: 500;
+    cursor: pointer;
+    font-size: var(--typography-scale-300);
+    margin-top: var(--spacing-4);
+}
+
+/* Results State */
+.resultsContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-4);
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.successBadge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-bottom: var(--spacing-4);
+}
+
+.starIconContainer {
+    width: 48px;
+    height: 48px;
+    background: white;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.successText {
+    color: #34A853;
+    font-weight: 700;
+    font-size: var(--typography-scale-300);
+}
+
+.resultsCard {
+    width: 100%;
+    background: white;
+    border-radius: var(--radius-2xl);
+    padding: var(--spacing-6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--border-neutral-light);
+    margin-bottom: var(--spacing-4);
+}
+
+.detectedFoodField {
+    margin-bottom: var(--spacing-6);
+}
+
+.label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--color-neutral-400);
+    display: block;
+    margin-bottom: var(--spacing-2);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.foodNameInput {
+    width: 100%;
+    font-size: var(--typography-scale-300);
+    font-weight: 700;
+    color: var(--color-neutral-900);
+    padding: var(--spacing-4);
+    background-color: var(--color-neutral-50);
+    border: 1px solid transparent;
+    border-radius: var(--radius-xl);
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.foodNameInput:focus {
+    outline: none;
+    background-color: white;
+    border-color: var(--color-primary-300);
+    box-shadow: 0 0 0 4px var(--color-primary-50);
+}
+
+.mainStats {
+    display: flex;
+    gap: var(--spacing-4);
+}
+
+.statBox {
+    flex: 1.2;
+    background-color: var(--color-primary-50);
+    padding: var(--spacing-4);
+    border-radius: var(--radius-2xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.statLabel {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--color-primary-600);
+    margin-bottom: var(--spacing-2);
+}
+
+.statValue {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.bigValueInput {
+    width: 70px;
+    font-size: var(--typography-scale-700);
+    font-weight: 800;
+    color: var(--color-primary-700);
+    font-family: var(--typography-family-heading);
+    background: transparent;
+    border: none;
+    text-align: center;
+    padding: 0;
+}
+
+.bigValueInput:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: var(--radius-sm);
+}
+
+.unit {
+    font-size: var(--typography-scale-100);
+    color: var(--color-primary-500);
+    font-weight: 600;
+}
+
+.secondaryStats {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background-color: var(--border-neutral-light);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 1px solid var(--border-neutral-light);
+}
+
+.miniStat {
+    background-color: white;
+    padding: var(--spacing-3) var(--spacing-4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.miniLabel {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--color-neutral-400);
+    font-family: var(--typography-family-heading);
+    text-transform: uppercase;
+}
+
+.miniValueInputWrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+}
+
+.miniValueInput {
+    width: 35px;
+    font-size: var(--typography-scale-200);
+    font-weight: 700;
+    color: #FF8C4B;
+    /* Orange as per Figma */
+    font-family: var(--typography-family-heading);
+    background: transparent;
+    border: none;
+    text-align: right;
+    padding: 0;
+}
+
+.statBox:nth-child(2) .miniValueInput,
+.statBox:nth-child(1) .miniValueInput {
+    color: #FF8C4B;
+}
+
+/* Specific colors for nutrients if needed */
+.miniStat:last-child .miniValueInput {
+    color: #4BB3FF;
+    /* Cyan for Fat */
+}
+
+.miniValueInput:focus {
+    outline: none;
+    background: var(--color-neutral-50);
+    border-radius: 2px;
+}
+
+.miniUnit {
+    font-size: 9px;
+    color: var(--color-neutral-400);
+    font-weight: 600;
+}
+
+.saveBtn {
+    width: 100%;
+    padding: var(--spacing-4);
+    background-color: #6C78E1;
+    /* Primary Violet/Blue */
+    color: white;
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: var(--typography-scale-300);
+    cursor: pointer;
+    box-shadow: 0 8px 16px rgba(108, 120, 225, 0.25);
+    transition: all 0.2s ease;
+}
+
+.saveBtn:active {
+    transform: scale(0.98);
+    box-shadow: 0 4px 8px rgba(108, 120, 225, 0.2);
+}
+
+.analyzingCircle {
+    width: 110px;
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-6);
+}
+
+.spinner {
+    color: var(--color-primary-500);
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}

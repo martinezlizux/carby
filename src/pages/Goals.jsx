@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from './Goals.module.css';
 import { useWizard } from '../contexts/WizardContext';
-import carbyCharacter from '../assets/carby-character.png';
+import carbyCharacter from '../assets/carby_character.png';
 
 const Particles = ({ active }) => {
     if (!active) return null;

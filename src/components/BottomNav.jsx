@@ -16,11 +16,11 @@ const BottomNav = () => {
                 <span>{t('home')}</span>
             </NavLink>
             <NavLink
-                to="/chat"
+                to="/history"
                 className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}
             >
                 <i className="fa-solid fa-utensils"></i>
-                <span>{t('chat')}</span>
+                <span>{t('history')}</span>
             </NavLink>
             <NavLink
                 to="/goals"

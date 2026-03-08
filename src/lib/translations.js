@@ -4,6 +4,8 @@ export const translations = {
         home: "Home",
         chat: "Chat",
         goals: "Goals",
+        goalsSubtitle: "Achieve your goals and collect badges.",
+        history: "History",
         settings: "Settings",
 
         // Dashboard
@@ -139,6 +141,11 @@ export const translations = {
         langSelectDesc: "Select the language you want to use in Carby.",
         wizardSkip: "Skip",
 
+        // Diabetes Types
+        diabetesType1: "Type 1",
+        diabetesType2: "Type 2",
+        diabetesGestational: "Gestational",
+
         // Onboarding
         obSlide1Title: "Achieve a perfect balance",
         obSlide1Desc: "Log your carbs and effortlessly calculate your insulin doses.",
@@ -168,12 +175,30 @@ export const translations = {
         sugars: "Sugars",
         proteins: "Proteins",
         fat: "Fat",
+        ariaTakePhoto: "Take a photo",
+        ariaUseVoice: "Use voice",
+        ariaWriteText: "Write a text",
+        saveProfile: "Save Profile",
+        edit: "Edit",
+        metricUnit: "Metric (cm/kg)",
+        imperialUnit: "Imperial (ft/lbs)",
+        historyTitle: "Your History",
+        loadingHistory: "Loading history...",
+        sourceCamera: "CAMERA",
+        sourceVoice: "VOICE",
+        sourceText: "MEAL",
+        noHistory: "No meals recorded yet.",
+        historyHint: "Use the central button to log your food!",
+        thanksTitle: "All set!",
+        thanksSubtitle: "Your profile has been saved.",
     },
     Spanish: {
         // Bottom Nav
         home: "Inicio",
         chat: "Chat",
         goals: "Metas",
+        goalsSubtitle: "Alcanza tus metas y colecciona medallas.",
+        history: "Historial",
         settings: "Ajustes",
 
         // Dashboard
@@ -216,7 +241,7 @@ export const translations = {
         badge3: "Semana Activa",
         badge3Desc: "7 días seguidos registrando al menos 3 comidas.",
         badge4: "15 Días Constante",
-        badge4Desc: "Two weeks maintaining the habit.",
+        badge4Desc: "Dos semanas manteniendo el hábito.",
         badge5: "Mes Comprometido",
         badge5Desc: "30 días de uso continuo.",
         badge6: "Registro Imparable",
@@ -309,6 +334,11 @@ export const translations = {
         langSelectDesc: "Selecciona el idioma que deseas usar en Carby.",
         wizardSkip: "Omitir",
 
+        // Diabetes Types
+        diabetesType1: "Tipo 1",
+        diabetesType2: "Tipo 2",
+        diabetesGestational: "Gestacional",
+
         // Onboarding
         obSlide1Title: "Logra un balance perfecto",
         obSlide1Desc: "Registra tus carbohidratos y calcula tus dosis de insulina sin complicaciones.",
@@ -338,6 +368,22 @@ export const translations = {
         sugars: "Azúcares",
         proteins: "Proteínas",
         fat: "Grasas",
+        ariaTakePhoto: "Tomar una foto",
+        ariaUseVoice: "Usar voz",
+        ariaWriteText: "Escribir texto",
+        saveProfile: "Guardar perfil",
+        edit: "Editar",
+        metricUnit: "Métrico (cm/kg)",
+        imperialUnit: "Imperial (ft/lbs)",
+        historyTitle: "Tu Historial",
+        loadingHistory: "Cargando historial...",
+        sourceCamera: "CÁMARA",
+        sourceVoice: "VOZ",
+        sourceText: "COMIDA",
+        noHistory: "No hay comidas registradas.",
+        historyHint: "¡Usa el botón central para registrar tu comida!",
+        thanksTitle: "¡Todo listo!",
+        thanksSubtitle: "Tu perfil ha sido guardado.",
     }
 };
 

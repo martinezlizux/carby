@@ -1,289 +1,216 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { supabase } from '../lib/supabase';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+// Lucide icons replaced by FontAwesome
 import { useWizard } from '../contexts/WizardContext';
 import { analyzeFoodWithAI } from '../lib/ai';
-import { searchOpenFoodFacts, searchUSDA } from '../lib/foodApis';
+import { saveMeal } from '../lib/mealHistory';
 import styles from './Chat.module.css';
-import { Send, Activity, Info, Bot } from 'lucide-react';
 
 const Chat = () => {
-    const { userData, t } = useWizard();
-    const [messages, setMessages] = useState([
-        { id: '1', sender: 'ai', text: t('chatWelcome') }
-    ]);
-    const [input, setInput] = useState('');
-    const [isTyping, setIsTyping] = useState(false);
-    const messagesEndRef = useRef(null);
+    const navigate = useNavigate();
+    const { userData } = useWizard();
+    const [step, setStep] = useState('input'); // 'input', 'analyzing', 'confirmation'
+    const [inputValue, setInputValue] = useState('');
+    const [resultData, setResultData] = useState(null);
+    const [isSaving, setIsSaving] = useState(false);
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Idioma del usuario (para la IA)
+    const userLang = userData?.language || (navigator.language.startsWith('es') ? 'Spanish' : 'English');
+
+    const handleBack = () => {
+        navigate('/dashboard');
     };
 
-    useEffect(() => {
-        scrollToBottom();
-    }, [messages, isTyping]);
+    const handleAnalyze = async () => {
+        if (!inputValue.trim()) return;
 
-    const searchFoodInDatabase = async (foodName) => {
+        setStep('analyzing');
         try {
-            const cleanQuery = foodName.toLowerCase().trim();
-            const { data, error } = await supabase
-                .from('food_database')
-                .select('*')
-                .ilike('food_name', cleanQuery) // Búsqueda exacta (sin los %) para evitar falsos positivos
-                .not('calories', 'is', null) // <-- Clave: Ignorar filas antiguas donde calorías es null
-                .order('created_at', { ascending: false }) // Traer siempre la versión más actualizada
-                .limit(1);
-
-            if (error) throw error;
-            return data && data.length > 0 ? data[0] : null;
-        } catch (e) {
-            console.error(e);
-            return null;
-        }
-    };
-
-    const saveFoodToDatabase = async (food) => {
-        try {
-            const { error } = await supabase
-                .from('food_database')
-                .insert([{
-                    food_name: food.food_name.toLowerCase(),
-                    carbs: food.carbs,
-                    calories: food.calories || 0
-                }]);
-
-            if (error) {
-                console.warn("Could not cache food in database:", error.message);
-            }
-        } catch (e) {
-            console.error(e);
-        }
-    };
-
-    const calculateInsulin = (carbs) => {
-        if (!userData.hasCondition || !userData.useCarbRatio || !userData.carbRatio) return null;
-        return (carbs / userData.carbRatio).toFixed(1);
-    };
-
-    const handleSend = async () => {
-        if (!input.trim() || isTyping) return;
-
-        const userText = input.trim();
-        const userMsgId = Date.now().toString();
-
-        setMessages(prev => [...prev, { id: userMsgId, sender: 'user', text: userText }]);
-        setInput('');
-        setIsTyping(true);
-
-        try {
-            // Dividimos la entrada por comas, "y", "e", "and" para procesar múltiples alimentos
-            const items = userText.split(/\s+y\s+|\s+e\s+|\s+and\s+|\s*,\s*/i).filter(item => item.trim() !== '');
-            let totalCarbs = 0;
-            let totalCalories = 0;
-            let sources = new Set();
-            let someFailed = false;
-
-            const results = await Promise.all(items.map(async (itemText) => {
-                const item = itemText.trim();
-                let foodResult = null;
-                let source = '';
-                let needsCache = false;
-
-                // 1. Buscamos en Base de Datos Local
-                const dbFood = await searchFoodInDatabase(item);
-                if (dbFood) {
-                    foodResult = dbFood;
-                    source = 'Local Database';
-                }
-
-                // 2. Prioridad a la IA (Groq) porque entiende las porciones (ej. "6 nuggets", "1 vaso")
-                if (!foodResult) {
-                    const aiResult = await analyzeFoodWithAI(item, userData.language);
-                    if (aiResult) {
-                        foodResult = aiResult;
-                        source = 'Carby AI';
-                        needsCache = true;
-                    }
-                }
-
-                // 3. Fallback: Open Food Facts (trae todo en 100g, no ideal para NLP pero salva)
-                if (!foodResult) {
-                    const offResult = await searchOpenFoodFacts(item);
-                    if (offResult) {
-                        foodResult = offResult;
-                        source = 'Open Food Facts';
-                        needsCache = true;
-                    }
-                }
-
-                // 4. Fallback final: USDA FoodData Central
-                if (!foodResult) {
-                    const usdaResult = await searchUSDA(item);
-                    if (usdaResult) {
-                        foodResult = usdaResult;
-                        source = 'USDA';
-                        needsCache = true;
-                    }
-                }
-
-                return { foodResult, source, needsCache, originalItem: item };
-            }));
-
-            for (const res of results) {
-                if (res.foodResult) {
-                    totalCarbs += res.foodResult.carbs;
-                    totalCalories += res.foodResult.calories || 0;
-                    sources.add(res.source);
-
-                    if (res.needsCache) {
-                        // Guardamos el item con el nombre exacto que escribió el usuario
-                        await saveFoodToDatabase({ ...res.foodResult, food_name: res.originalItem });
-                    }
-                } else {
-                    someFailed = true;
-                }
-            }
-
-            setIsTyping(false);
-
-            if (results.length > 0 && !someFailed) {
-                const combinedSource = Array.from(sources).join(', ');
-
-                setMessages(prev => [...prev, {
-                    id: Date.now().toString() + 'ai',
-                    sender: 'ai',
-                    type: 'card',
-                    items: results.map(r => ({
-                        name: r.originalItem.charAt(0).toUpperCase() + r.originalItem.slice(1),
-                        carbs: r.foodResult.carbs,
-                        calories: r.foodResult.calories || 0
-                    })),
-                    totalCarbs: parseFloat(totalCarbs.toFixed(1)),
-                    totalCalories: parseFloat(totalCalories.toFixed(0)),
-                    insulin: calculateInsulin(totalCarbs),
-                    source: combinedSource
-                }]);
+            const data = await analyzeFoodWithAI(inputValue, userLang);
+            if (data) {
+                setResultData(data);
+                setStep('confirmation');
             } else {
-                // Fallback si alguno falló
-                setMessages(prev => [...prev, {
-                    id: Date.now().toString() + 'err',
-                    sender: 'ai',
-                    text: t('chatError')
-                }]);
+                alert('No se pudo analizar la comida. Intenta de nuevo.');
+                setStep('input');
             }
         } catch (error) {
-            console.error(error);
-            setIsTyping(false);
-            setMessages(prev => [...prev, {
-                id: Date.now().toString() + 'err',
-                sender: 'ai',
-                text: t('chatError')
-            }]);
+            console.error("Analysis error:", error);
+            setStep('input');
         }
     };
 
-    return (
-        <div className={styles.chatContainer}>
-            <header className={styles.header}>
-                <div className={styles.headerLeft}>
-                    <div className={styles.logoCircle}>
-                        <Activity size={20} color="var(--color-primary-600)" />
-                    </div>
-                    <div>
-                        <h1 className={styles.headerTitle}>Carby AI</h1>
-                        <p className={styles.headerSubtitle}>{isTyping ? t('chatAnalyzing') : 'Ready to assist'}</p>
-                    </div>
-                </div>
-                <div className={styles.userRatio}>
-                    {userData.hasCondition && userData.useCarbRatio && userData.carbRatio ? (
-                        <>Ratio: 1U/<b>{userData.carbRatio}g</b></>
-                    ) : null}
-                </div>
-            </header>
+    const handleSave = async () => {
+        if (!resultData || isSaving) return;
 
-            <div className={styles.messagesArea}>
-                {messages.map((msg) => (
-                    <div key={msg.id} className={`${styles.messageWrapper} ${msg.sender === 'user' ? styles.wrapperUser : styles.wrapperAi}`}>
-                        {msg.sender === 'ai' && (
-                            <div className={styles.aiAvatar}>
-                                <Bot size={16} />
-                            </div>
-                        )}
-                        <div className={msg.sender === 'user' ? styles.msgUser : styles.msgAi}>
-                            {msg.text && <p className={styles.msgText}>{msg.text}</p>}
+        setIsSaving(true);
+        try {
+            const { error } = await saveMeal({
+                food_name: resultData.food_name,
+                carbs: parseFloat(resultData.carbs),
+                calories: parseFloat(resultData.calories),
+                proteins: parseFloat(resultData.proteins),
+                fat: parseFloat(resultData.fat),
+                explanation: resultData.explanation,
+                source: 'chat'
+            });
 
-                            {msg.type === 'card' && (
-                                <div className={styles.receiptCard}>
-                                    <div className={styles.itemList}>
-                                        {msg.items.map((item, idx) => (
-                                            <div key={idx} className={styles.itemBox}>
-                                                <span className={styles.itemName}>{item.name}</span>
-                                                <span className={styles.itemStats}>
-                                                    {item.carbs} {item.carbs === 0 ? 'carbs' : 'g C'} | {item.calories} kcal
-                                                </span>
-                                            </div>
-                                        ))}
-                                    </div>
+            if (error) {
+                alert('Ocurrió un error al guardar: ' + error.message);
+                setIsSaving(false);
+            } else {
+                navigate('/history');
+            }
+        } catch (error) {
+            console.error("Save error:", error);
+            setIsSaving(false);
+        }
+    };
 
-                                    <div className={styles.divider}></div>
-
-                                    <div className={styles.totalsArea}>
-                                        <div className={styles.totalRow}>
-                                            <span className={styles.totalLabel}>Total Carbs</span>
-                                            <span className={styles.totalValueBadge}>{msg.totalCarbs} gr</span>
-                                        </div>
-                                        <div className={styles.totalRow}>
-                                            <span className={styles.totalLabel}>Total Calories</span>
-                                            <span className={styles.totalValueBadge}>{msg.totalCalories} cal</span>
-                                        </div>
-                                    </div>
-
-                                    {msg.insulin !== null && (
-                                        <div className={styles.insulinBadge}>
-                                            <span className={styles.insulinLabel}>Insuline Vol (U)</span>
-                                            <span className={styles.insulinValue}>{msg.insulin}</span>
-                                        </div>
-                                    )}
-
-                                    <div className={styles.sourceFooter}>
-                                        Retrived from {msg.source}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                ))}
-                {isTyping && (
-                    <div className={`${styles.messageWrapper} ${styles.wrapperAi}`}>
-                        <div className={styles.aiAvatar}><Bot size={16} /></div>
-                        <div className={styles.typingIndicator}>
-                            <div className={styles.dot}></div><div className={styles.dot}></div><div className={styles.dot}></div>
-                        </div>
-                    </div>
-                )}
-                <div ref={messagesEndRef} />
+    const renderInputStep = () => (
+        <div className={styles.content}>
+            <div className={styles.illustrationContainer}>
+                <img src="/src/assets/balance.svg" alt="Balance" className={styles.illustration} />
             </div>
 
-            <div className={styles.inputArea}>
-                <div className={styles.inputWrapper}>
+            <div className={styles.inputCard}>
+                <textarea
+                    className={styles.textarea}
+                    placeholder="Describe lo que vas a comer ..."
+                    value={inputValue}
+                    onChange={(e) => setInputValue(e.target.value)}
+                    autoFocus
+                />
+
+                <button
+                    className={styles.primaryButton}
+                    onClick={handleAnalyze}
+                    disabled={!inputValue.trim()}
+                >
+                    Analizar
+                </button>
+            </div>
+
+            <button className={styles.secondaryLink} onClick={handleBack}>
+                Cerrar
+            </button>
+        </div>
+    );
+
+    const renderAnalyzingStep = () => (
+        <div className={styles.content}>
+            <div className={styles.loadingContainer}>
+                <div className={styles.spinner}></div>
+                <p className={styles.loadingText}>Analizando tu comida...</p>
+                <p className={styles.loadingSubtext}>Esto tomará solo unos segundos</p>
+            </div>
+        </div>
+    );
+
+    const renderConfirmationStep = () => (
+        <div className={styles.content}>
+            <div className={styles.illustrationContainer}>
+                <img src="/src/assets/balance.svg" alt="Balance" className={styles.illustration} />
+            </div>
+
+            <div className={styles.resultCard}>
+                <div className={styles.successHeader}>
+                    <i className="fa-solid fa-star" style={{ color: '#FBCA08' }}></i>
+                    <span className={styles.successTitle}>ANALIZADO CON ÉXITO</span>
+                </div>
+
+                <div className={styles.foodNameContainer}>
+                    <label className={styles.fieldLabel}>COMIDA DETECTADA</label>
                     <input
                         type="text"
-                        className={styles.inputField}
-                        placeholder={t('chatPlaceholder')}
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                        disabled={isTyping}
+                        className={styles.foodNameInput}
+                        value={resultData?.food_name || ''}
+                        onChange={(e) => setResultData({ ...resultData, food_name: e.target.value })}
                     />
-                    <button
-                        className={`${styles.sendButton} ${input.trim() ? styles.active : ''}`}
-                        onClick={handleSend}
-                        disabled={isTyping || !input.trim()}
-                    >
-                        <Send size={18} />
-                    </button>
                 </div>
+
+                <div className={styles.nutritionGrid}>
+                    <div className={styles.mainNutrient}>
+                        <div className={styles.nutrientBadge}>
+                            <span className={styles.nutrientLabel}>CALORIAS</span>
+                            <div className={styles.nutrientValueContainer}>
+                                <input
+                                    type="number"
+                                    className={styles.nutrientValueInput}
+                                    value={resultData?.calories || 0}
+                                    onChange={(e) => setResultData({ ...resultData, calories: e.target.value })}
+                                />
+                                <span className={styles.nutrientUnit}>kcl</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className={styles.otherNutrients}>
+                        <div className={styles.nutrientRow}>
+                            <span className={styles.smallLabel}>PROTEIN</span>
+                            <div className={styles.smallValueContainer}>
+                                <input
+                                    type="number"
+                                    className={`${styles.smallValueInput} ${styles.proteinInput}`}
+                                    value={resultData?.proteins || 0}
+                                    onChange={(e) => setResultData({ ...resultData, proteins: e.target.value })}
+                                />
+                                <span className={`${styles.unitSuffix} ${styles.proteinSuffix}`}>gr</span>
+                            </div>
+                        </div>
+                        <div className={styles.nutrientRow}>
+                            <span className={styles.smallLabel}>CARBS</span>
+                            <div className={styles.smallValueContainer}>
+                                <input
+                                    type="number"
+                                    className={`${styles.smallValueInput} ${styles.carbsInput}`}
+                                    value={resultData?.carbs || 0}
+                                    onChange={(e) => setResultData({ ...resultData, carbs: e.target.value })}
+                                />
+                                <span className={`${styles.unitSuffix} ${styles.carbsSuffix}`}>gr</span>
+                            </div>
+                        </div>
+                        <div className={styles.nutrientRow}>
+                            <span className={styles.smallLabel}>GRASAS</span>
+                            <div className={styles.smallValueContainer}>
+                                <input
+                                    type="number"
+                                    className={`${styles.smallValueInput} ${styles.fatInput}`}
+                                    value={resultData?.fat || 0}
+                                    onChange={(e) => setResultData({ ...resultData, fat: e.target.value })}
+                                />
+                                <span className={`${styles.unitSuffix} ${styles.fatSuffix}`}>gr</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button
+                    className={styles.primaryButton}
+                    onClick={handleSave}
+                    disabled={isSaving}
+                >
+                    {isSaving ? 'Guardando...' : 'Guardar registro'}
+                </button>
             </div>
+
+            <button className={styles.closeLink} onClick={() => setStep('input')}>
+                Cerrar
+            </button>
+        </div>
+    );
+
+    return (
+        <div className={styles.pageContainer}>
+            <header className={styles.header}>
+                <h2 className={styles.title}>Nueva entrada</h2>
+                <button className={styles.closeButton} onClick={handleBack}>
+                    <i className="fa-solid fa-xmark"></i>
+                </button>
+            </header>
+
+            {step === 'input' && renderInputStep()}
+            {step === 'analyzing' && renderAnalyzingStep()}
+            {step === 'confirmation' && renderConfirmationStep()}
         </div>
     );
 };

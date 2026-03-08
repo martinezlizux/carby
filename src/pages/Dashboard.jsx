@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
 import { useWizard } from '../contexts/WizardContext';
-import carbyCharacter from '../assets/carby-character.png';
+import carbyCharacter from '../assets/Dahboard-character-header.png';
 import ScannerCard from '../components/ScannerCard';
 
 const Dashboard = () => {
@@ -27,6 +27,32 @@ const Dashboard = () => {
 
     const initials = getInitials(displayName);
 
+    // Helpers to translate technical IDs
+    const getGenderLabel = (g) => {
+        if (g === 'male') return t('wizGenderMale');
+        if (g === 'female') return t('wizGenderFemale');
+        if (g === 'other') return t('wizGenderOther');
+        return t('wizGenderFemale');
+    };
+
+    const getDiabetesLabel = (type) => {
+        if (type === 'Type 1') return t('diabetesType1');
+        if (type === 'Type 2') return t('diabetesType2');
+        if (type === 'Gestational') return t('diabetesGestational');
+        return type;
+    };
+
+    const getTimingLabel = (tValue) => {
+        const timingMap = {
+            'Morning': 'timingMorning',
+            'Afternoon': 'timingAfternoon',
+            'Night': 'timingNight',
+            'With Meals': 'timingMeals',
+            'Weekly': 'timingWeekly'
+        };
+        return t(timingMap[tValue] || tValue);
+    };
+
     return (
         <div className={styles.container}>
             <header className={styles.header}>
@@ -39,21 +65,23 @@ const Dashboard = () => {
             </div>
 
             <main className={styles.main}>
-                <button
-                    className={styles.logMealBtn}
-                    onClick={() => navigate('/chat')}
-                >
-                    <i className="fa-solid fa-utensils"></i>
-                    <span>{t('logMeal')}</span>
-                </button>
-
-                <ScannerCard
-                    title={t('scanLabelTitle')}
-                    subtitle={t('scanLabelSubtitle')}
-                    icon="fa-barcode"
-                    buttonText={t('scanButton')}
-                    onClick={() => navigate('/scan')}
-                />
+                <div className={styles.logMealContainer}>
+                    <div className={styles.logMealHeader}>
+                        <i className="fa-solid fa-utensils"></i>
+                        <span>{t('logMeal')}</span>
+                    </div>
+                    <div className={styles.logMealActions}>
+                        <button className={styles.logMealActionBtn} onClick={() => navigate('/scan')} aria-label={t('ariaTakePhoto')}>
+                            <i className="fa-solid fa-camera"></i>
+                        </button>
+                        <button className={styles.logMealActionBtn} onClick={() => navigate('/voice')} aria-label={t('ariaUseVoice')}>
+                            <i className="fa-solid fa-microphone"></i>
+                        </button>
+                        <button className={styles.logMealActionBtn} onClick={() => navigate('/chat')} aria-label={t('ariaWriteText')}>
+                            <i className="fa-solid fa-pen"></i>
+                        </button>
+                    </div>
+                </div>
 
                 <div className={styles.profileSection}>
                     <div className={styles.sectionHeader}>
@@ -78,12 +106,12 @@ const Dashboard = () => {
                                 <div className={styles.profileDetailsRow}>
                                     <div className={styles.profileDetailsCol}>
                                         <p>{t('age')}: {userData.age || '30'}</p>
-                                        <p>{t('gender')}: {userData.gender === 'male' ? t('wizGenderMale') : userData.gender === 'female' ? t('wizGenderFemale') : userData.gender || 'Female'}</p>
+                                        <p>{t('gender')}: {getGenderLabel(userData.gender)}</p>
                                         <p>{t('height')}: {userData.height || '--'} cm</p>
                                         <p>{t('weight')}: {userData.weight || '--'} kg</p>
                                     </div>
                                     <div className={styles.profileDetailsCol}>
-                                        <p>{t('diabetes')}: {userData.hasCondition ? (userData.diabetesType || 'Type 1') : t('none')}</p>
+                                        <p>{t('diabetes')}: {userData.hasCondition ? getDiabetesLabel(userData.diabetesType) : t('none')}</p>
                                         <p>{t('med')}: {userData.hasCondition && userData.takesMedication ? mainMed.name : t('none')}</p>
                                     </div>
                                 </div>
@@ -108,7 +136,7 @@ const Dashboard = () => {
                         {userData.diabetesType && (
                             <div className={styles.metricCard}>
                                 <h3>{t('diabetes')}</h3>
-                                <p className={styles.metricValue}>{userData.diabetesType}</p>
+                                <p className={styles.metricValue}>{getDiabetesLabel(userData.diabetesType)}</p>
                             </div>
                         )}
 
@@ -134,7 +162,7 @@ const Dashboard = () => {
                         {userData.medications?.length > 0 && userData.medications[0].timing && (
                             <div className={styles.metricCard}>
                                 <h3>{t('dosis')}</h3>
-                                <p className={styles.metricValue}>{userData.medications[0].timing}</p>
+                                <p className={styles.metricValue}>{getTimingLabel(userData.medications[0].timing)}</p>
                             </div>
                         )}
                     </div>

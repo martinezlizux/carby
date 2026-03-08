@@ -1,319 +1,408 @@
-.chatContainer {
+.pageContainer {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    width: 100%;
-    background-color: var(--surface-primary-bg-light);
+    min-height: 100vh;
+    background-color: #FFFFFF;
     font-family: var(--typography-family-body, "Inter"), sans-serif;
+    color: var(--color-neutral-900, #0F172A);
 }
 
 .header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--spacing-4) var(--spacing-6);
-    background-color: white;
-    border-bottom: 1px solid var(--border-neutral-light);
-    height: 72px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-    z-index: 10;
+    padding: var(--spacing-6, 1.5rem);
+    background: transparent;
 }
 
-.headerLeft {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-3);
+.title {
+    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin: 0;
+    color: var(--color-neutral-900, #0F172A);
 }
 
-.logoCircle {
+.closeButton {
+    background: transparent;
+    border: none;
     width: 40px;
     height: 40px;
-    border-radius: var(--radius-full);
-    background: var(--color-primary-100);
+    color: #43404D;
+    /* Updated color */
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 20px;
 }
 
-.headerTitle {
-    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
-    font-size: var(--typography-scale-400);
-    margin: 0;
-    font-weight: var(--typography-weight-bold);
-    color: var(--color-neutral-900);
+.closeButton:hover {
+    background-color: var(--color-neutral-200, #E2E8F0);
+    transform: scale(1.05);
 }
 
-.headerSubtitle {
-    font-size: var(--typography-scale-100);
-    color: var(--color-primary-600);
-    margin: 0;
+.closeButton i {
+    font-size: 20px;
 }
 
-.userRatio {
-    font-size: var(--typography-scale-200);
-    color: var(--color-neutral-600);
-    background-color: var(--surface-neutral-bg-light);
-    padding: var(--spacing-1) var(--spacing-3);
-    border-radius: var(--radius-full);
-}
-
-.messagesArea {
+.content {
     flex: 1;
-    overflow-y: auto;
-    padding: var(--spacing-6);
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-4);
-    background: var(--surface-primary-bg-light);
-    scroll-behavior: smooth;
+    padding: 0 var(--spacing-6, 1.5rem) var(--spacing-10, 2.5rem);
 }
 
-.messageWrapper {
+/* Input Step */
+.inputCard {
+    background: white;
+    border-radius: 32px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
     display: flex;
-    max-width: 85%;
-    align-items: flex-end;
-    gap: var(--spacing-2);
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+    border: 1px solid #F1F5F9;
 }
 
-.wrapperUser {
-    align-self: flex-end;
-    flex-direction: row-reverse;
+.textarea {
+    width: 100%;
+    min-height: 280px;
+    padding: 1.5rem;
+    border: none;
+    border-radius: 20px;
+    background-color: #F8FAFC;
+    font-family: inherit;
+    font-size: 1.125rem;
+    resize: none;
+    outline: none;
+    transition: all 0.3s ease;
+    color: var(--color-neutral-900, #0F172A);
 }
 
-.wrapperAi {
-    align-self: flex-start;
+.textarea::placeholder {
+    color: #94A3B8;
 }
 
-.aiAvatar {
-    width: 28px;
-    height: 28px;
-    background-color: var(--color-neutral-200);
-    color: var(--color-neutral-700);
-    border-radius: var(--radius-full);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.msgAi {
+.textarea:focus {
     background-color: white;
-    padding: var(--spacing-3) var(--spacing-4);
-    border-radius: var(--radius-xl);
-    border-bottom-left-radius: 4px;
-    color: var(--color-neutral-900);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-    border: 1px solid var(--border-neutral-light);
+    box-shadow: inset 0 0 0 2px var(--color-primary-100, #E0E7FF);
 }
 
-.msgUser {
-    background-color: var(--color-primary-600);
-    padding: var(--spacing-3) var(--spacing-4);
-    border-radius: var(--radius-xl);
-    border-bottom-right-radius: 4px;
+/* Common Actions */
+.actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4, 1rem);
+}
+
+.primaryButton {
+    background: #7378E1;
     color: white;
-    box-shadow: 0 4px 12px rgba(95, 103, 182, 0.2);
-}
-
-.msgText {
-    margin: 0;
-    font-size: var(--typography-scale-300);
-    line-height: 1.5;
-}
-
-.receiptCard {
+    border: none;
+    border-radius: 100px;
+    padding: 1.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(115, 120, 225, 0.4);
+    transition: all 0.2s ease;
     width: 100%;
 }
 
-.itemList {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-2);
+.primaryButton:active {
+    transform: scale(0.98);
 }
 
-.itemBox {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-2) var(--spacing-3);
-    border: 1px solid var(--border-neutral-light);
-    border-radius: var(--radius-md);
-    font-size: var(--typography-scale-200);
+.primaryButton:disabled {
+    background-color: #CBD5E1;
+    box-shadow: none;
+    cursor: not-allowed;
 }
 
-.itemName {
-    color: var(--color-neutral-600);
-    font-weight: 600;
-}
-
-.itemStats {
-    color: var(--color-neutral-500);
-    font-variant-numeric: tabular-nums;
-}
-
-.divider {
-    height: 1px;
-    background-color: var(--border-neutral-light);
-    margin: var(--spacing-4) 0;
-}
-
-.totalsArea {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-3);
-}
-
-.totalRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: var(--typography-scale-200);
-}
-
-.totalLabel {
-    color: var(--color-neutral-600);
-    font-weight: 600;
-}
-
-.totalValueBadge {
-    background-color: #F3F4F6;
-    /* Fallback */
-    background-color: var(--surface-primary-bg-light, #EEF2FF);
-    border: 1px solid var(--color-primary-200, #C7D2FE);
-    color: var(--color-primary-700, #4F46E5);
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
-}
-
-.totalValueBadge:nth-child(2) {
-    color: var(--color-neutral-600);
-}
-
-.insulinBadge {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: var(--spacing-4);
-    background-color: var(--color-accent-50, #FFF7ED);
-    border: 1px solid var(--color-accent-400, #FB923C);
-    border-radius: var(--radius-md);
-    padding: var(--spacing-3) var(--spacing-4);
-}
-
-.insulinLabel {
-    color: #9A3412;
-    /* Dark orange/brown color from design */
+.secondaryLink {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--color-primary-600, #4F46E5);
+    padding: var(--spacing-4, 1rem);
+    font-size: 1.125rem;
     font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 1rem;
 }
 
-.insulinValue {
-    font-family: var(--typography-family-heading, "Outfit"), sans-serif;
-    font-size: var(--typography-scale-600, 1.5rem);
-    font-weight: 800;
-    color: #9A3412;
-}
-
-.sourceFooter {
-    margin-top: var(--spacing-3);
-    font-size: var(--typography-scale-100);
-    color: var(--color-neutral-500);
-}
-
-/* Typing indicator */
-.typingIndicator {
-    background-color: white;
-    padding: var(--spacing-3) var(--spacing-4);
-    border-radius: var(--radius-xl);
-    border-bottom-left-radius: 4px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    border: 1px solid var(--border-neutral-light);
-    height: 40px;
-}
-
-.dot {
-    width: 6px;
-    height: 6px;
-    background-color: var(--color-neutral-400);
-    border-radius: var(--radius-full);
-    animation: typing 1.4s infinite ease-in-out both;
-}
-
-.dot:nth-child(1) {
-    animation-delay: -0.32s;
-}
-
-.dot:nth-child(2) {
-    animation-delay: -0.16s;
-}
-
-@keyframes typing {
-
-    0%,
-    80%,
-    100% {
-        transform: translateY(0);
-    }
-
-    40% {
-        transform: translateY(-4px);
-    }
-}
-
-.inputArea {
-    padding: var(--spacing-4) var(--spacing-6);
-    background-color: white;
-    border-top: 1px solid var(--border-neutral-light);
-}
-
-.inputWrapper {
-    display: flex;
-    background-color: var(--surface-neutral-bg-light);
-    border: 1px solid var(--border-neutral-light);
-    border-radius: var(--radius-full);
-    padding: var(--spacing-1) var(--spacing-1) var(--spacing-1) var(--spacing-4);
-    align-items: center;
-    transition: all 0.2s ease;
-}
-
-.inputWrapper:focus-within {
-    border-color: var(--color-primary-400);
-    box-shadow: 0 0 0 3px rgba(119, 129, 228, 0.1);
-}
-
-.inputField {
+/* Analyzing Step */
+.loadingContainer {
     flex: 1;
-    border: none;
-    background: transparent;
-    outline: none;
-    font-family: var(--typography-family-body, "Inter"), sans-serif;
-    font-size: var(--typography-scale-300);
-    color: var(--color-neutral-900);
-    height: 48px;
-}
-
-.sendButton {
-    width: 44px;
-    height: 44px;
-    border-radius: var(--radius-full);
-    border: none;
-    background-color: var(--color-neutral-300);
-    color: white;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 1.5rem;
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid #E2E8F0;
+    border-top: 5px solid var(--color-primary-600, #4F46E5);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingText {
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.loadingSubtext {
+    color: var(--color-neutral-500, #64748B);
+}
+
+/* Confirmation Step */
+.illustrationContainer {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+.illustration {
+    width: 146px;
+    height: auto;
+    filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.05));
+    object-fit: contain;
+    animation: fadeInScale 0.6s ease-out;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.resultCard {
+    background: white;
+    border-radius: 2rem;
+    padding: 1.5rem 1.5rem 2.5rem 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+    width: 100%;
+}
+
+.successHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #04AA4C;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.875rem;
+}
+
+.foodNameContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    background: #F1F0F2;
+    padding: 1.25rem;
+    border-radius: 8px;
+}
+
+.fieldLabel {
+    font-size: 0.75rem;
+    color: #ABA5B4;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: block;
+    text-transform: uppercase;
+}
+
+.foodName {
+    font-size: 1.75rem;
+    font-weight: 900;
+    margin: 0;
+    line-height: 1.1;
+    color: #0F172A;
+}
+
+.foodNameInput {
+    width: 100%;
+    background: transparent;
+    border: none;
+    font-size: 1.125rem;
+    font-weight: 900;
+    color: #43404D;
+    outline: none;
+    line-height: 1.2;
+}
+
+.nutritionGrid {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.mainNutrient {
+    flex: 1;
+}
+
+.nutrientBadge {
+    background: #DEE1FB;
+    padding: 1.25rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    min-height: 100px;
+    flex: 1;
+}
+
+.nutrientValueContainer {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.nutrientValueInput {
+    width: 100%;
+    min-width: 0;
+    text-align: right;
+    background: transparent;
+    border: none;
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #6F6B80;
+    outline: none;
+}
+
+.nutrientValueInput::-webkit-outer-spin-button,
+.nutrientValueInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.nutrientValueInput[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.nutrientLabel {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #ABA5B4;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.nutrientUnit {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6F6B80;
+}
+
+.otherNutrients {
+    flex: 1.3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+    background: #FFFFFF;
+    border: 1px solid #DEE1FB;
+    border-radius: 8px;
+    padding: 1.25rem;
+    min-width: 0;
+}
+
+.nutrientRow {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    align-items: center;
+}
+
+.smallLabel {
+    color: #6F6B80;
+}
+
+.smallValueContainer {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+}
+
+.smallValueInput {
+    width: 40px;
+    text-align: right;
+    background: transparent;
+    border: none;
+    font-size: 1.125rem;
+    /* ~18px visually */
+    font-weight: 800;
+    outline: none;
+}
+
+.smallValueInput::-webkit-outer-spin-button,
+.smallValueInput::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.smallValueInput[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.unitSuffix {
+    font-size: 1.125rem;
+    font-weight: 800;
+}
+
+.proteinInput,
+.proteinSuffix {
+    color: #FF7444;
+}
+
+.carbsInput,
+.carbsSuffix {
+    color: #FFA202;
+}
+
+.fatInput,
+.fatSuffix {
+    color: #0971E1;
+}
+
+.closeLink {
+    background: none;
+    border: none;
+    color: #5F67B6;
+    padding: var(--spacing-4, 1rem);
+    font-size: 1.125rem;
+    font-weight: 800;
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.sendButton.active {
-    background-color: var(--color-primary-600);
-    box-shadow: 0 4px 12px rgba(95, 103, 182, 0.3);
-}
-
-.sendButton.active:active {
-    transform: scale(0.95);
+    text-align: center;
+    margin-top: 1rem;
+    width: 100%;
 }

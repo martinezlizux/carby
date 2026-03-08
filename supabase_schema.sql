@@ -60,10 +60,13 @@ VALUES
 CREATE TABLE public.food_logs (
   id uuid DEFAULT uuid_generate_v4() NOT NULL,
   user_id uuid REFERENCES auth.users NOT NULL,
-  query text,
   food_name text,
-  carbs_calculated numeric,
-  insulin_calculated numeric,
+  carbs numeric,
+  proteins numeric,
+  fat numeric,
+  calories numeric,
+  insulin_dose numeric,
+  source text,
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
   PRIMARY KEY (id)
 );
