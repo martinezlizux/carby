@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-// No Lucide icons needed here
 import { useWizard } from '../contexts/WizardContext';
 import { analyzeFoodWithAI } from '../lib/ai';
 import { saveMeal } from '../lib/mealHistory';
@@ -14,68 +13,76 @@ const VoiceEntry = () => {
     const [transcript, setTranscript] = useState('');
     const [resultData, setResultData] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [speechSupported, setSpeechSupported] = useState(false);
 
-    // Recognition ref
     const recognitionRef = useRef(null);
+    const transcriptRef = useRef('');
 
     const userLang = userData?.language || (navigator.language.startsWith('es') ? 'Spanish' : 'English');
 
     useEffect(() => {
-        // Initialize Web Speech API if supported
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (SpeechRecognition) {
-            recognitionRef.current = new SpeechRecognition();
-            recognitionRef.current.continuous = false;
-            recognitionRef.current.interimResults = true;
-            recognitionRef.current.lang = userLang === 'Spanish' ? 'es-ES' : 'en-US';
-
-            recognitionRef.current.onresult = (event) => {
-                const current = event.resultIndex;
-                const text = event.results[current][0].transcript;
-                setTranscript(text);
-            };
-
-            recognitionRef.current.onend = () => {
-                if (step === 'listening') {
-                    handleFinishRecording();
-                }
-            };
-
-            recognitionRef.current.onerror = (event) => {
-                console.error("Speech recognition error:", event.error);
-                setStep('ready');
-            };
+        if (!SpeechRecognition) {
+            setSpeechSupported(false);
+            return;
         }
-    }, [userLang, step]);
+
+        setSpeechSupported(true);
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = true;
+        recognition.lang = userLang === 'Spanish' ? 'es-ES' : 'en-US';
+
+        recognition.onresult = (event) => {
+            const text = event.results[event.resultIndex][0].transcript;
+            transcriptRef.current = text;
+            setTranscript(text);
+        };
+
+        recognition.onend = () => {
+            if (transcriptRef.current.trim()) {
+                handleFinishRecording(transcriptRef.current);
+            } else {
+                setStep('ready');
+            }
+        };
+
+        recognition.onerror = (event) => {
+            console.error("Speech recognition error:", event.error);
+            if (event.error === 'no-speech') {
+                setStep('ready');
+            } else {
+                setStep('ready');
+            }
+        };
+
+        recognitionRef.current = recognition;
+    }, [userLang]);
 
     const handleBack = () => {
-        if (step === 'listening') {
-            recognitionRef.current?.stop();
-        }
+        recognitionRef.current?.stop();
         navigate('/dashboard');
     };
 
     const handleStartRecording = () => {
+        transcriptRef.current = '';
         setTranscript('');
         setStep('listening');
-        if (recognitionRef.current) {
-            recognitionRef.current.start();
-        } else {
-            // Fallback mock
-            setTimeout(() => {
-                setTranscript('Me comí una manzana roja y un yogur griego');
-            }, 2000);
-        }
+        recognitionRef.current?.start();
     };
 
-    const handleFinishRecording = async () => {
+    const handleFinishRecording = async (capturedTranscript) => {
         recognitionRef.current?.stop();
-        setStep('analyzing');
+        const text = (capturedTranscript || transcriptRef.current).trim();
 
-        // Use transcript for analysis
+        if (!text) {
+            setStep('ready');
+            return;
+        }
+
+        setStep('analyzing');
         try {
-            const textToAnalyze = transcript || "Me comí una manzana"; // Mock if empty for demo
-            const data = await analyzeFoodWithAI(textToAnalyze, userLang);
+            const data = await analyzeFoodWithAI(text, userLang);
             if (data) {
                 setResultData(data);
                 setStep('confirmation');
@@ -123,19 +130,33 @@ const VoiceEntry = () => {
                 </div>
             </div>
 
-            <div className={styles.card}>
-                <div className={styles.iconCircle}>
-                    <i className={`fa-solid fa-microphone ${styles.micIcon}`}></i>
+            {!speechSupported ? (
+                <div className={styles.card}>
+                    <div className={styles.iconCircle}>
+                        <i className="fa-solid fa-microphone-slash" style={{ fontSize: '2rem', color: 'var(--text-neutral-dark)' }}></i>
+                    </div>
+                    <h2 className={styles.statusTitle}>Voz no disponible</h2>
+                    <p className={styles.statusSub}>
+                        Tu navegador no soporta dictado de voz. Usa la opción de texto para registrar tu comida.
+                    </p>
+                    <button className={styles.recordButton} onClick={() => navigate('/chat')}>
+                        Ir a texto
+                    </button>
                 </div>
-                <h2 className={styles.statusTitle}>Listo para grabar</h2>
-                <p className={styles.statusSub}>
-                    Di algo como: “Desayune 2 huevos con una tostada integral”
-                </p>
-
-                <button className={styles.recordButton} onClick={handleStartRecording}>
-                    Grabar
-                </button>
-            </div>
+            ) : (
+                <div className={styles.card}>
+                    <div className={styles.iconCircle}>
+                        <i className={`fa-solid fa-microphone ${styles.micIcon}`}></i>
+                    </div>
+                    <h2 className={styles.statusTitle}>Listo para grabar</h2>
+                    <p className={styles.statusSub}>
+                        Di algo como: "Desayuné 2 huevos con una tostada integral"
+                    </p>
+                    <button className={styles.recordButton} onClick={handleStartRecording}>
+                        Grabar
+                    </button>
+                </div>
+            )}
 
             <button className={styles.secondaryLink} onClick={handleBack}>
                 Cerrar
@@ -159,11 +180,10 @@ const VoiceEntry = () => {
                     </div>
                 </div>
                 <h2 className={`${styles.statusTitle} ${styles.listeningTitleText}`}>Escuchando...</h2>
-                <p className={styles.statusSub}>
-                    Di algo como: “Desayune 2 huevos con una tostada integral”
-                </p>
-
-                <button className={styles.stopButton} onClick={handleFinishRecording}>
+                {transcript && (
+                    <p className={styles.transcriptPreview}>"{transcript}"</p>
+                )}
+                <button className={styles.stopButton} onClick={() => handleFinishRecording(transcriptRef.current)}>
                     Parar y analizar
                 </button>
             </div>

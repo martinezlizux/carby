@@ -429,7 +429,7 @@ input:checked+.sliderRound:before {
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-200);
     font-weight: var(--typography-weight-bold);
-    color: var(--text-primary-base);
+    color: var(--text-primary-dark);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }

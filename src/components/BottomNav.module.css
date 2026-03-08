@@ -39,7 +39,7 @@
 }
 
 .navItem.active {
-    color: var(--text-primary-base);
+    color: var(--text-links-accent);
 }
 
 .navItem.active i {

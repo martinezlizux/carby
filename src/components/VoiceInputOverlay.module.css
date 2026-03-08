@@ -338,7 +338,7 @@
 .statLabel {
     font-size: 10px;
     font-weight: 800;
-    color: var(--text-primary-base);
+    color: var(--text-primary-dark);
     margin-bottom: var(--spacing-2);
 }
 
@@ -352,7 +352,7 @@
     width: 70px;
     font-size: var(--typography-scale-700);
     font-weight: 800;
-    color: var(--text-primary-base);
+    color: var(--text-primary-dark);
     font-family: var(--typography-family-heading);
     background: transparent;
     border: none;
@@ -368,7 +368,7 @@
 
 .unit {
     font-size: var(--typography-scale-100);
-    color: var(--text-primary-base);
+    color: var(--text-primary-dark);
     font-weight: 600;
 }
 

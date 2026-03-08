@@ -62,6 +62,25 @@ export const getMealHistory = async () => {
 };
 
 /**
+ * Updates an existing meal entry.
+ */
+export const updateMeal = async (id, updates) => {
+    try {
+        const { data, error } = await supabase
+            .from('food_logs')
+            .update(updates)
+            .eq('id', id)
+            .select();
+
+        if (error) throw error;
+        return { data: data[0], error: null };
+    } catch (error) {
+        console.error('Error updating meal:', error);
+        return { data: null, error };
+    }
+};
+
+/**
  * Deletes a meal from history.
  */
 export const deleteMeal = async (id) => {

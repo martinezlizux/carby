@@ -19,12 +19,6 @@ const Scan = () => {
     const fileInputRef = useRef(null);
     const userLang = userData?.language || (navigator.language.startsWith('es') ? 'Spanish' : 'English');
 
-    useEffect(() => {
-        // Automatically trigger camera on mount
-        if (step === 'input' && !imagePreview) {
-            fileInputRef.current?.click();
-        }
-    }, [step, imagePreview]);
 
     const compressImage = (file, maxWidth = 800) => {
         return new Promise((resolve, reject) => {

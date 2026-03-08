@@ -58,7 +58,7 @@
   font-family: var(--typography-family-heading, "Outfit"), sans-serif;
   font-size: var(--typography-scale-800);
   font-weight: var(--typography-weight-bold);
-  color: var(--text-primary-base);
+  color: var(--text-primary-dark);
   margin-top: 10px;
   margin-bottom: var(--spacing-2);
   letter-spacing: -1px;
