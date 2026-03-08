@@ -4,7 +4,7 @@
     min-height: 100vh;
     background-color: #FFFFFF;
     font-family: var(--typography-family-body, "Inter"), sans-serif;
-    color: var(--color-neutral-900, #0F172A);
+    color: var(--text-neutral-darker);
 }
 
 .header {
@@ -20,7 +20,7 @@
     font-size: 1.5rem;
     font-weight: 900;
     margin: 0;
-    color: var(--color-neutral-900, #0F172A);
+    color: var(--text-neutral-darker);
 }
 
 .closeButton {
@@ -28,7 +28,7 @@
     border: none;
     width: 40px;
     height: 40px;
-    color: #43404D;
+    color: var(--surface-neutral-dark);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -100,7 +100,7 @@
     font-size: 1.5rem;
     font-weight: 800;
     margin: 0;
-    color: var(--color-neutral-900, #0F172A);
+    color: var(--text-neutral-darker);
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
 }
 
@@ -110,7 +110,7 @@
 
 .statusSub {
     font-size: 1rem;
-    color: var(--color-neutral-500, #64748B);
+    color: var(--text-neutral-dark);
     max-width: 280px;
     line-height: 1.5;
     margin: 0;
@@ -197,7 +197,7 @@
     width: 100%;
     background: none;
     border: none;
-    color: var(--color-primary-600, #4F46E5);
+    color: var(--text-links-primary);
     padding: var(--spacing-4, 1rem);
     font-size: 1.125rem;
     font-weight: 800;
@@ -236,7 +236,7 @@
 }
 
 .loadingSubtext {
-    color: var(--color-neutral-500, #64748B);
+    color: var(--text-neutral-dark);
 }
 
 /* Illustration */
@@ -319,7 +319,7 @@
 
 .fieldLabel {
     font-size: 0.75rem;
-    color: #ABA5B4;
+    color: var(--text-neutral-base);
     font-weight: 600;
     margin-bottom: 0.25rem;
     display: block;
@@ -331,7 +331,7 @@
     font-weight: 900;
     margin: 0;
     line-height: 1.1;
-    color: #0F172A;
+    color: var(--text-neutral-darker);
 }
 
 .foodNameInput {
@@ -340,7 +340,7 @@
     border: none;
     font-size: 1.125rem;
     font-weight: 900;
-    color: #43404D;
+    color: var(--surface-neutral-dark);
     outline: none;
     line-height: 1.2;
 }
@@ -380,7 +380,7 @@
     border: none;
     font-size: 2.25rem;
     font-weight: 900;
-    color: #6F6B80;
+    color: var(--text-neutral-dark);
     outline: none;
 }
 
@@ -398,7 +398,7 @@
 .nutrientLabel {
     font-size: 0.75rem;
     font-weight: 800;
-    color: #6F6B80;
+    color: var(--text-neutral-dark);
     text-transform: uppercase;
     margin-bottom: 0.25rem;
 }
@@ -406,7 +406,7 @@
 .nutrientUnit {
     font-size: 1rem;
     font-weight: 600;
-    color: #6F6B80;
+    color: var(--text-neutral-dark);
 }
 
 .otherNutrients {
@@ -431,7 +431,7 @@
 }
 
 .smallLabel {
-    color: #6F6B80;
+    color: var(--text-neutral-dark);
 }
 
 .smallValueContainer {
@@ -485,7 +485,7 @@
 .closeLink {
     background: none;
     border: none;
-    color: #5F67B6;
+    color: var(--text-links-primary);
     padding: var(--spacing-4, 1rem);
     font-size: 1.125rem;
     font-weight: 800;

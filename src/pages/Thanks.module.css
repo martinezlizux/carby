@@ -62,14 +62,14 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-700);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-primary-900);
+    color: var(--text-primary-base);
     margin-bottom: var(--spacing-2);
 }
 
 .subtitle {
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-400);
-    color: var(--color-neutral-600);
+    color: var(--text-neutral-base);
     margin-bottom: var(--spacing-8);
 }
 

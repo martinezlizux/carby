@@ -1,7 +1,7 @@
 .description {
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-300);
-    color: var(--color-neutral-600);
+    color: var(--text-neutral-base);
     margin-bottom: var(--spacing-8);
     line-height: 1.5;
 }
@@ -59,7 +59,7 @@
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-400);
     font-weight: var(--typography-weight-medium);
-    color: var(--color-neutral-900);
+    color: var(--text-neutral-darker);
 }
 
 .radioIndicator {

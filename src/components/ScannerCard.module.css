@@ -40,13 +40,13 @@
     font-size: 16px;
     font-weight: var(--typography-weight-bold);
     margin: 0;
-    color: #1A1C1E;
+    color: var(--text-neutral-darker);
 }
 
 .subtitle {
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: 13px;
-    color: #6C707F;
+    color: var(--text-neutral-base);
     margin: 0;
     line-height: 1.3;
 }

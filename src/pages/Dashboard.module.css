@@ -17,14 +17,14 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: 32px;
     font-weight: var(--typography-weight-bold);
-    color: #1A1C1E;
+    color: var(--text-neutral-darker);
     margin: 0;
 }
 
 .subtitle {
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-400);
-    color: #6C707F;
+    color: var(--text-neutral-dark);
     margin: 0;
 }
 
@@ -63,7 +63,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: var(--color-neutral-700);
+    color: var(--surface-neutral-dark);
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: 20px;
     font-weight: 700;
@@ -90,7 +90,7 @@
     padding: 24px;
     cursor: pointer;
     transition: all 0.2s ease;
-    color: var(--color-neutral-700);
+    color: var(--surface-neutral-dark);
 }
 
 .logMealActionBtn i {
@@ -118,7 +118,7 @@
 .sectionHeader h2 {
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: 24px;
-    color: #1A1C1E;
+    color: var(--text-neutral-darker);
     font-weight: var(--typography-weight-bold);
     margin: 0;
 }
@@ -126,7 +126,7 @@
 .editBtn {
     background: transparent;
     border: none;
-    color: #7781E4;
+    color: var(--text-links-primary);
     cursor: pointer;
     font-size: 20px;
     padding: var(--spacing-1);
@@ -176,7 +176,7 @@
     font-size: 18px;
     font-weight: var(--typography-weight-bold);
     margin: 0;
-    color: #1A1C1E;
+    color: var(--text-neutral-darker);
 }
 
 .profileDetailsRow {
@@ -193,7 +193,7 @@
 .profileDetailsCol p {
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: 13px;
-    color: #6C707F;
+    color: var(--text-neutral-dark);
     margin: 0;
 }
 
@@ -221,7 +221,7 @@
 .metricCard h3 {
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: 13px;
-    color: #8E92A3;
+    color: var(--text-neutral-base);
     font-weight: var(--typography-weight-regular);
     margin: 0;
 }
@@ -230,7 +230,7 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: 26px;
     font-weight: var(--typography-weight-bold);
-    color: #323B6F;
+    color: var(--text-neutral-darker);
     margin: 0;
 }
 
@@ -257,7 +257,7 @@
 
 .noMed {
     font-size: 14px;
-    color: #C0C4D6;
+    color: var(--text-neutral-base);
     margin: 0;
 }
 

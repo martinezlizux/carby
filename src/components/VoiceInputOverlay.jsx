@@ -3,7 +3,7 @@ import { Mic, X, Loader2, Star, Utensils } from 'lucide-react';
 import styles from './VoiceInputOverlay.module.css';
 import { analyzeFoodWithAI } from '../lib/ai';
 import { saveMeal } from '../lib/mealHistory';
-import balanceSvg from '../assets/balance.svg';
+import BalanceIcon from './BalanceIcon';
 
 const VoiceInputOverlay = ({ onClose, onSaveSuccess }) => {
     const [status, setStatus] = useState('idle'); // idle, recording, analyzing, results
@@ -204,11 +204,9 @@ const VoiceInputOverlay = ({ onClose, onSaveSuccess }) => {
                     ) : (
                         <>
                             <div className={styles.illustrationArea}>
-                                <img
-                                    src={balanceSvg}
-                                    alt="Balance illustration"
-                                    className={`${styles.illustration} ${status === 'recording' ? styles.isAnimating : ''}`}
-                                />
+                                <div className={`${styles.illustration} ${status === 'recording' ? styles.isAnimating : ''}`}>
+                                    <BalanceIcon />
+                                </div>
                             </div>
 
                             <div className={styles.controlsArea}>

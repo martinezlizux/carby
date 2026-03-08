@@ -19,7 +19,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--color-neutral-900);
+    color: var(--text-neutral-darker);
     padding: var(--spacing-2);
     display: flex;
     align-items: center;
@@ -57,7 +57,7 @@
 .skipButton {
     background: transparent;
     border: none;
-    color: var(--color-neutral-500);
+    color: var(--text-neutral-base);
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-300);
     font-weight: var(--typography-weight-medium);
@@ -82,7 +82,7 @@
     font-family: var(--typography-family-heading, 'Outfit'), sans-serif;
     font-size: var(--typography-scale-600);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-neutral-900);
+    color: var(--text-neutral-darker);
     margin-bottom: var(--spacing-6);
     line-height: 1.2;
 }

@@ -11,7 +11,7 @@
     padding: var(--spacing-3);
     border: none;
     background: transparent;
-    color: var(--color-neutral-500);
+    color: var(--text-neutral-dark);
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-weight: var(--typography-weight-medium);
     border-radius: var(--radius-full);
@@ -21,7 +21,7 @@
 
 .toggleActive {
     background: #FFFFFF;
-    color: var(--color-primary-600);
+    color: var(--text-primary-base);
     font-weight: var(--typography-weight-bold);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -49,14 +49,14 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-500);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-neutral-900);
+    color: var(--text-neutral-darker);
 }
 
 .value {
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-700);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-primary-600);
+    color: var(--text-primary-base);
     line-height: 1;
 }
 
@@ -70,7 +70,7 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-700);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-primary-600);
+    color: var(--text-primary-base);
     line-height: 1;
     border: none;
     background: transparent;
@@ -90,7 +90,7 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-600);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-primary-600);
+    color: var(--text-primary-base);
     line-height: 1;
     border: none;
     background: transparent;
@@ -110,14 +110,14 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-600);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-primary-600);
+    color: var(--text-primary-base);
     line-height: 1;
 }
 
 .unit {
     font-size: var(--typography-scale-300);
     font-family: var(--typography-family-body, "Inter"), sans-serif;
-    color: var(--color-neutral-500);
+    color: var(--text-neutral-dark);
     font-weight: var(--typography-weight-medium);
     margin-left: var(--spacing-1);
 }
@@ -155,5 +155,5 @@
     justify-content: space-between;
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-caption-font-size);
-    color: var(--color-neutral-400);
+    color: var(--text-neutral-base);
 }

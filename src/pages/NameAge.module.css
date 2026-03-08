@@ -1,7 +1,7 @@
 .description {
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-300);
-    color: var(--color-neutral-600);
+    color: var(--text-neutral-base);
     margin-bottom: var(--spacing-8);
     line-height: 1.5;
 }
@@ -16,7 +16,7 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-400);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-neutral-900);
+    color: var(--text-neutral-darker);
     margin-bottom: var(--spacing-3);
 }
 
@@ -27,7 +27,7 @@
     padding: var(--spacing-4);
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-400);
-    color: var(--color-neutral-900);
+    color: var(--text-neutral-darker);
     transition: all 0.2s ease;
     outline: none;
 }

@@ -14,14 +14,14 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: 32px;
     font-weight: var(--typography-weight-bold);
-    color: #1A1C1E;
+    color: var(--text-neutral-darker);
     margin: 0;
 }
 
 .subtitle {
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-400);
-    color: #6C707F;
+    color: var(--text-neutral-base);
     margin-top: var(--spacing-1);
 }
 
@@ -58,13 +58,13 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: 18px;
     font-weight: var(--typography-weight-bold);
-    color: #1A1C1E;
+    color: var(--text-neutral-darker);
 }
 
 .settingValue {
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: 14px;
-    color: #6C707F;
+    color: var(--text-neutral-base);
 }
 
 .actionArea {

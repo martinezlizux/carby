@@ -5,7 +5,7 @@ import { useWizard } from '../contexts/WizardContext';
 import { analyzeFoodWithAI } from '../lib/ai';
 import { saveMeal } from '../lib/mealHistory';
 import styles from './VoiceEntry.module.css';
-import balanceIcon from '../assets/balance.svg';
+import BalanceIcon from '../components/BalanceIcon';
 
 const VoiceEntry = () => {
     const navigate = useNavigate();
@@ -118,7 +118,9 @@ const VoiceEntry = () => {
     const renderReadyStep = () => (
         <div className={styles.content}>
             <div className={styles.illustrationContainer}>
-                <img src={balanceIcon} alt="Balance" className={styles.illustration} />
+                <div className={styles.illustration}>
+                    <BalanceIcon />
+                </div>
             </div>
 
             <div className={styles.card}>
@@ -144,7 +146,9 @@ const VoiceEntry = () => {
     const renderListeningStep = () => (
         <div className={styles.content}>
             <div className={styles.illustrationContainer}>
-                <img src={balanceIcon} alt="Balance" className={styles.illustration} />
+                <div className={styles.illustration}>
+                    <BalanceIcon />
+                </div>
             </div>
 
             <div className={styles.card}>
@@ -183,7 +187,9 @@ const VoiceEntry = () => {
     const renderConfirmationStep = () => (
         <div className={styles.content}>
             <div className={styles.illustrationContainer}>
-                <img src={balanceIcon} alt="Balance" className={styles.illustration} />
+                <div className={styles.illustration}>
+                    <BalanceIcon />
+                </div>
             </div>
 
             <div className={styles.resultCard}>

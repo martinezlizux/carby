@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Dashboard.module.css';
 import { useWizard } from '../contexts/WizardContext';
-import carbyCharacter from '../assets/Dahboard-character-header.png';
+import carbyCharacter from '../assets/Dashboard-character-header.png';
 import ScannerCard from '../components/ScannerCard';
 
 const Dashboard = () => {

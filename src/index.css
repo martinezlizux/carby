@@ -141,12 +141,20 @@
   --border-neutral-light: var(--color-neutral-100);
   --border-neutral-base: var(--color-neutral-500);
   --border-neutral-dark: var(--color-neutral-700);
+
+  /* Semantic Text Tokens */
+  --text-neutral-darker: var(--color-neutral-800);
+  --text-neutral-dark: var(--color-neutral-500);
+  --text-neutral-base: var(--color-neutral-300);
+  --text-primary-base: var(--color-primary-600);
+  --text-links-primary: var(--color-primary-600);
+  --surface-neutral-dark: var(--color-neutral-700);
 }
 
 body {
   font-family: var(--typography-family-body, 'Inter'), sans-serif;
   background-color: var(--surface-neutral-bg-light, #f1f0f2);
-  color: var(--color-neutral-900, #16151a);
+  color: var(--text-neutral-darker);
   margin: 0;
   padding: 0;
   display: flex;
@@ -167,6 +175,7 @@ h5,
 h6 {
   font-family: var(--typography-family-heading, 'Outfit'), sans-serif;
   margin: 0;
+  color: var(--text-neutral-darker);
   font-weight: var(--typography-weight-bold, 700);
 }
 

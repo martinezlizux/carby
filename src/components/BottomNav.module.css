@@ -20,7 +20,7 @@
     align-items: center;
     justify-content: center;
     text-decoration: none;
-    color: var(--color-neutral-400);
+    color: var(--text-neutral-dark);
     gap: var(--spacing-1);
     transition: all 0.2s ease;
     flex: 1;
@@ -39,7 +39,7 @@
 }
 
 .navItem.active {
-    color: var(--color-accent-500);
+    color: var(--text-primary-base);
 }
 
 .navItem.active i {

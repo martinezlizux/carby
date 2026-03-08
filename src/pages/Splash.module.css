@@ -58,7 +58,7 @@
   font-family: var(--typography-family-heading, "Outfit"), sans-serif;
   font-size: var(--typography-scale-800);
   font-weight: var(--typography-weight-bold);
-  color: var(--color-primary-900);
+  color: var(--text-primary-base);
   margin-top: 10px;
   margin-bottom: var(--spacing-2);
   letter-spacing: -1px;
@@ -69,7 +69,7 @@
 
 .tagline {
   font-size: var(--typography-scale-300);
-  color: var(--color-neutral-600);
+  color: var(--text-neutral-base);
   font-weight: var(--typography-weight-medium);
   letter-spacing: 0.5px;
   opacity: 0;

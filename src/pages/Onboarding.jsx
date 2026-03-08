@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useWizard } from '../contexts/WizardContext';
 import styles from './Onboarding.module.css';
 import BalanceIcon from '../components/BalanceIcon';
-import carbyCharacter from '../assets/carby_character.png';
 import carbyFoody from '../assets/Carby_foody.mp4';
 
 const Onboarding = () => {

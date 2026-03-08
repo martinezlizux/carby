@@ -24,7 +24,7 @@
 .header h1 {
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-600);
-    color: var(--color-neutral-900);
+    color: var(--text-neutral-darker);
     margin: 0;
 }
 
@@ -38,7 +38,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: var(--color-neutral-600);
+    color: var(--text-neutral-base);
     font-size: 20px;
 }
 
@@ -135,7 +135,7 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-400);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-neutral-900);
+    color: var(--text-neutral-darker);
     margin-bottom: var(--spacing-4);
     display: block;
 }
@@ -144,7 +144,7 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-200);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-neutral-700);
+    color: var(--text-neutral-dark);
     display: block;
     margin: 0 0 var(--spacing-2) 0;
 }
@@ -163,7 +163,7 @@
     padding: var(--spacing-3) var(--spacing-4);
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-300);
-    color: var(--color-neutral-900);
+    color: var(--text-neutral-darker);
     transition: all 0.2s ease;
     box-sizing: border-box;
 }
@@ -196,7 +196,7 @@
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-300);
     font-weight: var(--typography-weight-medium);
-    color: var(--color-neutral-600);
+    color: var(--text-neutral-base);
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -224,7 +224,7 @@
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-100);
     font-weight: var(--typography-weight-medium);
-    color: var(--color-neutral-600);
+    color: var(--text-neutral-base);
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -282,7 +282,7 @@
 .unit {
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-300);
-    color: var(--color-neutral-500);
+    color: var(--text-neutral-base);
     margin-left: var(--spacing-2);
     min-width: 40px;
 }
@@ -320,7 +320,7 @@
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-500);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-neutral-500);
+    color: var(--text-neutral-base);
     margin-left: 2px;
     margin-right: var(--spacing-3);
 }
@@ -429,7 +429,7 @@ input:checked+.sliderRound:before {
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     font-size: var(--typography-scale-200);
     font-weight: var(--typography-weight-bold);
-    color: var(--color-primary-600);
+    color: var(--text-primary-base);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -465,7 +465,7 @@ input:checked+.sliderRound:before {
     padding: var(--spacing-2) var(--spacing-3);
     font-family: var(--typography-family-body, "Inter"), sans-serif;
     font-size: var(--typography-scale-200);
-    color: var(--color-neutral-600);
+    color: var(--text-neutral-base);
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -530,7 +530,7 @@ input:checked+.sliderRound:before {
     border-radius: var(--radius-lg);
     border: none;
     background-color: white;
-    color: var(--color-neutral-800);
+    color: var(--text-neutral-darker);
     font-size: var(--typography-scale-600);
     font-family: var(--typography-family-heading, "Outfit"), sans-serif;
     line-height: 1;
