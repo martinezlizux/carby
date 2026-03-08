@@ -16,6 +16,15 @@ const History = () => {
         fetchHistory();
     }, []);
 
+    useEffect(() => {
+        if (editingMeal) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => { document.body.style.overflow = ''; };
+    }, [editingMeal]);
+
     const fetchHistory = async () => {
         setLoading(true);
         const { data } = await getMealHistory();
