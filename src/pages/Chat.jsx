@@ -5,6 +5,7 @@ import { useWizard } from '../contexts/WizardContext';
 import { analyzeFoodWithAI } from '../lib/ai';
 import { saveMeal } from '../lib/mealHistory';
 import styles from './Chat.module.css';
+import balanceIcon from '../assets/balance.svg';
 
 const Chat = () => {
     const navigate = useNavigate();
@@ -70,7 +71,7 @@ const Chat = () => {
     const renderInputStep = () => (
         <div className={styles.content}>
             <div className={styles.illustrationContainer}>
-                <img src="/src/assets/balance.svg" alt="Balance" className={styles.illustration} />
+                <img src={balanceIcon} alt="Balance" className={styles.illustration} />
             </div>
 
             <div className={styles.inputCard}>
@@ -110,7 +111,7 @@ const Chat = () => {
     const renderConfirmationStep = () => (
         <div className={styles.content}>
             <div className={styles.illustrationContainer}>
-                <img src="/src/assets/balance.svg" alt="Balance" className={styles.illustration} />
+                <img src={balanceIcon} alt="Balance" className={styles.illustration} />
             </div>
 
             <div className={styles.resultCard}>
