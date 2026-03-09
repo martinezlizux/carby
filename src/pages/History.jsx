@@ -104,7 +104,7 @@ const History = () => {
                         <span className={styles.addMealSubtitle}>{t('addMealCardSubtitle')}</span>
                     </div>
                     <div className={styles.miniActions}>
-                        <button className={styles.miniActionBtn} onClick={() => navigate('/scan')}>
+                        <button className={styles.miniActionBtn} onClick={() => navigate('/scan-ar')}>
                             <i className="fa-solid fa-camera"></i>
                         </button>
                         <button className={styles.miniActionBtn} onClick={() => navigate('/voice')}>

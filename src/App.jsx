@@ -15,6 +15,7 @@ import EditProfile from './pages/EditProfile.jsx';
 import AppLayout from './components/AppLayout.jsx';
 import { WizardProvider } from './contexts/WizardContext.jsx';
 import Scan from './pages/Scan.jsx';
+import ScanAR from './pages/ScanAR.jsx';
 import History from './pages/History.jsx';
 import VoiceEntry from './pages/VoiceEntry.jsx';
 
@@ -41,6 +42,7 @@ function App() {
           <Route path="/profile/edit" element={<EditProfile />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/scan" element={<Scan />} />
+          <Route path="/scan-ar" element={<ScanAR />} />
           <Route path="/voice" element={<VoiceEntry />} />
         </Routes>
       </BrowserRouter>

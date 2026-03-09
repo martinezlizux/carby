@@ -71,7 +71,7 @@ const Dashboard = () => {
                         <span>{t('logMeal')}</span>
                     </div>
                     <div className={styles.logMealActions}>
-                        <button className={styles.logMealActionBtn} onClick={() => navigate('/scan')} aria-label={t('ariaTakePhoto')}>
+                        <button className={styles.logMealActionBtn} onClick={() => navigate('/scan-ar')} aria-label={t('ariaTakePhoto')}>
                             <i className="fa-solid fa-camera"></i>
                         </button>
                         <button className={styles.logMealActionBtn} onClick={() => navigate('/voice')} aria-label={t('ariaUseVoice')}>
