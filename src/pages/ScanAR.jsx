@@ -33,7 +33,9 @@ const ScanAR = () => {
             streamRef.current = stream;
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
-                videoRef.current.play();
+                videoRef.current.play().catch(e => {
+                    if (e.name !== 'AbortError') console.error("Video play error:", e);
+                });
             }
             setStep('live');
             scheduleNextScan(1200);

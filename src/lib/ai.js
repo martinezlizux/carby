@@ -43,7 +43,15 @@ export const analyzeImageWithAI = async (base64Image, userLanguage = 'English') 
         return data;
 
     } catch (error) {
-        console.error("DEBUG: AI vision analysis error:", error);
+        console.error("DEBUG: AI image analysis error:", error);
+        if (error.context) {
+            try {
+                const body = await error.context.json();
+                console.error("DEBUG: Function error body:", body);
+            } catch (e) {
+                console.error("DEBUG: Could not parse error body");
+            }
+        }
         return null;
     }
 };
