@@ -20,7 +20,7 @@ const Scan = () => {
     const userLang = userData?.language || (navigator.language.startsWith('es') ? 'Spanish' : 'English');
 
 
-    const compressImage = (file, maxWidth = 800) => {
+    const compressImage = (file, maxWidth = 1024) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);

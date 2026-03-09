@@ -98,17 +98,24 @@ export const analyzeImageWithAI = async (base64Image, userLanguage = 'English') 
                 'Authorization': `Bearer ${API_KEY}`
             },
             body: JSON.stringify({
-                model: "llama-3.2-90b-vision-preview",
+                model: "meta-llama/llama-4-scout-17b-16e-instruct",
                 messages: [
+                    {
+                        role: "system",
+                        content: `You are Carby AI, a clinical nutritionist specialized in diabetes management.
+Your job is to analyze food photos and estimate nutritional values for insulin dose calculation — so accuracy matters.
+Always estimate for the TOTAL PORTION visible in the image, not per 100g.
+If it's a packaged product with a visible nutrition label, read values from the label directly.
+If it's a home-cooked meal or restaurant dish, estimate based on visible portion size.
+Respond ONLY with a valid JSON object. No extra text.
+JSON structure: { "food_name": "string", "carbs": number, "calories": number, "proteins": number, "fat": number, "sugars": number, "explanation": "Brief reasoning in ${userLanguage}" }`
+                    },
                     {
                         role: "user",
                         content: [
                             {
                                 type: "text",
-                                text: `You are Carby AI, a nutritionist. Look at this product image.
-Identify the product and estimate its nutritional values per 100g/ml if possible.
-Respond ONLY with a valid JSON object.
-JSON structure: { "food_name": "Product Name", "carbs": number, "calories": number, "proteins": number, "fat": number, "sugars": number, "explanation": "Brief reasoning in ${userLanguage}" }`
+                                text: "Analyze this food image and return the nutritional values for the portion shown."
                             },
                             {
                                 type: "image_url",
@@ -130,9 +137,21 @@ JSON structure: { "food_name": "Product Name", "carbs": number, "calories": numb
             return null;
         }
 
-        const content = data.choices[0]?.message?.content;
-        const cleanJson = content ? content.replace(/```json|```/g, '').trim() : "{}";
-        return JSON.parse(cleanJson);
+        if (!data.choices || data.choices.length === 0) {
+            console.error("DEBUG: No choices returned from Vision API");
+            return null;
+        }
+
+        const content = data.choices[0].message?.content;
+        if (!content) return null;
+
+        const cleanJson = content.replace(/```json|```/g, '').trim();
+        const parsed = JSON.parse(cleanJson);
+
+        // Treat empty or missing food_name as a failed recognition
+        if (!parsed.food_name) return null;
+
+        return parsed;
 
     } catch (error) {
         console.error("DEBUG: AI Vision Analysis Error:", error);
