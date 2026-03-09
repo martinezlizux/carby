@@ -11,6 +11,7 @@ const ScanAR = () => {
     const [step, setStep] = useState('requesting'); // 'requesting', 'denied', 'live', 'scanning', 'result'
     const [resultData, setResultData] = useState(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [saved, setSaved] = useState(false);
 
     const videoRef = useRef(null);
     const streamRef = useRef(null);
@@ -80,6 +81,7 @@ const ScanAR = () => {
 
         if (result && result.food_name) {
             setResultData(result);
+            setSaved(false);
             setStep('result');
         } else {
             setStep('live');
@@ -89,11 +91,12 @@ const ScanAR = () => {
 
     const handleRescan = () => {
         setResultData(null);
+        setSaved(false);
         setStep('live');
         scheduleNextScan(800);
     };
 
-    const handleSave = async () => {
+    const handleAddToLog = async () => {
         if (!resultData || isSaving) return;
         setIsSaving(true);
         const { error } = await saveMeal({
@@ -105,35 +108,22 @@ const ScanAR = () => {
             explanation: resultData.explanation,
             source: 'scan'
         });
-        if (error) {
-            setIsSaving(false);
-        } else {
-            stopEverything();
-            navigate('/history');
-        }
+        setIsSaving(false);
+        if (!error) setSaved(true);
     };
 
     return (
         <div className={styles.container}>
-            {/* Live camera feed */}
-            <video
-                ref={videoRef}
-                className={styles.video}
-                autoPlay
-                playsInline
-                muted
-            />
-
-            {/* Dark gradient overlay top/bottom */}
+            <video ref={videoRef} className={styles.video} autoPlay playsInline muted />
             <div className={styles.gradientTop} />
             <div className={styles.gradientBottom} />
 
             {/* Header */}
             <header className={styles.header}>
-                <button className={styles.backBtn} onClick={() => { stopEverything(); navigate('/history'); }}>
+                <button className={styles.backBtn} onClick={() => { stopEverything(); navigate(-1); }}>
                     <i className="fa-solid fa-xmark"></i>
                 </button>
-                <span className={styles.headerTitle}>Escanear comida</span>
+                <span className={styles.headerTitle}>Explorar alimento</span>
                 <div style={{ width: 40 }} />
             </header>
 
@@ -148,7 +138,7 @@ const ScanAR = () => {
                         {step === 'scanning' && <div className={styles.scanLine} />}
                     </div>
                     <p className={styles.scanHint}>
-                        {step === 'scanning' ? 'Analizando...' : 'Apunta al alimento'}
+                        {step === 'scanning' ? 'Analizando...' : 'Apunta a un empaque o plato'}
                     </p>
                 </div>
             )}
@@ -156,7 +146,6 @@ const ScanAR = () => {
             {/* Result AR Panel */}
             {step === 'result' && resultData && (
                 <div className={styles.resultFrame}>
-                    {/* AR target corners — green when found */}
                     <div className={styles.frameContainer}>
                         <div className={`${styles.scanFrame} ${styles.found}`}>
                             <div className={`${styles.corner} ${styles.cornerTL}`} />
@@ -166,13 +155,10 @@ const ScanAR = () => {
                         </div>
                     </div>
 
-                    {/* Nutrition panel */}
                     <div className={styles.resultPanel}>
                         <div className={styles.resultHeader}>
                             <i className="fa-solid fa-circle-check" style={{ color: '#2ED199' }}></i>
-                            <h2 className={styles.foodName}>
-                                {resultData.food_name}
-                            </h2>
+                            <h2 className={styles.foodName}>{resultData.food_name}</h2>
                         </div>
 
                         <div className={styles.nutrientBadges}>
@@ -202,9 +188,16 @@ const ScanAR = () => {
                             <button className={styles.rescanBtn} onClick={handleRescan}>
                                 <i className="fa-solid fa-rotate"></i> Otro
                             </button>
-                            <button className={styles.saveBtn} onClick={handleSave} disabled={isSaving}>
-                                {isSaving ? 'Guardando...' : 'Guardar registro'}
-                            </button>
+                            {saved ? (
+                                <span className={styles.savedConfirm}>
+                                    <i className="fa-solid fa-check"></i> Agregado al log
+                                </span>
+                            ) : (
+                                <button className={styles.addToLogBtn} onClick={handleAddToLog} disabled={isSaving}>
+                                    <i className="fa-solid fa-plus"></i>
+                                    {isSaving ? 'Guardando...' : 'Agregar al log'}
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -216,9 +209,7 @@ const ScanAR = () => {
                     <i className="fa-solid fa-camera-slash" style={{ fontSize: '3rem', color: 'white', opacity: 0.6 }}></i>
                     <p className={styles.deniedText}>No se pudo acceder a la cámara.</p>
                     <p className={styles.deniedSub}>Activa el permiso de cámara en tu navegador.</p>
-                    <button className={styles.saveBtn} onClick={() => navigate('/scan')}>
-                        Subir foto
-                    </button>
+                    <button className={styles.addToLogBtn} onClick={() => navigate(-1)}>Volver</button>
                 </div>
             )}
 

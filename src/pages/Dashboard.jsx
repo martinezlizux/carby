@@ -71,7 +71,7 @@ const Dashboard = () => {
                         <span>{t('logMeal')}</span>
                     </div>
                     <div className={styles.logMealActions}>
-                        <button className={styles.logMealActionBtn} onClick={() => navigate('/scan-ar')} aria-label={t('ariaTakePhoto')}>
+                        <button className={styles.logMealActionBtn} onClick={() => navigate('/scan')} aria-label={t('ariaTakePhoto')}>
                             <i className="fa-solid fa-camera"></i>
                         </button>
                         <button className={styles.logMealActionBtn} onClick={() => navigate('/voice')} aria-label={t('ariaUseVoice')}>
@@ -82,6 +82,19 @@ const Dashboard = () => {
                         </button>
                     </div>
                 </div>
+
+                <button className={styles.arExplorerCard} onClick={() => navigate('/scan-ar')}>
+                    <div className={styles.arExplorerLeft}>
+                        <div className={styles.arExplorerIcon}>
+                            <i className="fa-solid fa-eye"></i>
+                        </div>
+                        <div>
+                            <p className={styles.arExplorerTitle}>Explorar alimento</p>
+                            <p className={styles.arExplorerSub}>Apunta tu cámara y descubre los nutrientes en AR</p>
+                        </div>
+                    </div>
+                    <i className="fa-solid fa-chevron-right" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}></i>
+                </button>
 
                 <div className={styles.profileSection}>
                     <div className={styles.sectionHeader}>

@@ -282,26 +282,45 @@
     background: rgba(255,255,255,0.18);
 }
 
-.saveBtn {
+.addToLogBtn {
     flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     padding: 14px 20px;
-    background: var(--color-primary-600, #4338CA);
-    border: none;
+    background: rgba(98, 122, 238, 0.25);
+    border: 1px solid rgba(98, 122, 238, 0.45);
     border-radius: 16px;
-    color: white;
+    color: #9EB4FF;
     font-size: 15px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
     transition: background 0.2s ease;
 }
 
-.saveBtn:hover {
-    background: var(--color-primary-700, #3730A3);
+.addToLogBtn:hover {
+    background: rgba(98, 122, 238, 0.38);
 }
 
-.saveBtn:disabled {
+.addToLogBtn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.savedConfirm {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px;
+    border-radius: 16px;
+    background: rgba(46, 209, 153, 0.2);
+    border: 1px solid rgba(46, 209, 153, 0.35);
+    color: #2ED199;
+    font-size: 15px;
+    font-weight: 600;
 }
 
 /* ─── Permission Denied / Requesting ───────────────── */

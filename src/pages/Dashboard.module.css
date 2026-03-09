@@ -48,6 +48,59 @@
     gap: var(--spacing-4);
 }
 
+/* ─── AR Explorer Card ──────────────────────────────── */
+.arExplorerCard {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, #3730A3 0%, #4F46E5 60%, #627AEE 100%);
+    border-radius: var(--radius-xl);
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    width: 100%;
+}
+
+.arExplorerCard:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.arExplorerLeft {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.arExplorerIcon {
+    width: 42px;
+    height: 42px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.arExplorerTitle {
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+    margin: 0 0 2px;
+}
+
+.arExplorerSub {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    margin: 0;
+    line-height: 1.4;
+}
+
 .logMealContainer {
     background-color: var(--surface-primary-bg-lighter);
     border-radius: var(--radius-xl);
