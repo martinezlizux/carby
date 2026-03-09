@@ -17,17 +17,8 @@ serve(async (req: Request) => {
     try {
         const { mode, userInput, base64Image, userLanguage = 'English' } = await req.json()
 
-        const systemPromptText = `You are Carby AI, a professional nutrition assistant for people with diabetes.
-Respond ONLY with a valid JSON object. No extra text.
-Prioritize accurate nutritional estimation for calculating insulin doses.
-JSON structure: { "food_name": "string", "carbs": number, "calories": number, "proteins": number, "fat": number, "sugars": number, "explanation": "string" }
-The explanation should be short and in ${userLanguage}.`
-
-        const systemPromptVision = `You are Carby AI, a clinical nutritionist specialized in diabetes management.
-Your job is to analyze food photos and estimate nutritional values for insulin dose calculation.
-Always estimate for the TOTAL PORTION visible in the image.
-Respond ONLY with a valid JSON object. No extra text.
-JSON structure: { "food_name": "string", "carbs": number, "calories": number, "proteins": number, "fat": number, "sugars": number, "explanation": "Brief reasoning in ${userLanguage}" }`
+        const systemPromptText = `Nutritionist (Diabetes). Respond ONLY JSON: { "food_name": "string", "carbs": number, "calories": number, "proteins": number, "fat": number, "sugars": number, "explanation": "Short, in ${userLanguage}" }`
+        const systemPromptVision = `Nutritionist (Diabetes). Analyze TOTAL PORTION. Respond ONLY JSON: { "food_name": "string", "carbs": number, "calories": number, "proteins": number, "fat": number, "sugars": number, "explanation": "Short reasoning, in ${userLanguage}" }`
 
         if (mode === 'text') {
             let error = null
@@ -43,7 +34,7 @@ JSON structure: { "food_name": "string", "carbs": number, "calories": number, "p
                         },
                         body: JSON.stringify({
                             model: 'claude-3-5-haiku-20241022',
-                            max_tokens: 512,
+                            max_tokens: 300,
                             system: systemPromptText,
                             messages: [{ role: 'user', content: userInput }]
                         })
@@ -105,7 +96,7 @@ JSON structure: { "food_name": "string", "carbs": number, "calories": number, "p
                         },
                         body: JSON.stringify({
                             model: 'claude-3-5-sonnet-20241022',
-                            max_tokens: 512,
+                            max_tokens: 300,
                             system: systemPromptVision,
                             messages: [{
                                 role: 'user',
