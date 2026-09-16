@@ -20,10 +20,16 @@ serve(async (req: Request) => {
         const systemPromptText = `Nutritionist (Diabetes). Respond ONLY JSON: { "food_name": "string", "carbs": number, "calories": number, "proteins": number, "fat": number, "sugars": number, "explanation": "Short, in ${userLanguage}" }`
         const systemPromptVision = `Nutritionist (Diabetes). Analyze TOTAL PORTION. Respond ONLY JSON: { "food_name": "string", "carbs": number, "calories": number, "proteins": number, "fat": number, "sugars": number, "explanation": "Short reasoning, in ${userLanguage}" }`
 
+        const extractJson = (text: string) => {
+            const trimmed = text.trim()
+            const match = trimmed.match(/\{[\s\S]*\}/)
+            return match ? match[0] : trimmed
+        }
+
         if (mode === 'text') {
             let error = null
 
-            // Try Groq first (Low Cost / High Speed)
+            // Try Groq first (Low Cost / Ultra High Speed)
             if (GROQ_API_KEY) {
                 try {
                     const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -33,7 +39,7 @@ serve(async (req: Request) => {
                             'Authorization': `Bearer ${GROQ_API_KEY}`
                         },
                         body: JSON.stringify({
-                            model: 'meta-llama/Llama-4-Scout-17B-16E-Instruct',
+                            model: 'openai/gpt-oss-20b',
                             messages: [
                                 { role: 'system', content: systemPromptText },
                                 { role: 'user', content: userInput }
@@ -45,7 +51,9 @@ serve(async (req: Request) => {
                     const data = await response.json()
                     if (data.error) throw new Error(`Groq error: ${data.error.message || JSON.stringify(data.error)}`)
                     const content = data.choices?.[0]?.message?.content
-                    if (content) return new Response(content, { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+                    if (content) {
+                        return new Response(extractJson(content), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+                    }
                 } catch (e) {
                     error = e.message
                     console.error("Groq failed, trying Anthropic fallback:", e)
@@ -63,7 +71,7 @@ serve(async (req: Request) => {
                             'anthropic-version': '2023-06-01'
                         },
                         body: JSON.stringify({
-                            model: 'claude-3-5-haiku-20241022',
+                            model: 'claude-haiku-4-5-20251001',
                             max_tokens: 300,
                             system: systemPromptText,
                             messages: [{ role: 'user', content: userInput }]
@@ -72,7 +80,9 @@ serve(async (req: Request) => {
                     const data = await response.json()
                     if (data.error) throw new Error(`Anthropic error: ${JSON.stringify(data.error)}`)
                     const content = data.content?.[0]?.text
-                    if (content) return new Response(content, { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+                    if (content) {
+                        return new Response(extractJson(content), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+                    }
                 } catch (e) {
                     error = (error ? error + ' | ' : '') + e.message
                     console.error("Anthropic fallback failed:", e)
@@ -84,40 +94,7 @@ serve(async (req: Request) => {
         if (mode === 'image') {
             let error = null
 
-            // Groq Vision First (Low Cost)
-            if (GROQ_API_KEY) {
-                try {
-                    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${GROQ_API_KEY}`
-                        },
-                        body: JSON.stringify({
-                            model: 'meta-llama/Llama-4-Scout-17B-16E-Instruct',
-                            messages: [
-                                { role: 'system', content: systemPromptVision },
-                                {
-                                    role: 'user', content: [
-                                        { type: 'text', text: 'Analyze this food portions.' },
-                                        { type: 'image_url', image_url: { url: base64Image } }
-                                    ]
-                                }
-                            ],
-                            response_format: { type: 'json_object' }
-                        })
-                    })
-                    const data = await response.json()
-                    if (data.error) throw new Error(`Groq Vision error: ${data.error.message || JSON.stringify(data.error)}`)
-                    const content = data.choices?.[0]?.message?.content
-                    if (content) return new Response(content, { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
-                } catch (e) {
-                    error = e.message
-                    console.error("Groq vision failed, trying Anthropic fallback:", e)
-                }
-            }
-
-            // Anthropic Vision Fallback (High Precision)
+            // Anthropic Vision Primary (High Precision)
             if (ANTHROPIC_API_KEY) {
                 try {
                     const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '')
@@ -131,14 +108,14 @@ serve(async (req: Request) => {
                             'anthropic-version': '2023-06-01'
                         },
                         body: JSON.stringify({
-                            model: 'claude-3-5-sonnet-20241022',
+                            model: 'claude-sonnet-4-5-20250929',
                             max_tokens: 300,
                             system: systemPromptVision,
                             messages: [{
                                 role: 'user',
                                 content: [
                                     { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64Data } },
-                                    { type: 'text', text: 'Analyze this food portions.' }
+                                    { type: 'text', text: 'Analyze this food portions. Respond ONLY valid raw JSON.' }
                                 ]
                             }]
                         })
@@ -151,13 +128,15 @@ serve(async (req: Request) => {
                         throw new Error(`Anthropic Vision error: ${msg}`)
                     }
                     const content = data.content?.[0]?.text
-                    if (content) return new Response(content, { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+                    if (content) {
+                        return new Response(extractJson(content), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
+                    }
                 } catch (e) {
-                    error = (error ? error + ' | ' : '') + e.message
-                    console.error("Anthropic fallback vision failed:", e)
+                    error = e.message
+                    console.error("Anthropic vision failed:", e)
                 }
             }
-            throw new Error(error || 'All Vision models failed or both API keys are missing')
+            throw new Error(error || 'Vision analysis failed or Anthropic API key missing')
         }
 
         return new Response(JSON.stringify({ error: 'Invalid mode' }), {
