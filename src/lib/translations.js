@@ -26,6 +26,9 @@ export const translations = {
         daily: "Daily",
         completeProfileMsg: "Please complete your information to enjoy a fully personalized experience.",
         completeProfileBtn: "Complete Profile",
+        arVirtualReality: "Virtual Reality",
+        arSubtitle: "Point your camera and discover nutrients in products and dishes",
+        arExploreFood: "Explore food",
 
         // Settings
         personalize: "Personalize your experience.",
@@ -225,6 +228,9 @@ export const translations = {
         daily: "Diario",
         completeProfileMsg: "Por favor completa tu información para disfrutar de una experiencia totalmente personalizada.",
         completeProfileBtn: "Completar Perfil",
+        arVirtualReality: "Realidad Virtual",
+        arSubtitle: "Apunta tu cámara y descubre los nutrientes de productos y platillos",
+        arExploreFood: "Explorar alimento",
 
         // Settings
         personalize: "Personaliza tu experiencia.",

@@ -4,6 +4,7 @@ import styles from './Dashboard.module.css';
 import { useWizard } from '../contexts/WizardContext';
 import carbyCharacter from '../assets/Dashboard-character-header.png';
 import ScannerCard from '../components/ScannerCard';
+import { Scan } from 'lucide-react';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -83,18 +84,16 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <button className={styles.arExplorerCard} onClick={() => navigate('/scan-ar')}>
-                    <div className={styles.arExplorerLeft}>
-                        <div className={styles.arExplorerIcon}>
-                            <i className="fa-solid fa-eye"></i>
-                        </div>
-                        <div>
-                            <p className={styles.arExplorerTitle}>Explorar alimento</p>
-                            <p className={styles.arExplorerSub}>Apunta tu cámara y descubre los nutrientes en AR</p>
-                        </div>
+                <div className={styles.arExplorerCard}>
+                    <div className={styles.arExplorerHeader}>
+                        <h3 className={styles.arExplorerTitle}>{t('arVirtualReality')}</h3>
+                        <p className={styles.arExplorerSub}>{t('arSubtitle')}</p>
                     </div>
-                    <i className="fa-solid fa-chevron-right" style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px' }}></i>
-                </button>
+                    <button className={styles.arExplorerBtn} onClick={() => navigate('/scan-ar')}>
+                        <Scan size={22} color="#ffffff" strokeWidth={2.2} />
+                        <span>{t('arExploreFood')}</span>
+                    </button>
+                </div>
 
                 <div className={styles.profileSection}>
                     <div className={styles.sectionHeader}>

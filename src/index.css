@@ -34,6 +34,16 @@
   --color-neutral-700: rgba(67, 64, 77, 1);
   --color-neutral-800: rgba(44, 43, 51, 1);
   --color-neutral-900: rgba(22, 21, 26, 1);
+  --color-success-50: rgba(242, 250, 246, 1);
+  --color-success-100: rgba(218, 239, 229, 1);
+  --color-success-200: rgba(180, 223, 203, 1);
+  --color-success-300: rgba(130, 203, 168, 1);
+  --color-success-400: rgba(68, 176, 124, 1);
+  --color-success-500: rgba(5, 150, 80, 1); /* #059650 */
+  --color-success-600: rgba(4, 120, 64, 1);
+  --color-success-700: rgba(3, 90, 48, 1);
+  --color-success-800: rgba(2, 60, 32, 1);
+  --color-success-900: rgba(1, 30, 16, 1);
 
   --spacing-1: 4px;
   --spacing-2: 8px;
@@ -130,6 +140,12 @@
   --surface-neutral-bg-lighter: var(--color-neutral-0);
   --surface-neutral-bg-darker: var(--color-neutral-700);
 
+  --surface-success-bg-lighter: var(--color-success-50);
+  --surface-success-bg-light: var(--color-success-100);
+  --surface-success-bg-base: var(--color-success-300);
+  --surface-success-bg-dark: var(--color-success-500);
+  --surface-success-bg-darker: var(--color-success-700);
+
   --border-primary-light: var(--color-primary-100);
   --border-primary-base: var(--color-primary-500);
   --border-primary-dark: var(--color-primary-700);
@@ -141,6 +157,10 @@
   --border-neutral-light: var(--color-neutral-100);
   --border-neutral-base: var(--color-neutral-500);
   --border-neutral-dark: var(--color-neutral-700);
+
+  --border-success-light: var(--color-success-100);
+  --border-success-base: var(--color-success-500);
+  --border-success-dark: var(--color-success-700);
 
   /* Semantic Text Tokens — Neutral */
   --text-neutral-lighter: var(--color-neutral-0);
@@ -167,12 +187,13 @@
   --text-links-primary: var(--color-primary-600);
   --text-links-accent: var(--color-accent-500);
 
-  /* Surface — Good (status green) */
-  --surface-good-bg-lighter: #ECFFF3;
-  --surface-good-bg-light: #DCFCE7;
-  --surface-good-bg-base: #2ED199;
-  --surface-good-bg-dark: #23AB7C;
-  --surface-good-bg-darker: #107452;
+  /* Semantic Text Tokens — Success */
+  --text-success-lighter: var(--color-success-50);
+  --text-success-light: var(--color-success-100);
+  --text-success-base: var(--color-success-400);
+  --text-success-dark: var(--color-success-600);
+  --text-success-darker: var(--color-success-800);
+
 
   /* Legacy alias — surface token used for text (kept for backward compat) */
   --surface-neutral-dark: var(--color-neutral-700);
