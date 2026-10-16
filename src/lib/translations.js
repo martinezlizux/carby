@@ -105,6 +105,7 @@ export const translations = {
         wizNamePlaceholder: "e.g. Alex",
         wizAgeLabel: "How old are you?",
         wizAgePlaceholder: "e.g. 25",
+        ageUnit: "years",
 
         wizGenderTitle: "What's your biological sex?",
         wizGenderDesc: "This helps us calculate your macro requirements more accurately.",
@@ -307,6 +308,7 @@ export const translations = {
         wizNamePlaceholder: "Ej. Alex",
         wizAgeLabel: "¿Cuántos años tienes?",
         wizAgePlaceholder: "Ej. 25",
+        ageUnit: "años",
 
         wizGenderTitle: "¿Cuál es tu sexo biológico?",
         wizGenderDesc: "Esto nos ayuda a calcular tus requerimientos (macros) con mayor precisión.",

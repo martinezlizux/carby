@@ -4,21 +4,21 @@ import styles from './Dashboard.module.css';
 import { useWizard } from '../contexts/WizardContext';
 import carbyCharacter from '../assets/Dashboard-character-header.png';
 import ScannerCard from '../components/ScannerCard';
-import { Scan } from 'lucide-react';
+import { Scan, User, Edit3, Plus, Pill } from 'lucide-react';
+import AuthModal from '../components/AuthModal';
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const { userData, t } = useWizard();
+    const { userData, isGuest, openAuthModal, t } = useWizard();
 
     // Default values if none provided
-    const displayName = userData.name || 'Markus Dominguez';
-    const mainMed = userData.medications?.[0] || { name: t('none'), timing: '' };
-
-    // Check if the user skipped the wizard (incomplete profile), unless they explicitly saved the profile later.
-    const isProfileComplete = userData.profileEdited || (userData.height && userData.weight && userData.hasCondition !== undefined);
+    const isProfileComplete = Boolean(userData.profileEdited || (userData.height && userData.weight && userData.hasCondition !== undefined));
+    const displayName = userData.name || (isGuest ? 'Invitado' : 'Usuario');
+    const hasMedication = Boolean(userData.hasCondition && userData.takesMedication && userData.medications && userData.medications.length > 0);
+    const mainMed = userData.medications?.[0] || { name: 'Medicación', timing: '' };
 
     const getInitials = (name) => {
-        if (!name) return 'MD';
+        if (!name) return 'U';
         const names = name.trim().split(' ');
         if (names.length >= 2) {
             return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
@@ -96,51 +96,92 @@ const Dashboard = () => {
                 </div>
 
                 <div className={styles.profileSection}>
-                    <div className={styles.sectionHeader}>
-                        <h2>{t('profile')}</h2>
-                        <button className={styles.editBtn} onClick={() => navigate('/profile/edit')}>
-                            <i className="fa-solid fa-pencil"></i>
-                        </button>
-                    </div>
-                    <div className={styles.profileCard}>
-                        <div className={styles.profilePhoto}>
-                            {userData.avatar ? (
-                                <img src={userData.avatar} alt="Avatar" className={styles.avatarImage} />
-                            ) : (
-                                <div className={styles.avatarPlaceholder}>
-                                    <span className={styles.avatarInitials}>{initials}</span>
-                                </div>
-                            )}
+                    {!isProfileComplete ? (
+                        /* ── Variant 1: Property 1=No Completo ── */
+                        <div className={styles.cardProfile}>
+                            <h3 className={styles.cardProfileTitle}>{t('profile')}</h3>
+                            <button
+                                className={styles.cardProfileCompleteBtn}
+                                onClick={() => {
+                                    if (isGuest) {
+                                        openAuthModal();
+                                    } else {
+                                        navigate('/profile/edit');
+                                    }
+                                }}
+                            >
+                                <User size={20} />
+                                <span>{t('completeProfileBtn')}</span>
+                            </button>
                         </div>
-                        <div className={styles.profileInfo}>
-                            <h3 className={styles.profileName}>{displayName}</h3>
-                            {isProfileComplete ? (
-                                <div className={styles.profileDetailsRow}>
-                                    <div className={styles.profileDetailsCol}>
-                                        <p>{t('age')}: {userData.age || '30'}</p>
-                                        <p>{t('gender')}: {getGenderLabel(userData.gender)}</p>
-                                        <p>{t('height')}: {userData.height || '--'} cm</p>
-                                        <p>{t('weight')}: {userData.weight || '--'} kg</p>
-                                    </div>
-                                    <div className={styles.profileDetailsCol}>
-                                        <p>{t('diabetes')}: {userData.hasCondition ? getDiabetesLabel(userData.diabetesType) : t('none')}</p>
-                                        <p>{t('med')}: {userData.hasCondition && userData.takesMedication ? mainMed.name : t('none')}</p>
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className={styles.incompleteProfile}>
-                                    <p className={styles.incompleteMsg}>{t('completeProfileMsg')}</p>
-                                    <button
-                                        className={styles.completeProfileBtn}
-                                        onClick={() => navigate('/profile/edit')}
-                                    >
-                                        <i className="fa-solid fa-file-pen" style={{ marginRight: '8px' }}></i>
-                                        {t('completeProfileBtn')}
-                                    </button>
-                                </div>
-                            )}
+                    ) : hasMedication ? (
+                        /* ── Variant 2: Property 1=Profile + medicamento ── */
+                        <div className={styles.cardProfile}>
+                            <div className={styles.cardProfileHeader}>
+                                <h3 className={styles.cardProfileTitle}>{t('profile')}</h3>
+                                <button className={styles.cardProfileEditLink} onClick={() => navigate('/profile/edit')}>
+                                    <Edit3 size={15} />
+                                    <span>{t('edit') || 'Edit'}</span>
+                                </button>
+                            </div>
+                            
+                            <div className={styles.cardProfileInfo}>
+                                <span className={styles.cardProfileName}>{displayName}</span>
+                                {userData.age && (
+                                    <span className={styles.cardProfileAge}>{userData.age} {t('ageUnit') || 'años'}</span>
+                                )}
+                            </div>
+
+                            <div className={styles.chipsRow}>
+                                {userData.gender && <span className={styles.chip}>{getGenderLabel(userData.gender)}</span>}
+                                {userData.height && <span className={styles.chip}>H: {userData.height} cm</span>}
+                                {userData.weight && <span className={styles.chip}>W: {userData.weight} kg</span>}
+                                <span className={styles.chip}>{userData.hasCondition ? getDiabetesLabel(userData.diabetesType) : (t('none') || 'Sin condición')}</span>
+                            </div>
+
+                            <div className={styles.chipsRow}>
+                                <span className={`${styles.chip} ${styles.chipTreatment}`}>
+                                    <Pill size={13} />
+                                    <span>{mainMed.name}</span>
+                                </span>
+                                {userData.useCarbRatio && (
+                                    <span className={`${styles.chip} ${styles.chipTreatment}`}>
+                                        {t('ratio') || 'Insuline & Carb ratio'} 1:{userData.carbRatio || 10}
+                                    </span>
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        /* ── Variant 3: Property 1=Profile +add ── */
+                        <div className={styles.cardProfile}>
+                            <div className={styles.cardProfileHeader}>
+                                <h3 className={styles.cardProfileTitle}>{t('profile')}</h3>
+                                <button className={styles.cardProfileEditLink} onClick={() => navigate('/profile/edit')}>
+                                    <Edit3 size={15} />
+                                    <span>{t('edit') || 'Edit'}</span>
+                                </button>
+                            </div>
+                            
+                            <div className={styles.cardProfileInfo}>
+                                <span className={styles.cardProfileName}>{displayName}</span>
+                                {userData.age && (
+                                    <span className={styles.cardProfileAge}>{userData.age} {t('ageUnit') || 'años'}</span>
+                                )}
+                            </div>
+
+                            <div className={styles.chipsRow}>
+                                {userData.gender && <span className={styles.chip}>{getGenderLabel(userData.gender)}</span>}
+                                {userData.height && <span className={styles.chip}>H: {userData.height} cm</span>}
+                                {userData.weight && <span className={styles.chip}>W: {userData.weight} kg</span>}
+                                <span className={styles.chip}>{userData.hasCondition ? getDiabetesLabel(userData.diabetesType) : (t('none') || 'Sin condición')}</span>
+                            </div>
+
+                            <button className={styles.cardProfileAddMedBtn} onClick={() => navigate('/profile/edit')}>
+                                <Plus size={16} />
+                                <span>Add medication</span>
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {isProfileComplete && userData.hasCondition && (
@@ -180,6 +221,7 @@ const Dashboard = () => {
                     </div>
                 )}
             </main>
+            <AuthModal onSuccess={() => navigate('/profile/edit')} />
         </div>
     );
 };

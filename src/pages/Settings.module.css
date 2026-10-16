@@ -116,3 +116,35 @@
 .toggleActive .toggleKnob {
     transform: translateX(20px);
 }
+
+.logoutBtn {
+    background: #FEF2F2;
+    border: 1px solid #FEE2E2;
+    color: #EF4444;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.logoutBtn:hover {
+    background: #FEE2E2;
+}
+
+.loginBadge {
+    background: #EFF0FF;
+    color: #6C79FF;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.loginBadge:hover {
+    background: #E2E5FF;
+}

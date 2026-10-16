@@ -1,9 +1,10 @@
 import React from 'react';
 import styles from './Settings.module.css';
 import { useWizard } from '../contexts/WizardContext';
+import AuthModal from '../components/AuthModal';
 
 const Settings = () => {
-    const { userData, updateUserData, t } = useWizard();
+    const { userData, updateUserData, user, logout, openAuthModal, t } = useWizard();
 
     const toggleLanguage = () => {
         const newLang = userData.language === 'English' ? 'Spanish' : 'English';
@@ -53,7 +54,29 @@ const Settings = () => {
                         <div className={styles.toggleKnob}></div>
                     </div>
                 </div>
+
+                {/* Account / Sync Card */}
+                <div className={styles.card}>
+                    <div className={styles.settingInfo}>
+                        <span className={styles.settingTitle}>Cuenta</span>
+                        <span className={styles.settingValue}>
+                            {user ? user.email : 'Modo Invitado (Guest)'}
+                        </span>
+                    </div>
+                    <div>
+                        {user ? (
+                            <button className={styles.logoutBtn} onClick={logout}>
+                                Cerrar Sesión
+                            </button>
+                        ) : (
+                            <button className={styles.loginBadge} onClick={openAuthModal}>
+                                Iniciar Sesión
+                            </button>
+                        )}
+                    </div>
+                </div>
             </main>
+            <AuthModal />
         </div>
     );
 };

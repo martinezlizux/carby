@@ -5,10 +5,10 @@ import styles from './EditProfile.module.css';
 
 const EditProfile = () => {
     const navigate = useNavigate();
-    const { userData, updateUserData, t } = useWizard();
+    const { userData, updateUserData, saveProfileToSupabase, isGuest, user, t } = useWizard();
     const fileInputRef = useRef(null);
 
-    const [name, setName] = useState(userData.name || '');
+    const [name, setName] = useState(userData.name || user?.user_metadata?.name || '');
     const [age, setAge] = useState(userData.age || '');
     const [gender, setGender] = useState(userData.gender || '');
     const [height, setHeight] = useState(userData.height || '');
@@ -130,30 +130,38 @@ const EditProfile = () => {
         setMedications(medications.filter(med => med.id !== id));
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         const activeMedications = takesMedication
             ? medications.filter(m => m.name.trim() !== '')
             : [];
 
-        updateUserData('name', name);
-        updateUserData('age', age);
-        updateUserData('gender', gender);
-        updateUserData('height', height);
-        updateUserData('weight', weight);
-        updateUserData('avatar', avatar);
-        updateUserData('hasCondition', hasCondition);
-        updateUserData('diabetesType', hasCondition ? diabetesType : null);
-        updateUserData('takesMedication', hasCondition ? takesMedication : false);
-        updateUserData('medications', hasCondition ? activeMedications : []);
-        updateUserData('useCarbRatio', hasCondition ? useCarbRatio : false);
-        updateUserData('carbRatio', hasCondition ? carbRatio : 10);
-        updateUserData('profileEdited', true);
+        const updated = {
+            name,
+            age,
+            gender,
+            height,
+            weight,
+            avatar,
+            hasCondition,
+            diabetesType: hasCondition ? diabetesType : null,
+            takesMedication: hasCondition ? takesMedication : false,
+            medications: hasCondition ? activeMedications : [],
+            useCarbRatio: hasCondition ? useCarbRatio : false,
+            carbRatio: hasCondition ? carbRatio : 10,
+            profileEdited: true
+        };
+
+        Object.entries(updated).forEach(([k, v]) => updateUserData(k, v));
+
+        if (!isGuest) {
+            await saveProfileToSupabase(updated);
+        }
 
         navigate('/dashboard');
     };
 
     const getInitials = (n) => {
-        if (!n) return 'MD';
+        if (!n) return 'U';
         const names = n.trim().split(' ');
         if (names.length >= 2) return `${names[0][0]}${names[names.length - 1][0]}`.toUpperCase();
         return n.slice(0, 2).toUpperCase();
